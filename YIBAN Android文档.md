@@ -5,9 +5,6 @@
  - `BottomNavigationView` 
  - **首页**，**社区**，**消息**，**我的**：4个 `Fragment` 
 
- 1. 用 `BottomNavigationView` 实现
- 2. **首页**，**社区**，**消息**，**我的**用4个 `Fragment` 实现
-
 
 ## 首页（Fragment） ##
 
