@@ -1,10 +1,10 @@
-# YIBAN Android文档
+﻿# YIBAN Android文档
 
 ## 底部导航栏 ##
 
  - `BottomNavigationView` 
  - **首页**，**社区**，**消息**，**我的**：4个 `Fragment` 
-
+ - 用 `ViewPager` 管理4个 `Fragment` 
 
 ## 首页（Fragment） ##
 
