@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <ImageView
+        android:id="@+id/contest_team_face"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_mine_black"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/contest_team_person_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/contestTeamPersonName"
+            android:textSize="15sp"
+            android:text="aha"/>
+
+        <TextView
+            android:id="@+id/contest_team_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/contestTeamName"
+            android:textSize="15sp"
+            android:text="队伍:我是18的咸鱼"/>
+
+        <TextView
+            android:id="@+id/contest_team_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/contestTeamNumber"
+            android:textSize="15sp"
+            android:text="需要小伙伴6名"/>
+
+        <TextView
+            android:id="@+id/contest_team_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/contestTeamComment"
+            android:textSize="17sp"
+            android:text="我们的队伍很强我们的队伍很强我们的队伍很强我们的队伍很强我们的队伍很强我们的队伍很强"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/contest_team_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@color/contestTeamTime"
+                android:textSize="14sp"
+                android:text="现在"/>
+
+            <Button
+                android:id="@+id/contest_team_join"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_contest_team_join"
+                android:minHeight="30dp"
+                android:minWidth="50dp"
+                android:textColor="@color/contestTeamJoinButton"
+                android:textSize="14sp"
+                android:text="加入"
+                style="?android:attr/borderlessButtonStyle"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

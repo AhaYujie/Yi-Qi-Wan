@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.Activity.ContestActivity"
+    tools:showIn="@layout/activity_contest">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/contest_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@color/contestTitle"
+                android:textSize="30sp"
+                android:text="Contest Title"/>
+
+            <TextView
+                android:id="@+id/contest_content_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:textColor="@color/contestContentTime"
+                android:textSize="14sp"
+                android:text="今天12:43"/>
+
+            <TextView
+                android:id="@+id/contest_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@color/contestContent"
+                android:textSize="20sp"
+                android:text="@string/contest_content"/>
+
+            <TextView
+                android:id="@+id/contest_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/contestSource"
+                android:textSize="14sp"
+                android:text="来源：aha"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/boundaryLine"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@color/contestTeamTitle"
+                android:textSize="30sp"
+                android:text="@string/contest_team_title"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/contest_team_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

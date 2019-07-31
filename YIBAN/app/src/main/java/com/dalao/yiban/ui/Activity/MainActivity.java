@@ -1,8 +1,9 @@
-package com.dalao.yiban.ui;
+package com.dalao.yiban.ui.Activity;
 
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.ui.ViewPagerAdapter;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.CommunityFragment;
 import com.dalao.yiban.ui.fragment.HomeFragment;
