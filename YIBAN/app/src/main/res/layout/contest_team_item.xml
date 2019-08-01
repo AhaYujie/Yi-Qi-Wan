@@ -7,8 +7,8 @@
     
     <ImageView
         android:id="@+id/contest_team_face"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/contest_team_face_size"
+        android:layout_height="@dimen/contest_team_face_size"
         android:padding="10dp"
         android:src="@drawable/ic_mine_black"/>
 
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/contestTeamPersonName"
-            android:textSize="15sp"
+            android:textSize="@dimen/contest_team_info_size"
             android:text="aha"/>
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/contestTeamName"
-            android:textSize="15sp"
+            android:textSize="@dimen/contest_team_info_size"
             android:text="队伍:我是18的咸鱼"/>
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/contestTeamNumber"
-            android:textSize="15sp"
+            android:textSize="@dimen/contest_team_info_size"
             android:text="需要小伙伴6名"/>
 
         <TextView
@@ -50,8 +50,9 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/contestTeamComment"
-            android:textSize="17sp"
-            android:text="我们的队伍很强我们的队伍很强我们的队伍很强我们的队伍很强我们的队伍很强我们的队伍很强"/>
+            android:textSize="@dimen/contest_team_comment_size"
+            android:lineSpacingMultiplier="@string/line_spacing_multiplier"
+            android:text="@string/contest_team_comment"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -63,8 +64,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:textColor="@color/contestTeamTime"
-                android:textSize="14sp"
+                android:textColor="@color/contestHint"
+                android:textSize="@dimen/contest_hint_text_size"
                 android:text="现在"/>
 
             <Button
@@ -73,11 +74,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:background="@drawable/ic_contest_team_join"
-                android:minHeight="30dp"
-                android:minWidth="50dp"
+                android:minHeight="@dimen/contest_team_join_height"
+                android:minWidth="@dimen/contest_team_join_width"
                 android:textColor="@color/contestTeamJoinButton"
-                android:textSize="14sp"
-                android:text="加入"
+                android:textSize="@dimen/contest_hint_text_size"
+                android:text="@string/contest_team_join"
                 style="?android:attr/borderlessButtonStyle"/>
 
         </LinearLayout>

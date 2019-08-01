@@ -29,4 +29,10 @@
         <item name="overlapAnchor">false</item>
     </style>
 
+    <!-- PopUpWindow动画 -->
+    <style name="popWindowAnim">
+        <item name="android:windowEnterAnimation">@anim/pop_window_enter</item>
+        <item name="android:windowExitAnimation">@anim/pop_window_exit</item>
+    </style>
+
 </resources>

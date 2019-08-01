@@ -59,7 +59,7 @@ public class ContestTeamAdapter extends RecyclerView.Adapter<ContestTeamAdapter.
 
     @Override
     public int getItemCount() {
-        return 10;
+        return 20;
     }
 
 }

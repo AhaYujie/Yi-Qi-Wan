@@ -5,18 +5,21 @@
     <color name="colorAccent">#D81B60</color>
     
     <color name="boundaryLine">#F4F4F4</color>
-    
+
+    <color name="forwardPopWindowBackground">#FFFFFF</color>
+    <color name="forwardPopWindowCancel">#A7A7A9</color>
+
+    <color name="contestBackground">#FFFFFF</color>
     <color name="contestTitle">#000000</color>
-    <color name="contestContentTime">#A7A7A9</color>
     <color name="contestContent">#000000</color>
-    <color name="contestSource">#A7A7A9</color>
     <color name="contestTeamTitle">#000000</color>
     <color name="contestTeamPersonName">#000000</color>
     <color name="contestTeamName">#000000</color>
     <color name="contestTeamNumber">#000000</color>
     <color name="contestTeamComment">#000000</color>
-    <color name="contestTeamTime">#A7A7A9</color>
     <color name="contestTeamJoinButton">#4CB6FB</color>
     <color name="contestTeamCreate">#A7A7A9</color>
     <color name="contestBottomNav">#FFFFFF</color>
+    <color name="contestHint">#A7A7A9</color>
+
 </resources>

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.Activity.ContestActivity"
+    tools:context=".ui.activity.ContestActivity"
     tools:showIn="@layout/activity_contest">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/contest_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,12 +19,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/contest_title_text"
+                android:id="@+id/contest_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/contestTitle"
-                android:textSize="30sp"
+                android:textSize="@dimen/contest_title_size"
                 android:text="Contest Title"/>
 
             <TextView
@@ -31,8 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:textColor="@color/contestContentTime"
-                android:textSize="14sp"
+                android:textColor="@color/contestHint"
+                android:textSize="@dimen/contest_hint_text_size"
                 android:text="今天12:43"/>
 
             <TextView
@@ -41,7 +42,8 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/contestContent"
-                android:textSize="20sp"
+                android:textSize="@dimen/contest_content_size"
+                android:lineSpacingMultiplier="@string/line_spacing_multiplier"
                 android:text="@string/contest_content"/>
 
             <TextView
@@ -50,8 +52,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:paddingBottom="5dp"
-                android:textColor="@color/contestSource"
-                android:textSize="14sp"
+                android:textColor="@color/contestHint"
+                android:textSize="@dimen/contest_hint_text_size"
                 android:text="来源：aha"/>
 
             <TextView
@@ -60,11 +62,12 @@
                 android:background="@color/boundaryLine"/>
 
             <TextView
+                android:id="@+id/contest_team_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/contestTeamTitle"
-                android:textSize="30sp"
+                android:textSize="@dimen/contest_title_size"
                 android:text="@string/contest_team_title"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -75,8 +78,24 @@
 
             </androidx.recyclerview.widget.RecyclerView>
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="20dp"
+                    android:text="@string/contest_no_more_team"
+                    android:textSize="@dimen/contest_hint_text_size"
+                    android:textColor="@color/contestHint"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

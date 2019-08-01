@@ -34,8 +34,8 @@
 
         <Button
             android:id="@+id/contest_move_to_team"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/contest_bottom_nav_icon_size"
+            android:layout_height="@dimen/contest_bottom_nav_icon_size"
             android:background="@drawable/ic_team_black"
             style="?android:attr/borderlessButtonStyle"/>
 
@@ -50,8 +50,8 @@
 
         <Button
             android:id="@+id/contest_team_collect"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/contest_bottom_nav_icon_size"
+            android:layout_height="@dimen/contest_bottom_nav_icon_size"
             android:background="@drawable/ic_collect_black"
             style="?android:attr/borderlessButtonStyle"/>
 
@@ -66,8 +66,8 @@
 
         <Button
             android:id="@+id/contest_team_forward"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/contest_bottom_nav_icon_size"
+            android:layout_height="@dimen/contest_bottom_nav_icon_size"
             android:background="@drawable/ic_forward_black"
             style="?android:attr/borderlessButtonStyle"/>
 

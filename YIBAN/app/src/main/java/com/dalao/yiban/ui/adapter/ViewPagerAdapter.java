@@ -1,4 +1,4 @@
-package com.dalao.yiban.ui;
+package com.dalao.yiban.ui.adapter;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
