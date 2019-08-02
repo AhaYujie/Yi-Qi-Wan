@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -7,23 +7,25 @@
     
     <ImageView
         android:id="@+id/contest_team_face"
-        android:layout_width="@dimen/contest_team_face_size"
-        android:layout_height="@dimen/contest_team_face_size"
+        android:layout_width="@dimen/my_face_size"
+        android:layout_height="@dimen/my_face_size"
         android:padding="10dp"
         android:src="@drawable/ic_mine_black"/>
 
     <LinearLayout
+        android:id="@+id/contest_team"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/contest_team_face">
 
         <TextView
             android:id="@+id/contest_team_person_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textColor="@color/contestTeamPersonName"
-            android:textSize="@dimen/contest_team_info_size"
+            android:textColor="@color/myPersonName"
+            android:textSize="@dimen/my_team_info_size"
             android:text="aha"/>
 
         <TextView
@@ -32,7 +34,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/contestTeamName"
-            android:textSize="@dimen/contest_team_info_size"
+            android:textSize="@dimen/my_team_info_size"
             android:text="队伍:我是18的咸鱼"/>
 
         <TextView
@@ -41,7 +43,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/contestTeamNumber"
-            android:textSize="@dimen/contest_team_info_size"
+            android:textSize="@dimen/my_team_info_size"
             android:text="需要小伙伴6名"/>
 
         <TextView
@@ -49,10 +51,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textColor="@color/contestTeamComment"
-            android:textSize="@dimen/contest_team_comment_size"
+            android:textColor="@color/myCommentText"
+            android:textSize="@dimen/my_comment_size"
             android:lineSpacingMultiplier="@string/line_spacing_multiplier"
-            android:text="@string/contest_team_comment"/>
+            android:text="@string/my_comment"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -64,8 +66,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:textColor="@color/contestHint"
-                android:textSize="@dimen/contest_hint_text_size"
+                android:textColor="@color/myHint"
+                android:textSize="@dimen/my_hint_text_size"
                 android:text="现在"/>
 
             <Button
@@ -73,11 +75,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:background="@drawable/ic_contest_team_join"
-                android:minHeight="@dimen/contest_team_join_height"
-                android:minWidth="@dimen/contest_team_join_width"
-                android:textColor="@color/contestTeamJoinButton"
-                android:textSize="@dimen/contest_hint_text_size"
+                android:background="@drawable/my_comment_reply_join"
+                android:minHeight="@dimen/my_button_height"
+                android:minWidth="@dimen/my_button_width"
+                android:textColor="@color/myCommentButton"
+                android:textSize="@dimen/my_hint_text_size"
                 android:text="@string/contest_team_join"
                 style="?android:attr/borderlessButtonStyle"/>
 
@@ -85,4 +87,12 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/contest_team"
+        android:layout_marginTop="10dp"
+        android:background="@color/boundaryLine">
+    </LinearLayout>
+
+</RelativeLayout>

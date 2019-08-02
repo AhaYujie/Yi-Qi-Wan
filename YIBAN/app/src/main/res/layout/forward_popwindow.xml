@@ -139,7 +139,7 @@
             android:id="@+id/forward_cancel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/ic_contest_team_create"
+            android:background="@drawable/my_create_comment"
             android:text="@string/forward_pop_window"
             android:textColor="@color/forwardPopWindowCancel"
             style="?android:attr/borderlessButtonStyle"/>

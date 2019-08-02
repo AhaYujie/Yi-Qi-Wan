@@ -6,14 +6,15 @@
 
     <dimen name="forward_text_size">13sp</dimen>
 
-    <dimen name="contest_title_size">30sp</dimen>
-    <dimen name="contest_hint_text_size">14sp</dimen>
-    <dimen name="contest_content_size">20sp</dimen>
-    <dimen name="contest_team_face_size">50dp</dimen>
-    <dimen name="contest_team_info_size">15sp</dimen>
-    <dimen name="contest_team_comment_size">17sp</dimen>
-    <dimen name="contest_team_join_height">30dp</dimen>
-    <dimen name="contest_team_join_width">50dp</dimen>
-    <dimen name="contest_bottom_nav_icon_size">25dp</dimen>
+    <!-- 竞赛，活动字体 -->
+    <dimen name="my_title_size">30sp</dimen>
+    <dimen name="my_hint_text_size">14sp</dimen>
+    <dimen name="my_content_size">20sp</dimen>
+    <dimen name="my_face_size">50dp</dimen>
+    <dimen name="my_team_info_size">15sp</dimen>
+    <dimen name="my_comment_size">17sp</dimen>
+    <dimen name="my_button_height">30dp</dimen>
+    <dimen name="my_button_width">50dp</dimen>
+    <dimen name="my_bottom_nav_icon_size">25dp</dimen>
 
 </resources>

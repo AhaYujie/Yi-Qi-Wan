@@ -9,17 +9,18 @@
     <color name="forwardPopWindowBackground">#FFFFFF</color>
     <color name="forwardPopWindowCancel">#A7A7A9</color>
 
-    <color name="contestBackground">#FFFFFF</color>
-    <color name="contestTitle">#000000</color>
-    <color name="contestContent">#000000</color>
-    <color name="contestTeamTitle">#000000</color>
-    <color name="contestTeamPersonName">#000000</color>
+    <!-- 竞赛，活动颜色 -->
+    <color name="myBackground">#FFFFFF</color>
+    <color name="myTitle">#000000</color>
+    <color name="myContent">#000000</color>
+    <color name="myTitleColor">#000000</color>
+    <color name="myPersonName">#000000</color>
     <color name="contestTeamName">#000000</color>
     <color name="contestTeamNumber">#000000</color>
-    <color name="contestTeamComment">#000000</color>
-    <color name="contestTeamJoinButton">#4CB6FB</color>
-    <color name="contestTeamCreate">#A7A7A9</color>
-    <color name="contestBottomNav">#FFFFFF</color>
-    <color name="contestHint">#A7A7A9</color>
+    <color name="myCommentText">#000000</color>
+    <color name="myCommentButton">#4CB6FB</color>
+    <color name="myCreateComment">#A7A7A9</color>
+    <color name="myBottomNav">#FFFFFF</color>
+    <color name="myHint">#A7A7A9</color>
 
 </resources>

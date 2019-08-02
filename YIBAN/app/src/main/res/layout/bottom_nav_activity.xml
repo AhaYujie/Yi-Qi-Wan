@@ -13,14 +13,14 @@
         android:layout_margin="10dp">
 
         <Button
-            android:id="@+id/contest_team_create"
+            android:id="@+id/activity_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="30dp"
             android:paddingLeft="20dp"
             android:gravity="left|center"
             android:background="@drawable/my_create_comment"
-            android:text="@string/contest_team_create"
+            android:text="@string/activity_comment"
             android:textColor="@color/myCreateComment"
             style="?android:attr/borderlessButtonStyle"/>
 
@@ -34,10 +34,10 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/contest_move_to_team"
+            android:id="@+id/activity_move_to_comment"
             android:layout_width="@dimen/my_bottom_nav_icon_size"
             android:layout_height="@dimen/my_bottom_nav_icon_size"
-            android:background="@drawable/ic_team_black"
+            android:background="@drawable/ic_comment_black"
             style="?android:attr/borderlessButtonStyle"/>
 
     </LinearLayout>
@@ -50,7 +50,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/contest_team_collect"
+            android:id="@+id/activity_comment_collect"
             android:layout_width="@dimen/my_bottom_nav_icon_size"
             android:layout_height="@dimen/my_bottom_nav_icon_size"
             android:background="@drawable/ic_collect_black"
@@ -66,7 +66,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/contest_team_forward"
+            android:id="@+id/activity_comment_forward"
             android:layout_width="@dimen/my_bottom_nav_icon_size"
             android:layout_height="@dimen/my_bottom_nav_icon_size"
             android:background="@drawable/ic_forward_black"

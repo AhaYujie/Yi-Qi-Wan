@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.activity.ContestActivity"
-    tools:showIn="@layout/activity_contest">
+    tools:context=".ui.activity.ActivityActivity"
+    tools:showIn="@layout/activity_activity">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/contest_scroll_view"
+        android:id="@+id/activity_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,16 +18,16 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/contest_title"
+                android:id="@+id/activity_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/myTitle"
                 android:textSize="@dimen/my_title_size"
-                android:text="Contest Title"/>
+                android:text="活动标题"/>
 
             <TextView
-                android:id="@+id/contest_content_time"
+                android:id="@+id/activity_content_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -36,7 +36,7 @@
                 android:text="今天12:43"/>
 
             <TextView
-                android:id="@+id/contest_content"
+                android:id="@+id/activity_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -46,7 +46,7 @@
                 android:text="@string/my_content"/>
 
             <TextView
-                android:id="@+id/contest_source"
+                android:id="@+id/activity_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -61,16 +61,16 @@
                 android:background="@color/boundaryLine"/>
 
             <TextView
-                android:id="@+id/contest_team_title"
+                android:id="@+id/activity_team_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/myTitleColor"
                 android:textSize="@dimen/my_title_size"
-                android:text="@string/contest_team_title"/>
+                android:text="@string/activity_comment_title"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/contest_team_recyclerview"
+                android:id="@+id/activity_comment_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
@@ -87,7 +87,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="20dp"
-                    android:text="@string/contest_no_more_team"
+                    android:text="@string/activity_no_more_comment"
                     android:textSize="@dimen/my_hint_text_size"
                     android:textColor="@color/myHint"/>
 
@@ -97,4 +97,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

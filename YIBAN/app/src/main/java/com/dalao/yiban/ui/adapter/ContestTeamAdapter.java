@@ -41,7 +41,7 @@ public class ContestTeamAdapter extends RecyclerView.Adapter<ContestTeamAdapter.
     }
 
     public ContestTeamAdapter() {
-
+        // TODO
     }
 
     @NonNull
