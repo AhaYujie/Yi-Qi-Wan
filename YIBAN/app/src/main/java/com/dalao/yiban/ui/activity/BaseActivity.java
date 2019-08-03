@@ -28,7 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.my_more_menu, menu);
+        getMenuInflater().inflate(R.menu.more_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

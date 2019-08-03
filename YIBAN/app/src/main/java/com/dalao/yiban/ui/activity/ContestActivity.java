@@ -2,6 +2,7 @@ package com.dalao.yiban.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,7 +27,12 @@ import com.dalao.yiban.R;
 import com.dalao.yiban.constant.ContestConstant;
 import com.dalao.yiban.ui.adapter.ContestTeamAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
+import com.dalao.yiban.util.ImageUtils;
+import com.dalao.yiban.util.StringUtils;
 import com.dalao.yiban.util.SystemUiUtil;
+import com.sendtion.xrichtext.RichTextView;
+
+import java.util.List;
 
 public class ContestActivity extends BaseActivity {
 
@@ -36,6 +43,8 @@ public class ContestActivity extends BaseActivity {
     private ContestTeamAdapter contestTeamAdapter;
 
     private TextView contestTitle;
+
+    private RichTextView richTextView;
 
     private TextView contestTeamTitle;
 
@@ -75,6 +84,7 @@ public class ContestActivity extends BaseActivity {
         contestTeamForward = (Button) findViewById(R.id.contest_team_forward);
         contestTeamTitle = (TextView) findViewById(R.id.contest_team_title);
         contestTitle = (TextView) findViewById(R.id.contest_title);
+        richTextView = (RichTextView) findViewById(R.id.contest_content);
 
         // 设置button点击事件
         contestTeamCreate.setOnClickListener(this);
@@ -102,6 +112,48 @@ public class ContestActivity extends BaseActivity {
         contestTeamRecyclerview.setLayoutManager(layoutManager);
         contestTeamAdapter = new ContestTeamAdapter();
         contestTeamRecyclerview.setAdapter(contestTeamAdapter);
+
+        // test
+        richTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                showEditData("测试测试测试测试测试测试测试测试测试测试测试测试" +
+                        "测试测试测试测试测试测试测试测试测试测试测试测试测试" +
+                        "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
+                        "<img src=\"https://i11.hoopchina.com.cn/hupuapp/bbs/133437271753938/thread_133437271753938_20190802070638_s_760723_w_750_h_3784_56213.jpg?x-oss-process=image/resize,w_800/format,webp\" >" +
+                        "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
+                        "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
+                        "<img src=\"https://i4.hoopchina.com.cn/hupuapp/bbs/244653993008752/thread_244653993008752_20190803012459_s_56694_w_640_h_360_13312.jpg?x-oss-process=image/resize,w_800/format,webp\" >");
+            }
+        });
+
+    }
+
+    protected void showEditData(String content) {
+
+        richTextView.clearAllLayout();
+
+        List<String> textList = StringUtils.cutStringByImgTag(content);
+        for (int i = 0; i < textList.size(); i++) {
+            String text = textList.get(i);
+            Log.d("yujie", text);
+            if (text.contains("<img")) {
+                String imagePath = StringUtils.getImgSrc(text);
+//                int width = ScreenUtils.getScreenWidth(this);
+//                int height = ScreenUtils.getScreenHeight(this);
+                richTextView.measure(0,0);
+//                Bitmap bitmap = ImageUtils.getSmallBitmap(imagePath, width, height);
+                if (imagePath != null){
+                    richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
+                } else {
+                    richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
+                }
+            }
+            else {
+                richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
+            }
+        }
+
     }
 
     /**

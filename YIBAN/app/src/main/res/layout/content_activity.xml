@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".ui.activity.ActivityActivity"
@@ -35,15 +36,27 @@
                 android:textSize="@dimen/my_hint_text_size"
                 android:text="今天12:43"/>
 
-            <TextView
+            <!--<TextView-->
+                <!--android:id="@+id/activity_content"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:padding="10dp"-->
+                <!--android:textColor="@color/myContent"-->
+                <!--android:textSize="@dimen/my_content_size"-->
+                <!--android:lineSpacingMultiplier="@string/line_spacing_multiplier"-->
+                <!--android:text="@string/my_content"/>-->
+
+            <com.sendtion.xrichtext.RichTextView
                 android:id="@+id/activity_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textColor="@color/myContent"
-                android:textSize="@dimen/my_content_size"
-                android:lineSpacingMultiplier="@string/line_spacing_multiplier"
-                android:text="@string/my_content"/>
+                app:rt_view_text_line_space="6dp"
+                app:rt_view_text_size="@dimen/my_content_size"
+                app:rt_view_text_color="@color/myCommentText"
+                app:rt_view_image_height="0"
+                app:rt_view_image_bottom="10">
+
+            </com.sendtion.xrichtext.RichTextView>
 
             <TextView
                 android:id="@+id/activity_source"
@@ -61,13 +74,13 @@
                 android:background="@color/boundaryLine"/>
 
             <TextView
-                android:id="@+id/activity_team_title"
+                android:id="@+id/activity_comment_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/myTitleColor"
                 android:textSize="@dimen/my_title_size"
-                android:text="@string/activity_comment_title"/>
+                android:text="@string/my_comment_title"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/activity_comment_recyclerview"
@@ -87,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="20dp"
-                    android:text="@string/activity_no_more_comment"
+                    android:text="@string/my_no_more_comment"
                     android:textSize="@dimen/my_hint_text_size"
                     android:textColor="@color/myHint"/>
 

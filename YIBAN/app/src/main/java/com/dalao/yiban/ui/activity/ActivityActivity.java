@@ -18,7 +18,7 @@ public class ActivityActivity extends BaseActivity {
 
     private Toolbar activityToolbar;
 
-    private RecyclerView activityRecyclerView;
+    private RecyclerView activityCommentRecyclerView;
 
     private ActivityCommentAdapter activityCommentAdapter;
 
@@ -29,7 +29,7 @@ public class ActivityActivity extends BaseActivity {
 
         // 初始化控件
         activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
-        activityRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
+        activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -41,9 +41,9 @@ public class ActivityActivity extends BaseActivity {
 
         // 初始化RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        activityRecyclerView.setLayoutManager(layoutManager);
+        activityCommentRecyclerView.setLayoutManager(layoutManager);
         activityCommentAdapter = new ActivityCommentAdapter();
-        activityRecyclerView.setAdapter(activityCommentAdapter);
+        activityCommentRecyclerView.setAdapter(activityCommentAdapter);
 
     }
 
