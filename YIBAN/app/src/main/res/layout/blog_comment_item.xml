@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/blog_comment_face"
+        android:layout_width="@dimen/my_face_size"
+        android:layout_height="@dimen/my_face_size"
+        android:padding="10dp"
+        android:src="@drawable/ic_mine_black"/>
+
+    <LinearLayout
+        android:id="@+id/blog_comment"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/blog_comment_face">
+
+        <TextView
+            android:id="@+id/blog_comment_person_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/myPersonName"
+            android:textSize="@dimen/my_team_info_size"
+            android:text="aha"/>
+
+        <TextView
+            android:id="@+id/blog_comment_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/myCommentText"
+            android:textSize="@dimen/my_comment_size"
+            android:lineSpacingMultiplier="@string/line_spacing_multiplier"
+            android:text="@string/my_comment"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/blog_comment_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@color/myHint"
+                android:textSize="@dimen/my_hint_text_size"
+                android:text="现在"/>
+
+            <Button
+                android:id="@+id/blog_comment_reply_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/my_comment_reply_join"
+                android:minHeight="@dimen/my_button_height"
+                android:minWidth="@dimen/my_button_width"
+                android:textColor="@color/myCommentButton"
+                android:textSize="@dimen/my_hint_text_size"
+                android:text="@string/my_comment_reply"
+                style="?android:attr/borderlessButtonStyle"/>
+
+            <LinearLayout
+                android:id="@+id/blog_comment_reply"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="@dimen/my_button_height"
+                    android:layout_height="@dimen/my_button_height"
+                    android:src="@drawable/ic_reply_blue"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/my_hint_text_size"
+                    android:textColor="@color/myCommentButton"
+                    android:text="@string/my_comment_reply_num"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/my_hint_text_size"
+                    android:textColor="@color/myCommentButton"
+                    android:text="("/>
+
+                <TextView
+                    android:id="@+id/blog_comment_reply_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/my_hint_text_size"
+                    android:textColor="@color/myCommentButton"
+                    android:text="58"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/my_hint_text_size"
+                    android:textColor="@color/myCommentButton"
+                    android:text=")"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/activity_comment"
+        android:layout_marginTop="10dp"
+        android:background="@color/boundaryLine">
+    </LinearLayout>
+
+
+</RelativeLayout>

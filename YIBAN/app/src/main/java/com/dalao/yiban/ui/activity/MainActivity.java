@@ -1,8 +1,9 @@
-package com.dalao.yiban.ui;
+package com.dalao.yiban.ui.activity;
 
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.CommunityFragment;
 import com.dalao.yiban.ui.fragment.HomeFragment;
@@ -13,11 +14,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
