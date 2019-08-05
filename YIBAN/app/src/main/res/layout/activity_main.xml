@@ -8,6 +8,61 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <com.google.android.material.tabs.TabLayout
+            app:tabSelectedTextColor="@color/blue"
+            app:tabRippleColor="bla"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorColor="@color/blue"
+            app:tabMode="scrollable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/comp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <Button
+            android:layout_width="153dp"
+            android:layout_height="wrap_content"
+            tools:visibility="invisible" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/hot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <ImageView
+            android:src="@drawable/search"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+
     <com.dalao.yiban.ui.custom.CustomViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"

@@ -29,6 +29,7 @@ public class CustomViewPager extends ViewPager {
      * 取消ViewPager的左右滑动切换页面的效果
      * @param disable:When disable = true not work the scroll and when disble = false work the scroll
      */
+
     public void disableScroll(Boolean disable){
         this.disable = disable;
     }
