@@ -27,12 +27,20 @@ import com.dalao.yiban.R;
 import com.dalao.yiban.constant.ContestConstant;
 import com.dalao.yiban.ui.adapter.ContestTeamAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
+import com.dalao.yiban.util.HttpUtil;
 import com.dalao.yiban.util.ImageUtils;
+import com.dalao.yiban.util.JsonUtil;
 import com.dalao.yiban.util.StringUtils;
 import com.dalao.yiban.util.SystemUiUtil;
 import com.sendtion.xrichtext.RichTextView;
 
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Response;
 
 public class ContestActivity extends BaseActivity {
 
@@ -124,6 +132,23 @@ public class ContestActivity extends BaseActivity {
                         "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
                         "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
                         "<img src=\"https://i4.hoopchina.com.cn/hupuapp/bbs/244653993008752/thread_244653993008752_20190803012459_s_56694_w_640_h_360_13312.jpg?x-oss-process=image/resize,w_800/format,webp\" >");
+            }
+        });
+
+        // test
+        String url = "http://188888888.xyz:5000/home/compete/";
+        FormBody formBody  = new FormBody.Builder()
+                .add("sort", "1")
+                .build();
+        HttpUtil.sendHttpPost(url, formBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                JsonUtil.handleContestListResponse(response.body().string());
             }
         });
 
