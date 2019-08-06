@@ -1,16 +1,23 @@
 package com.dalao.yiban.ui.activity;
 
+import android.Manifest;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -34,12 +42,19 @@ import com.dalao.yiban.util.StringUtils;
 import com.dalao.yiban.util.SystemUiUtil;
 import com.sendtion.xrichtext.RichTextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ContestActivity extends BaseActivity {
@@ -66,9 +81,9 @@ public class ContestActivity extends BaseActivity {
 
     private Toolbar contestToolbar;
 
-    /**contest_toolbar
+    /**
      * 启动ContestActivity
-     * @param context
+     * @param context:
      * @param contestId:竞赛ID
      */
     public static void actionStart(Context context, String contestId) {
@@ -80,6 +95,7 @@ public class ContestActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_contest);
 
         // 初始化控件
@@ -135,39 +151,40 @@ public class ContestActivity extends BaseActivity {
             }
         });
 
-        // test
-        String url = "http://188888888.xyz:5000/home/compete/";
-        FormBody formBody  = new FormBody.Builder()
-                .add("sort", "1")
-                .build();
-        HttpUtil.sendHttpPost(url, formBody, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                JsonUtil.handleContestListResponse(response.body().string());
-            }
-        });
-
+        if (ContextCompat.checkSelfPermission(ContestActivity.this, Manifest.permission.
+                WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ContestActivity.this, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, 1);
+        }
     }
 
-    protected void showEditData(String content) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                }
+                else {
+                    Toast.makeText(this, "拒接权限将无法使用此功能", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void showEditData(String content) {
 
         richTextView.clearAllLayout();
 
         List<String> textList = StringUtils.cutStringByImgTag(content);
         for (int i = 0; i < textList.size(); i++) {
             String text = textList.get(i);
-            Log.d("yujie", text);
             if (text.contains("<img")) {
                 String imagePath = StringUtils.getImgSrc(text);
-//                int width = ScreenUtils.getScreenWidth(this);
-//                int height = ScreenUtils.getScreenHeight(this);
                 richTextView.measure(0,0);
-//                Bitmap bitmap = ImageUtils.getSmallBitmap(imagePath, width, height);
                 if (imagePath != null){
                     richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
                 } else {
@@ -257,16 +274,15 @@ public class ContestActivity extends BaseActivity {
 
     /**
      * Toolbar菜单栏点击事件
-     * @param item
-     * @return
+     * @param item:
+     * @return :
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // TODO:返回到MainActivity的竞赛列表界面
-                Toast.makeText(ContestActivity.this, "back",
-                        Toast.LENGTH_SHORT).show();
+                // TODO:返回到 MainActivity 的 home 界面
+                finish();
                 break;
 
             case R.id.contest_more_collect:

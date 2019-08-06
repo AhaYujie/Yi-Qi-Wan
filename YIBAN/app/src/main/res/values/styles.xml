@@ -11,6 +11,7 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/ActivitySlideInOutAnimation</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -33,6 +34,14 @@
     <style name="popWindowAnim">
         <item name="android:windowEnterAnimation">@anim/pop_window_enter</item>
         <item name="android:windowExitAnimation">@anim/pop_window_exit</item>
+    </style>
+
+    <!-- layout slide 动画 -->
+    <style name="ActivitySlideInOutAnimation">
+        <item name="android:activityOpenEnterAnimation">@anim/right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/left_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/left_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/right_out</item>
     </style>
 
 </resources>

@@ -4,10 +4,16 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- 首页 -->
+    <dimen name="home_item_height">100dp</dimen>
+    <dimen name="home_item_title_size">18sp</dimen>
+    <dimen name="home_item_hint_size">12sp</dimen>
+    <dimen name="home_item_eye_size">18dp</dimen>
+
     <!-- 转发 -->
     <dimen name="forward_text_size">13sp</dimen>
 
-    <!-- 竞赛，活动字体 -->
+    <!-- 竞赛，活动 -->
     <dimen name="my_title_size">30sp</dimen>
     <dimen name="my_hint_text_size">14sp</dimen>
     <dimen name="my_content_size">20sp</dimen>
@@ -17,5 +23,8 @@
     <dimen name="my_button_height">30dp</dimen>
     <dimen name="my_button_width">50dp</dimen>
     <dimen name="my_bottom_nav_icon_size">25dp</dimen>
+
+    <!-- 首页 -->
+    <dimen name="search_button_size">20dp</dimen>
 
 </resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/home_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/home_item_height"
+    android:background="@drawable/layout_selector"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/home_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/home_item_pic"
+        android:layout_above="@+id/home_item_time"
+        android:textSize="@dimen/home_item_title_size"
+        android:textColor="@color/home_item_title"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:lineSpacingMultiplier="@string/line_spacing_multiplier"/>
+
+    <TextView
+        android:id="@+id/home_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:textSize="@dimen/home_item_hint_size"
+        android:textColor="@color/home_hint"/>
+
+    <ImageView
+        android:id="@+id/home_item_eye"
+        android:layout_width="@dimen/home_item_eye_size"
+        android:layout_height="@dimen/home_item_eye_size"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/home_item_time"
+        android:src="@drawable/ic_eye_grey"/>
+
+    <TextView
+        android:id="@+id/home_item_pageviews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/home_item_eye"
+        android:textSize="@dimen/home_item_hint_size"
+        android:textColor="@color/home_hint"/>
+
+    <ImageView
+        android:id="@+id/home_item_pic"
+        android:layout_width="@dimen/home_item_height"
+        android:layout_height="@dimen/home_item_height"
+        android:layout_alignParentRight="true"
+        android:padding="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/boundaryLine">
+    </LinearLayout>
+
+</RelativeLayout>

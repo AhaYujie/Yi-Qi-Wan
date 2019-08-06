@@ -2,19 +2,66 @@ package com.dalao.yiban.ui.fragment;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.ServerPostDataConstant;
+import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.gson.HomeListGson;
+import com.dalao.yiban.ui.activity.MainActivity;
+import com.dalao.yiban.ui.adapter.HomeItemAdapter;
+import com.dalao.yiban.util.HttpUtil;
+import com.dalao.yiban.util.JsonUtil;
+import com.google.android.material.tabs.TabLayout;
 
-public class HomeFragment extends Fragment implements BaseFragment {
+import java.io.IOException;
 
-    // 为了测试
-    private TextView homeText;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Response;
+
+public class HomeFragment extends BaseFragment {
+
+    private  int categorySelected;
+
+    private int sortSelected;
+
+    private static final int SELECT_CONTEST = 0;
+    private static final int SELECT_ACTIVITY = 1;
+
+    private static final int SELECT_HOT = 0;
+    private static final int SELECT_TIME = 1;
+
+    private SwipeRefreshLayout homeSwipeRefresh;
+
+    private RecyclerView homeItemRecyclerView;
+
+    private HomeItemAdapter homeItemAdapter;
+
+    private TabLayout homeCategoryTablayout;
+
+    private TabLayout homeSortTablayout;
+
+    private Button homeSearchButton;
+
+    private HomeListGson homeListGson = null;
+
+    private MainActivity activity;
+
+    private View view;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -27,8 +74,7 @@ public class HomeFragment extends Fragment implements BaseFragment {
      * @return A new instance of fragment HomeFragment.
      */
     public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
-        return fragment;
+        return new HomeFragment();
     }
 
     @Override
@@ -37,16 +83,179 @@ public class HomeFragment extends Fragment implements BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // 为了测试
-        homeText = (TextView) view.findViewById(R.id.home_text);
-        homeText.setText("This is home page");
+        // 初始化控件
+        homeSwipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.home_swipe_refresh);
+        homeItemRecyclerView =(RecyclerView) view.findViewById(R.id.home_item_recyclerView);
+        homeCategoryTablayout = (TabLayout) view.findViewById(R.id.home_category_tablayout);
+        homeSortTablayout = (TabLayout) view.findViewById(R.id.home_sort_tablayout);
+        homeSearchButton = (Button) view.findViewById(R.id.home_search_button);
+        activity = (MainActivity) getActivity();
+
+        categorySelected = SELECT_CONTEST;
+        sortSelected = SELECT_HOT;
+
+        // 设置category切换事件
+        homeCategoryTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == SELECT_CONTEST) {
+                    categorySelected = SELECT_CONTEST;
+                }
+                else if (tab.getPosition() == SELECT_ACTIVITY) {
+                    categorySelected = SELECT_ACTIVITY;
+                }
+                requestDataFromServer(categorySelected, sortSelected);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                requestDataFromServer(categorySelected, sortSelected);
+            }
+        });
+
+        // 设置sort切换事件
+        homeSortTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == SELECT_HOT) {
+                    sortSelected = SELECT_HOT;
+                }
+                else if (tab.getPosition() == SELECT_TIME) {
+                    sortSelected = SELECT_TIME;
+                }
+                requestDataFromServer(categorySelected, sortSelected);
+        }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                requestDataFromServer(categorySelected, sortSelected);
+            }
+        });
+
+        // 设置search button点击事件
+        homeSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+                Log.d("yujie", "click search button");
+            }
+        });
+
+        // 设置swipe refresh事件
+        homeSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        homeSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestDataFromServer(categorySelected, sortSelected);
+            }
+        });
+
+        // 初始化RecyclerView
+        LinearLayoutManager linearLayoutManager =new LinearLayoutManager(activity);
+        homeItemRecyclerView.setLayoutManager(linearLayoutManager);
+        homeItemAdapter = new HomeItemAdapter(homeListGson);
+        homeItemRecyclerView.setAdapter(homeItemAdapter);
+
+        // 如果view可见则请求服务器获取数据
+        onVisible();
 
         return view;
     }
 
+    /**
+     * view用户可见时进行的操作
+     */
+    @Override
+    protected void onVisible() {
+        // 请求服务器获取数据
+        if (isVisible && view != null)
+            requestDataFromServer(categorySelected, sortSelected);
+    }
+
+    /**
+     * view用户不可见时进行的操作
+     */
+    @Override
+    protected void onInvisible() {
+    }
+
+    /**
+     * 从服务器获取列表数据并刷新UI
+     * @param category : SELECT_CONTEST or SELECT_ACTIVITY
+     * @param sort : SELECT_HOT or SELECT_TIME
+     */
+    private void requestDataFromServer(final int category, final int sort) {
+        homeSwipeRefresh.setRefreshing(true);
+
+        String url = null;
+        if (category == SELECT_CONTEST) {
+            url = ServerUrlConstant.CONTEST_LIST_URI;
+        }
+        else if (category == SELECT_ACTIVITY) {
+            url = ServerUrlConstant.ACTIVITY_LIST_URI;
+        }
+
+        FormBody formBody  = new FormBody.Builder()
+                .add(ServerPostDataConstant.SORT, String.valueOf(sort))
+                .build();
+
+        HttpUtil.sendHttpPost(url, formBody, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        homeSwipeRefresh.setRefreshing(false);
+                        Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() == null) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                final String responseText = response.body().string();
+                final HomeListGson homeListGson = JsonUtil.handleContestListResponse(responseText);
+                if (homeListGson == null) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateHomeListUI(homeListGson);
+                        homeSwipeRefresh.setRefreshing(false);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * 刷新列表UI
+     * @param homeListGson : 解析后的json数据
+     */
+    private void updateHomeListUI(@NonNull HomeListGson homeListGson) {
+        this.homeListGson = homeListGson;
+        homeItemAdapter.setHomeListGson(this.homeListGson);
+        homeItemAdapter.notifyDataSetChanged();
+    }
+
 }
+

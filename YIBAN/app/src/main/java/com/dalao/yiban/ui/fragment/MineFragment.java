@@ -11,10 +11,7 @@ import android.widget.TextView;
 
 import com.dalao.yiban.R;
 
-public class MineFragment extends Fragment implements BaseFragment {
-
-    // 为了测试
-    private TextView mineText;
+public class MineFragment extends Fragment {
 
     public MineFragment() {
         // Required empty public constructor
@@ -41,11 +38,6 @@ public class MineFragment extends Fragment implements BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mine, container, false);
-
-        // 为了测试
-        mineText = (TextView) view.findViewById(R.id.mine_text);
-        mineText.setText("This is mine page");
-
         return view;
     }
 

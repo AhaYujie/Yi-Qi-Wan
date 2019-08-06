@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.dalao.yiban.R;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
+import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.CommunityFragment;
 import com.dalao.yiban.ui.fragment.HomeFragment;
@@ -11,20 +12,24 @@ import com.dalao.yiban.ui.fragment.MessageFragment;
 import com.dalao.yiban.ui.fragment.MineFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private CustomViewPager viewPager;
+
     private ViewPagerAdapter viewPagerAdapter;
+
     private BottomNavigationView bottomNavigationView;
+
+    public CustomProgressDialog customProgressBar;
 
     // 首页，社区，消息，我的
     private List<Fragment> fragmentList;
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.nav_view);
         viewPager = (CustomViewPager) findViewById(R.id.view_pager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        customProgressBar = new CustomProgressDialog(this);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentList = initFragmentList();
@@ -76,6 +82,16 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
         // 取消ViewPager的左右滑动切换界面动画
         viewPager.disableScroll(true);
+        viewPager.setOffscreenPageLimit(3);
+    }
+
+    /**
+     * 点击事件
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        //TODO
     }
 
     private List<Fragment> initFragmentList() {

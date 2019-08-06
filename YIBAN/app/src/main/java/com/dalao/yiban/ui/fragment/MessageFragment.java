@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.dalao.yiban.R;
 
-public class MessageFragment extends Fragment implements BaseFragment {
+public class MessageFragment extends Fragment {
 
     // 为了测试
     private TextView messageText;

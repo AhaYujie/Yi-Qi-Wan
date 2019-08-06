@@ -1,37 +1,25 @@
 package com.dalao.yiban.util;
 
-import android.util.Log;
-
-import com.dalao.yiban.gson.ContestListGson;
+import com.dalao.yiban.gson.HomeListGson;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class JsonUtil {
 
     /**
      * 解析竞赛列表数据json
-     * @param response : 返回的json数据body
-     * @return : ContestListGson
+     * @param responseText : 返回的json数据body
+     * @return : HomeListGson
      */
-    public static ContestListGson handleContestListResponse(String response) {
+    public static HomeListGson handleContestListResponse(String responseText) {
         try {
-            JSONArray jsonArray = new JSONArray(response);
-            ContestListGson contestListGson = new ContestListGson();
-            List<ContestListGson.ContestListBean> contestListBeans = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                String content = jsonObject.toString();
-                contestListBeans.add(new Gson().fromJson(content, ContestListGson.ContestListBean.class));
-            }
-            contestListGson.setContestList(contestListBeans);
-            return contestListGson;
+            JSONObject jsonObject = new JSONObject(responseText);
+            String content = jsonObject.toString();
+            return new Gson().fromJson(content, HomeListGson.class);
+
         }
         catch (JSONException e) {
             e.printStackTrace();
