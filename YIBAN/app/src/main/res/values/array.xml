@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="community_sort_spinner">
+        <item>按热度排序</item>
+        <item>按时间排序 </item>
+        <item>只看关注的人</item>
+    </string-array>
+</resources>

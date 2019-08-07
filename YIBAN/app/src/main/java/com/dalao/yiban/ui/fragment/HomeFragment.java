@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.HomeListGson;
@@ -33,17 +34,16 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
+import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_HOT;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_TIME;
+
 public class HomeFragment extends BaseFragment {
 
     private  int categorySelected;
 
     private int sortSelected;
-
-    private static final int SELECT_CONTEST = 0;
-    private static final int SELECT_ACTIVITY = 1;
-
-    private static final int SELECT_HOT = 0;
-    private static final int SELECT_TIME = 1;
 
     private SwipeRefreshLayout homeSwipeRefresh;
 
@@ -163,9 +163,9 @@ public class HomeFragment extends BaseFragment {
         });
 
         // 初始化RecyclerView
-        LinearLayoutManager linearLayoutManager =new LinearLayoutManager(activity);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
-        homeItemAdapter = new HomeItemAdapter(homeListGson);
+        homeItemAdapter = new HomeItemAdapter(homeListGson, categorySelected);
         homeItemRecyclerView.setAdapter(homeItemAdapter);
 
         // 如果view可见则请求服务器获取数据
@@ -175,7 +175,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     /**
-     * view用户可见时进行的操作
+     * 用户可见view时进行的操作
      */
     @Override
     protected void onVisible() {
@@ -185,7 +185,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     /**
-     * view用户不可见时进行的操作
+     * 用户不可见view时进行的操作
      */
     @Override
     protected void onInvisible() {
@@ -254,6 +254,7 @@ public class HomeFragment extends BaseFragment {
     private void updateHomeListUI(@NonNull HomeListGson homeListGson) {
         this.homeListGson = homeListGson;
         homeItemAdapter.setHomeListGson(this.homeListGson);
+        homeItemAdapter.setCategorySelected(categorySelected);
         homeItemAdapter.notifyDataSetChanged();
     }
 

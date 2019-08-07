@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/activity_comment_face"
         android:layout_width="@dimen/my_face_size"
         android:layout_height="@dimen/my_face_size"
@@ -13,7 +13,7 @@
         android:src="@drawable/ic_mine_black"/>
 
     <LinearLayout
-        android:id="@+id/activity_comment"
+        android:id="@+id/activity_comment_button"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/activity_comment"
+        android:layout_below="@+id/activity_comment_button"
         android:layout_marginTop="10dp"
         android:background="@color/boundaryLine">
     </LinearLayout>

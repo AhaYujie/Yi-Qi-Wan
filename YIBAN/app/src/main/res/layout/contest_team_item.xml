@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/community_blog_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/layout_selector">
     
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/contest_team_face"
         android:layout_width="@dimen/my_face_size"
         android:layout_height="@dimen/my_face_size"
         android:padding="10dp"
-        android:src="@drawable/ic_mine_black"/>
+        android:src="@drawable/ic_yiban"/>
 
     <LinearLayout
         android:id="@+id/contest_team"

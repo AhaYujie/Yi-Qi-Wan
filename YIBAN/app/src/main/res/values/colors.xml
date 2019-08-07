@@ -8,6 +8,11 @@
     <color name="home_item_title">#000000</color>
     <color name="home_hint">#A7A7A9</color>
 
+    <!-- 社区 -->
+    <color name="community_blog_title">#000000</color>
+    <color name="community_hint">#A7A7A9</color>
+    <color name="community_blog_author_name">#000000</color>
+
     <!-- 分界线 -->
     <color name="boundaryLine">#FAFAFA</color>
 
@@ -15,11 +20,18 @@
     <color name="layout_default">#FFFFFF</color>
     <color name="layout_touch">#F0F0F0</color>
 
-    <!-- 转发 -->
+    <!-- 转发pop window -->
     <color name="forwardPopWindowBackground">#FFFFFF</color>
     <color name="forwardPopWindowCancel">#A7A7A9</color>
 
-    <!-- 竞赛，活动颜色 -->
+    <!-- comment pop window -->
+    <color name="commentPopWindowBackground">#FFFFFF</color>
+    <color name="commentPopWindowHint">#A7A7A9</color>
+    <color name="commentPopWindowText">#000000</color>
+    <color name="commentPopWindowButtonText">#FFFFFF</color>
+    <color name="commentPopWindowButton">#4CB6FB</color>
+
+    <!-- 竞赛, 活动, 博客颜色 -->
     <color name="myBackground">#FFFFFF</color>
     <color name="myTitle">#000000</color>
     <color name="myContent">#000000</color>

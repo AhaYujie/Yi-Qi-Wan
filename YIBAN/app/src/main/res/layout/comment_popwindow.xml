@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/commentPopWindowBackground">
+
+    <EditText
+        android:id="@+id/comment_edit_text"
+        android:layout_margin="5dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:focusable="true"
+        android:textColorHint="@color/commentPopWindowHint"
+        android:textColor="@color/commentPopWindowText"
+        android:textSize="@dimen/comment_text_size"
+        android:hint="@string/comment_hint"/>
+
+    <Button
+        android:id="@+id/comment_publish_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:minWidth="50dp"
+        android:minHeight="30dp"
+        android:layout_margin="5dp"
+        android:background="@color/commentPopWindowButton"
+        android:textColor="@color/commentPopWindowButtonText"
+        android:text="@string/comment_publish"
+        style="?android:attr/buttonStyleSmall"/>
+
+</LinearLayout>

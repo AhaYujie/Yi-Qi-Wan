@@ -4,12 +4,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.ui.adapter.ActivityCommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 
@@ -22,6 +28,23 @@ public class ActivityActivity extends BaseActivity {
 
     private ActivityCommentAdapter activityCommentAdapter;
 
+    private Button activityCommentButton;
+
+    private EditText commentEditText;
+
+    private PopupWindow commentPopupWindow;
+
+    /**
+     * 启动 ActivityActivity
+     * @param context:
+     * @param activityId:活动Id
+     */
+    public static void actionStart(Context context, String activityId) {
+        Intent intent = new Intent(context, ActivityActivity.class);
+        intent.putExtra(HomeConstant.activityId, activityId);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +53,10 @@ public class ActivityActivity extends BaseActivity {
         // 初始化控件
         activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
         activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
+        activityCommentButton = (Button) findViewById(R.id.activity_comment_button);
+
+        // 设置点击事件
+        activityCommentButton.setOnClickListener(this);
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -53,7 +80,24 @@ public class ActivityActivity extends BaseActivity {
      */
     @Override
     public void onClick(View v) {
-        // TODO
+        switch (v.getId()) {
+            // 评论
+            case R.id.activity_comment_button:
+                CustomPopWindow.PopWindowViewHelper popWindowViewHelper =  CustomPopWindow.commentPopWindow(v, this);
+                commentEditText = popWindowViewHelper.editText;
+                commentPopupWindow = popWindowViewHelper.popupWindow;
+                break;
+
+            // 发布评论
+            case R.id.comment_publish_button:
+                //TODO
+                commentPopupWindow.dismiss();
+                String content = commentEditText.getText().toString();
+                Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -84,9 +128,8 @@ public class ActivityActivity extends BaseActivity {
 
             // 转发button弹出PopWindow
             case R.id.contest_more_forward:
-                CustomPopWindow.initPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.activity_comment_forward),
-                                ActivityActivity.this);
+                CustomPopWindow.forwardPopWindow
+                        (getWindow().getDecorView().findViewById(R.id.activity_comment_forward), this);
                 break;
             default:
                 break;

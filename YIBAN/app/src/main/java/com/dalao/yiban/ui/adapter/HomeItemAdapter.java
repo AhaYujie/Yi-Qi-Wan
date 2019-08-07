@@ -16,14 +16,29 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.gson.HomeListGson;
+import com.dalao.yiban.ui.activity.ActivityActivity;
 import com.dalao.yiban.ui.activity.ContestActivity;
 import com.dalao.yiban.ui.fragment.HomeFragment;
+
+import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
 
 public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHolder> {
 
     private HomeListGson homeListGson;
+
+    private int categorySelected;
+
+    public int getCategorySelected() {
+        return categorySelected;
+    }
+
+    public void setCategorySelected(int categorySelected) {
+        this.categorySelected = categorySelected;
+    }
 
     public HomeListGson getHomeListGson() {
         return homeListGson;
@@ -51,8 +66,9 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
         }
     }
 
-    public HomeItemAdapter(HomeListGson homeListGson) {
+    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected) {
         this.homeListGson = homeListGson;
+        this.categorySelected = categorySelected;
     }
 
     @NonNull
@@ -76,7 +92,12 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 // 启动ContestActivity
-                ContestActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
+                if (categorySelected == SELECT_CONTEST)
+                    ContestActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
+                // 启动ActivityActivity
+                else if (categorySelected == SELECT_ACTIVITY)
+                    //TODO
+                    ActivityActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
             }
         });
 

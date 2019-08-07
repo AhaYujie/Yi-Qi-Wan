@@ -1,15 +1,11 @@
 package com.dalao.yiban.ui.activity;
 
 import android.Manifest;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -17,45 +13,20 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
-import com.dalao.yiban.constant.ContestConstant;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.ui.adapter.ContestTeamAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
-import com.dalao.yiban.util.HttpUtil;
-import com.dalao.yiban.util.ImageUtils;
-import com.dalao.yiban.util.JsonUtil;
 import com.dalao.yiban.util.StringUtils;
-import com.dalao.yiban.util.SystemUiUtil;
 import com.sendtion.xrichtext.RichTextView;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class ContestActivity extends BaseActivity {
 
@@ -88,7 +59,7 @@ public class ContestActivity extends BaseActivity {
      */
     public static void actionStart(Context context, String contestId) {
         Intent intent = new Intent(context, ContestActivity.class);
-        intent.putExtra(ContestConstant.contestId, contestId);
+        intent.putExtra(HomeConstant.contestId, contestId);
         context.startActivity(intent);
     }
 
@@ -126,7 +97,7 @@ public class ContestActivity extends BaseActivity {
 
         // 获取数据
         Intent intent = getIntent();
-        String contestId = intent.getStringExtra(ContestConstant.contestId);
+        String contestId = intent.getStringExtra(HomeConstant.contestId);
         // TODO:本地获取用户id
 
         // TODO:请求服务器
@@ -265,7 +236,7 @@ public class ContestActivity extends BaseActivity {
 
             // 转发button弹出PopWindow
             case R.id.contest_team_forward:
-                CustomPopWindow.initPopWindow(v, ContestActivity.this);
+                CustomPopWindow.forwardPopWindow(v, this);
                 break;
             default:
                 break;
@@ -299,9 +270,8 @@ public class ContestActivity extends BaseActivity {
 
             // 转发button弹出PopWindow
             case R.id.contest_more_forward:
-                CustomPopWindow.initPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.contest_team_forward),
-                                ContestActivity.this);
+                CustomPopWindow.forwardPopWindow
+                        (getWindow().getDecorView().findViewById(R.id.contest_team_forward), this);
                 break;
             default:
                 break;

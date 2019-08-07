@@ -1,17 +1,18 @@
 package com.dalao.yiban.ui.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.ui.adapter.BlogCommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 
@@ -22,6 +23,17 @@ public class BlogActivity extends BaseActivity {
     private RecyclerView blogCommentRecyclerView;
 
     private BlogCommentAdapter blogCommentAdapter;
+
+    /**
+     * 启动 BlogActivity
+     * @param context:
+     * @param blogId:博客Id
+     */
+    public static void actionStart(Context context, String blogId) {
+        Intent intent = new Intent(context, BlogActivity.class);
+        intent.putExtra(HomeConstant.blogId, blogId);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +96,7 @@ public class BlogActivity extends BaseActivity {
 
             // 转发button弹出PopWindow
             case R.id.contest_more_forward:
-                CustomPopWindow.initPopWindow
+                CustomPopWindow.forwardPopWindow
                         (getWindow().getDecorView().findViewById(R.id.blog_comment_forward),
                                 BlogActivity.this);
                 break;

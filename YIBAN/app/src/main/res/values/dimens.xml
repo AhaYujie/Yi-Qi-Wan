@@ -10,6 +10,17 @@
     <dimen name="home_item_hint_size">12sp</dimen>
     <dimen name="home_item_eye_size">18dp</dimen>
 
+    <!-- 社区 -->
+    <dimen name="community_create_blog_button_size">20dp</dimen>
+    <dimen name="community_blog_item_height">110dp</dimen>
+    <dimen name="community_blog_title_size">18sp</dimen>
+    <dimen name="community_blog_hint_size">12sp</dimen>
+    <dimen name="community_blog_eye_size">18dp</dimen>
+    <dimen name="community_blog_author_face_size">20dp</dimen>
+
+    <!-- comment pop window -->
+    <dimen name="comment_text_size">14sp</dimen>
+
     <!-- 转发 -->
     <dimen name="forward_text_size">13sp</dimen>
 

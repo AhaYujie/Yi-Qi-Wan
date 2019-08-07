@@ -39,6 +39,10 @@
     <string name="forward_qq_space">QQ空间</string>
     <string name="forward_yiban">易班</string>
 
+    <!-- comment pop window -->
+    <string name="comment_hint">说点什么</string>
+    <string name="comment_publish">发表</string>
+
     <!-- for test -->
     <string name="my_content_text">
         这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！

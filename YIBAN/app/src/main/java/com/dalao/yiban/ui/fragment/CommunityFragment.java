@@ -2,19 +2,37 @@ package com.dalao.yiban.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.ui.activity.MainActivity;
+import com.dalao.yiban.ui.adapter.CommunityBlogItemAdapter;
 
-public class CommunityFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
 
-    // 为了测试
-    private TextView communityText;
+public class CommunityFragment extends BaseFragment {
+
+    private View view;
+
+    private MainActivity activity;
+
+    private RecyclerView communityBlogRecyclerView;
+
+    private CommunityBlogItemAdapter communityBlogItemAdapter;
+
+    private Spinner communitySortSpinner;
 
     public CommunityFragment() {
         // Required empty public constructor
@@ -28,8 +46,7 @@ public class CommunityFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static CommunityFragment newInstance() {
-        CommunityFragment fragment = new CommunityFragment();
-        return fragment;
+        return new CommunityFragment();
     }
 
     @Override
@@ -38,16 +55,74 @@ public class CommunityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_community, container, false);
+        view = inflater.inflate(R.layout.fragment_community, container, false);
 
-        // 为了测试
-        communityText = (TextView) view.findViewById(R.id.community_text);
-        communityText.setText("This is community page");
+        // 初始化控件
+        activity = (MainActivity) getActivity();
+        communityBlogRecyclerView = (RecyclerView) view.findViewById(R.id.community_blog_recyclerView);
+        communitySortSpinner = (Spinner) view.findViewById(R.id.community_sort_spinner);
+
+        // 设置spinner
+        String[] sortItems = getResources().getStringArray(R.array.community_sort_spinner);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
+                (activity, android.R.layout.simple_spinner_item, sortItems);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        communitySortSpinner.setAdapter(arrayAdapter);
+        communitySortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                //TODO
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //TODO
+            }
+        });
+
+        // 初始化RecyclerView
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
+        communityBlogRecyclerView.setLayoutManager(linearLayoutManager);
+        communityBlogItemAdapter = new CommunityBlogItemAdapter();
+        communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
+
+        // 如果view可见则请求服务器获取数据
+        onVisible();
 
         return view;
     }
 
+    /**
+     * 用户可见view时进行的操作
+     */
+    @Override
+    protected void onVisible() {
+        //TODO
+    }
+
+    /**
+     * 用户不可见view时进行的操作
+     */
+    @Override
+    protected void onInvisible() {
+        //TODO
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
