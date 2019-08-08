@@ -256,6 +256,8 @@ public class HomeFragment extends BaseFragment {
         homeItemAdapter.setHomeListGson(this.homeListGson);
         homeItemAdapter.setCategorySelected(categorySelected);
         homeItemAdapter.notifyDataSetChanged();
+        homeItemRecyclerView.scrollToPosition(5);
+        homeItemRecyclerView.smoothScrollToPosition(0);
     }
 
 }

@@ -17,7 +17,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/activity_comment_face">
+        android:layout_toRightOf="@+id/activity_comment_face"
+        android:layout_toEndOf="@+id/activity_comment_face">
 
         <TextView
             android:id="@+id/activity_comment_person_name"
@@ -41,7 +42,8 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/activity_comment_time"
@@ -57,9 +59,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@drawable/my_comment_reply_join"
-                android:minHeight="@dimen/my_button_height"
-                android:minWidth="@dimen/my_button_width"
+                android:minHeight="@dimen/my_reply_button_height"
+                android:minWidth="@dimen/my_reply_button_width"
                 android:textColor="@color/myCommentButton"
                 android:textSize="@dimen/my_hint_text_size"
                 android:text="@string/my_comment_reply"
@@ -71,12 +74,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_gravity="center"
                 android:clickable="true">
 
                 <ImageView
-                    android:layout_width="@dimen/my_button_height"
-                    android:layout_height="@dimen/my_button_height"
+                    android:layout_width="@dimen/my_check_comment_button_size"
+                    android:layout_height="@dimen/my_check_comment_button_size"
                     android:src="@drawable/ic_reply_blue"/>
 
                 <TextView
@@ -93,7 +97,7 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/my_hint_text_size"
                     android:textColor="@color/myCommentButton"
-                    android:text="("/>
+                    android:text="@string/left_parentheses"/>
 
                 <TextView
                     android:id="@+id/activity_comment_reply_num"
@@ -110,7 +114,7 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/my_hint_text_size"
                     android:textColor="@color/myCommentButton"
-                    android:text=")"/>
+                    android:text="@string/right_parentheses"/>
 
             </LinearLayout>
 

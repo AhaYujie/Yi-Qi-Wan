@@ -13,6 +13,11 @@
     <color name="community_hint">#A7A7A9</color>
     <color name="community_blog_author_name">#000000</color>
 
+    <!-- 我的 -->
+    <color name="mine_background">#F5F5F5</color>
+    <color name="mine_info_background">#FFFFFF</color>
+    <color name="mine_text">#000000</color>
+
     <!-- 分界线 -->
     <color name="boundaryLine">#FAFAFA</color>
 

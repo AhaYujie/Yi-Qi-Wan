@@ -24,7 +24,7 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:lineSpacingMultiplier="@string/line_spacing_multiplier"
-        android:text="博客标题博客标题博客标题博客标题博客标题博客标题博客标题博客标题博客标题"/>
+        android:text="博客标题博客标题博客标题"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/community_blog_author_face"
@@ -48,7 +48,7 @@
         android:layout_marginStart="10dp"
         android:textSize="@dimen/community_blog_hint_size"
         android:textColor="@color/community_blog_author_name"
-        android:text="ahahaha"/>
+        android:text="aha"/>
 
     <TextView
         android:id="@+id/community_blog_time"

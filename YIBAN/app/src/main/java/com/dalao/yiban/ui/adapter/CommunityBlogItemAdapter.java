@@ -66,7 +66,7 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
     @Override
     public int getItemCount() {
         //TODO
-        return 20;
+        return 100;
     }
 
 }

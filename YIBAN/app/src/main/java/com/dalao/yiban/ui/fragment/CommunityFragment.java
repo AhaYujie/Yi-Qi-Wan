@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,8 @@ public class CommunityFragment extends BaseFragment {
     private CommunityBlogItemAdapter communityBlogItemAdapter;
 
     private Spinner communitySortSpinner;
+
+    private SwipeRefreshLayout communityBlogRefresh;
 
     public CommunityFragment() {
         // Required empty public constructor
@@ -63,6 +66,7 @@ public class CommunityFragment extends BaseFragment {
         activity = (MainActivity) getActivity();
         communityBlogRecyclerView = (RecyclerView) view.findViewById(R.id.community_blog_recyclerView);
         communitySortSpinner = (Spinner) view.findViewById(R.id.community_sort_spinner);
+        communityBlogRefresh = (SwipeRefreshLayout) view.findViewById(R.id.community_blog_refresh);
 
         // 设置spinner
         String[] sortItems = getResources().getStringArray(R.array.community_sort_spinner);
@@ -87,6 +91,17 @@ public class CommunityFragment extends BaseFragment {
         communityBlogRecyclerView.setLayoutManager(linearLayoutManager);
         communityBlogItemAdapter = new CommunityBlogItemAdapter();
         communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
+
+        // 设置swipe refresh事件
+        communityBlogRefresh.setColorSchemeResources(R.color.colorPrimary);
+        communityBlogRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                communityBlogRecyclerView.scrollToPosition(5);
+                communityBlogRecyclerView.smoothScrollToPosition(0);
+                communityBlogRefresh.setRefreshing(false);
+            }
+        });
 
         // 如果view可见则请求服务器获取数据
         onVisible();

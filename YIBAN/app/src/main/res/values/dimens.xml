@@ -18,6 +18,13 @@
     <dimen name="community_blog_eye_size">18dp</dimen>
     <dimen name="community_blog_author_face_size">20dp</dimen>
 
+    <!-- 我的 -->
+    <dimen name="mine_title_size">25sp</dimen>
+    <dimen name="mine_key_size">18sp</dimen>
+    <dimen name="mine_value_size">15sp</dimen>
+    <dimen name="mine_icon_size">20dp</dimen>
+    <dimen name="mine_face_size">50dp</dimen>
+
     <!-- comment pop window -->
     <dimen name="comment_text_size">14sp</dimen>
 
@@ -31,8 +38,9 @@
     <dimen name="my_face_size">50dp</dimen>
     <dimen name="my_team_info_size">15sp</dimen>
     <dimen name="my_comment_size">17sp</dimen>
-    <dimen name="my_button_height">30dp</dimen>
-    <dimen name="my_button_width">50dp</dimen>
+    <dimen name="my_reply_button_height">25dp</dimen>
+    <dimen name="my_reply_button_width">40dp</dimen>
+    <dimen name="my_check_comment_button_size">20dp</dimen>
     <dimen name="my_bottom_nav_icon_size">25dp</dimen>
 
     <!-- 首页 -->

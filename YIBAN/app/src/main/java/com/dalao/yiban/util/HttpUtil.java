@@ -19,8 +19,8 @@ public class HttpUtil {
 
     /**
      * GET请求
-     * @param url
-     * @param callback
+     * @param url:请求地址
+     * @param callback:
      */
     public static void sendHttpGet(String url, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
@@ -36,9 +36,9 @@ public class HttpUtil {
 
     /**
      * POST请求
-     * @param url
-     * @param formBody
-     * @param callback
+     * @param url:请求地址
+     * @param formBody:提交的form格式数据
+     * @param callback:
      */
     public static void sendHttpPost(String url, FormBody formBody, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()

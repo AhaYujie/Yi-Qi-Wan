@@ -19,7 +19,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/contest_team_face">
+        android:layout_toRightOf="@+id/contest_team_face"
+        android:layout_toEndOf="@+id/contest_team_face">
 
         <TextView
             android:id="@+id/contest_team_person_name"
@@ -77,9 +78,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@drawable/my_comment_reply_join"
-                android:minHeight="@dimen/my_button_height"
-                android:minWidth="@dimen/my_button_width"
+                android:minHeight="@dimen/my_reply_button_height"
+                android:minWidth="@dimen/my_reply_button_width"
                 android:textColor="@color/myCommentButton"
                 android:textSize="@dimen/my_hint_text_size"
                 android:text="@string/contest_team_join"

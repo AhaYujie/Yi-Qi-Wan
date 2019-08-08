@@ -112,7 +112,7 @@ public class ContestActivity extends BaseActivity {
         richTextView.post(new Runnable() {
             @Override
             public void run() {
-                showEditData("测试测试测试测试测试测试测试测试测试测试测试测试" +
+                showEditData("测试测试测试测试测试测试测试测试测试测试测试测试\n" +
                         "测试测试测试测试测试测试测试测试测试测试测试测试测试" +
                         "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
                         "<img src=\"https://i11.hoopchina.com.cn/hupuapp/bbs/133437271753938/thread_133437271753938_20190802070638_s_760723_w_750_h_3784_56213.jpg?x-oss-process=image/resize,w_800/format,webp\" >" +
