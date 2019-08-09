@@ -34,11 +34,15 @@
 
     <!-- contest -->
     <string name="contest_team_title">一起组队</string>
+    <string name="contest_team">队伍: </string>
+    <string name="contest_team_number_left">需要小伙伴 </string>
+    <string name="contest_team_number_right"> 名</string>
     <string name="contest_team_create">我要组队</string>
     <string name="contest_no_more_team">暂无更多队伍</string>
     <string name="contest_team_join">加入</string>
 
     <!-- activity, blog -->
+    <string name="content_source">来源: </string>
     <string name="my_comment_title">最新评论</string>
     <string name="my_comment_hint">我来评论</string>
     <string name="my_comment_reply">回复</string>

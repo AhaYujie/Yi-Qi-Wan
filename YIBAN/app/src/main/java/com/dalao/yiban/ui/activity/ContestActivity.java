@@ -1,18 +1,17 @@
 package com.dalao.yiban.ui.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,25 +19,45 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.ServerPostDataConstant;
+import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.gson.ContestGson;
 import com.dalao.yiban.ui.adapter.ContestTeamAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
+import com.dalao.yiban.util.HttpUtil;
+import com.dalao.yiban.util.JsonUtil;
 import com.dalao.yiban.util.StringUtils;
 import com.sendtion.xrichtext.RichTextView;
 
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Response;
 
 public class ContestActivity extends BaseActivity {
 
+    private MenuItem moreCollect;
+
+    private ContestGson contestGson = null;
+
     private NestedScrollView contestScrollView;
 
-    private RecyclerView contestTeamRecyclerview;
+    private RecyclerView contestTeamRecyclerView;
 
     private ContestTeamAdapter contestTeamAdapter;
 
     private TextView contestTitle;
 
+    private TextView contestContentTime;
+
     private RichTextView richTextView;
+
+    private TextView contestSource;
 
     private TextView contestTeamTitle;
 
@@ -52,6 +71,12 @@ public class ContestActivity extends BaseActivity {
 
     private Toolbar contestToolbar;
 
+    private String contestId;
+
+    private String userId;
+
+    private Menu menu;
+
     /**
      * 启动ContestActivity
      * @param context:
@@ -59,27 +84,28 @@ public class ContestActivity extends BaseActivity {
      */
     public static void actionStart(Context context, String contestId) {
         Intent intent = new Intent(context, ContestActivity.class);
-        intent.putExtra(HomeConstant.contestId, contestId);
+        intent.putExtra(HomeConstant.CONTEST_ID, contestId);
         context.startActivity(intent);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_contest);
 
         // 初始化控件
-        contestToolbar = findViewById(R.id.contest_toolbar);
+        contestTeamRecyclerView = (RecyclerView) findViewById(R.id.contest_team_recyclerview);
         contestScrollView = (NestedScrollView) findViewById(R.id.contest_scroll_view);
-        contestTeamRecyclerview = (RecyclerView) findViewById(R.id.contest_team_recyclerview);
+        contestContentTime = (TextView) findViewById(R.id.contest_content_time);
         contestTeamCreate = (Button) findViewById(R.id.contest_team_create);
         contestMoveToTeam = (Button) findViewById(R.id.contest_move_to_team);
         contestTeamCollect = (Button) findViewById(R.id.contest_team_collect);
         contestTeamForward = (Button) findViewById(R.id.contest_team_forward);
         contestTeamTitle = (TextView) findViewById(R.id.contest_team_title);
-        contestTitle = (TextView) findViewById(R.id.contest_title);
         richTextView = (RichTextView) findViewById(R.id.contest_content);
+        contestSource = (TextView) findViewById(R.id.contest_source);
+        contestTitle = (TextView) findViewById(R.id.contest_title);
+        contestToolbar = findViewById(R.id.contest_toolbar);
 
         // 设置button点击事件
         contestTeamCreate.setOnClickListener(this);
@@ -95,79 +121,44 @@ public class ContestActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // 获取数据
-        Intent intent = getIntent();
-        String contestId = intent.getStringExtra(HomeConstant.contestId);
-        // TODO:本地获取用户id
-
-        // TODO:请求服务器
-
         // 初始化RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        contestTeamRecyclerview.setLayoutManager(layoutManager);
-        contestTeamAdapter = new ContestTeamAdapter();
-        contestTeamRecyclerview.setAdapter(contestTeamAdapter);
+        contestTeamRecyclerView.setLayoutManager(layoutManager);
+        contestTeamAdapter = new ContestTeamAdapter(null);
+        contestTeamRecyclerView.setAdapter(contestTeamAdapter);
 
-        // test
-        richTextView.post(new Runnable() {
-            @Override
-            public void run() {
-                showEditData("测试测试测试测试测试测试测试测试测试测试测试测试\n" +
-                        "测试测试测试测试测试测试测试测试测试测试测试测试测试" +
-                        "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
-                        "<img src=\"https://i11.hoopchina.com.cn/hupuapp/bbs/133437271753938/thread_133437271753938_20190802070638_s_760723_w_750_h_3784_56213.jpg?x-oss-process=image/resize,w_800/format,webp\" >" +
-                        "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
-                        "测试测试测试测试测试测试测试测试测试测试测试测试测试测试" +
-                        "<img src=\"https://i4.hoopchina.com.cn/hupuapp/bbs/244653993008752/thread_244653993008752_20190803012459_s_56694_w_640_h_360_13312.jpg?x-oss-process=image/resize,w_800/format,webp\" >");
-            }
-        });
+        // 获取数据
+        Intent intent = getIntent();
+        contestId = intent.getStringExtra(HomeConstant.CONTEST_ID);
+        // TODO:本地获取用户id
+        userId = "5";   // test
+        // 请求服务器
+        requestDataFromServer();
 
-        if (ContextCompat.checkSelfPermission(ContestActivity.this, Manifest.permission.
-                WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ContestActivity.this, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, 1);
-        }
+//
+//        if (ContextCompat.checkSelfPermission(ContestActivity.this, Manifest.permission.
+//                WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(ContestActivity.this, new String[]{
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+//            }, 1);
+//        }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                }
-                else {
-                    Toast.makeText(this, "拒接权限将无法使用此功能", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void showEditData(String content) {
-
-        richTextView.clearAllLayout();
-
-        List<String> textList = StringUtils.cutStringByImgTag(content);
-        for (int i = 0; i < textList.size(); i++) {
-            String text = textList.get(i);
-            if (text.contains("<img")) {
-                String imagePath = StringUtils.getImgSrc(text);
-                richTextView.measure(0,0);
-                if (imagePath != null){
-                    richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
-                } else {
-                    richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
-                }
-            }
-            else {
-                richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
-            }
-        }
-
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                           int[] grantResults) {
+//        switch (requestCode) {
+//            case 1:
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                }
+//                else {
+//                    Toast.makeText(this, "拒接权限将无法使用此功能", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     /**
      * 点击事件
@@ -244,32 +235,45 @@ public class ContestActivity extends BaseActivity {
     }
 
     /**
+     * 创建菜单栏
+     * @param menu:
+     * @return :
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.more_menu, menu);
+        this.menu = menu;
+        this.moreCollect = menu.findItem(R.id.more_collect);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
      * Toolbar菜单栏点击事件
      * @param item:
      * @return :
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // TODO:返回到 MainActivity 的 home 界面
                 finish();
                 break;
 
-            case R.id.contest_more_collect:
+            case R.id.more_collect:
                 // TODO:收藏该竞赛
-                Toast.makeText(ContestActivity.this, "collect",
+                Toast.makeText(ContestActivity.this, "COLLECT",
                         Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.contest_more_copy:
+            case R.id.more_copy:
                 // TODO：复制该竞赛链接
                 Toast.makeText(ContestActivity.this, "copy",
                         Toast.LENGTH_SHORT).show();
                 break;
 
             // 转发button弹出PopWindow
-            case R.id.contest_more_forward:
+            case R.id.more_forward:
                 CustomPopWindow.forwardPopWindow
                         (getWindow().getDecorView().findViewById(R.id.contest_team_forward), this);
                 break;
@@ -277,6 +281,117 @@ public class ContestActivity extends BaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 请求服务器获取竞赛数据, 并解析刷新UI
+     */
+    private void requestDataFromServer() {
+        FormBody formBody  = new FormBody.Builder()
+                .add(ServerPostDataConstant.CONTEST_ID, contestId)
+                .add(ServerPostDataConstant.USER_ID, userId)
+                .build();
+        HttpUtil.sendHttpPost(ServerUrlConstant.CONTEST_URI, formBody, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ContestActivity.this, HintConstant.GET_DATA_FAILED,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    final ContestGson contestGson = JsonUtil.handleContestResponse(responseText);
+                    if (contestGson != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateContestUI(contestGson);
+                            }
+                        });
+                    }
+                    else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ContestActivity.this,
+                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ContestActivity.this,
+                                    HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * 刷新竞赛UI
+     * @param contestGson:解析后的数据
+     */
+    private void updateContestUI(@NonNull final ContestGson contestGson) {
+        this.contestGson = contestGson;
+        contestTitle.setText(contestGson.getTitle());
+        contestContentTime.setText(contestGson.getTime());
+        contestSource.setText(contestGson.getAuthor());
+        richTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                showContestContent(contestGson.getContent());
+            }
+        });
+        if (contestGson.getCollection() == HomeConstant.COLLECT) {
+            contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        }
+        else if (contestGson.getCollection() == HomeConstant.UN_COLLECT) {
+            contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_black);
+            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+        }
+        contestTeamAdapter.setTeamBeanList(contestGson.getTeam());
+        contestTeamAdapter.notifyDataSetChanged();
+    }
+
+
+    /**
+     * 解析并刷新竞赛内容
+     * @param content:竞赛内容
+     */
+    private void showContestContent(String content) {
+        richTextView.clearAllLayout();
+        List<String> textList = StringUtils.cutStringByImgTag(content);
+        for (int i = 0; i < textList.size(); i++) {
+            String text = textList.get(i);
+            if (text.contains(HomeConstant.IMAGE_TAG)) {
+                String imagePath = StringUtils.getImgSrc(text);
+                richTextView.measure(0,0);
+                if (imagePath != null){
+                    richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
+                }
+                else {
+                    richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
+                }
+            }
+            else {
+                richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
+            }
+        }
+
     }
 
 }

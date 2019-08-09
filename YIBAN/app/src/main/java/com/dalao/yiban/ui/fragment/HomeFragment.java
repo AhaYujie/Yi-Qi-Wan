@@ -108,7 +108,7 @@ public class HomeFragment extends BaseFragment {
                 else if (tab.getPosition() == SELECT_ACTIVITY) {
                     categorySelected = SELECT_ACTIVITY;
                 }
-                requestDataFromServer(categorySelected, sortSelected);
+                requestDataFromServer();
             }
 
             @Override
@@ -117,7 +117,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                requestDataFromServer(categorySelected, sortSelected);
+                requestDataFromServer();
             }
         });
 
@@ -131,7 +131,7 @@ public class HomeFragment extends BaseFragment {
                 else if (tab.getPosition() == SELECT_TIME) {
                     sortSelected = SELECT_TIME;
                 }
-                requestDataFromServer(categorySelected, sortSelected);
+                requestDataFromServer();
         }
 
             @Override
@@ -140,7 +140,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                requestDataFromServer(categorySelected, sortSelected);
+                requestDataFromServer();
             }
         });
 
@@ -158,7 +158,7 @@ public class HomeFragment extends BaseFragment {
         homeSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestDataFromServer(categorySelected, sortSelected);
+                requestDataFromServer();
             }
         });
 
@@ -181,7 +181,7 @@ public class HomeFragment extends BaseFragment {
     protected void onVisible() {
         // 请求服务器获取数据
         if (isVisible && view != null)
-            requestDataFromServer(categorySelected, sortSelected);
+            requestDataFromServer();
     }
 
     /**
@@ -193,22 +193,20 @@ public class HomeFragment extends BaseFragment {
 
     /**
      * 从服务器获取列表数据并刷新UI
-     * @param category : SELECT_CONTEST or SELECT_ACTIVITY
-     * @param sort : SELECT_HOT or SELECT_TIME
      */
-    private void requestDataFromServer(final int category, final int sort) {
+    private void requestDataFromServer() {
         homeSwipeRefresh.setRefreshing(true);
 
         String url = null;
-        if (category == SELECT_CONTEST) {
+        if (categorySelected == SELECT_CONTEST) {
             url = ServerUrlConstant.CONTEST_LIST_URI;
         }
-        else if (category == SELECT_ACTIVITY) {
+        else if (categorySelected == SELECT_ACTIVITY) {
             url = ServerUrlConstant.ACTIVITY_LIST_URI;
         }
 
         FormBody formBody  = new FormBody.Builder()
-                .add(ServerPostDataConstant.SORT, String.valueOf(sort))
+                .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
                 .build();
 
         HttpUtil.sendHttpPost(url, formBody, new Callback() {
@@ -226,23 +224,39 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.body() == null) {
-                    Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                final String responseText = response.body().string();
-                final HomeListGson homeListGson = JsonUtil.handleContestListResponse(responseText);
-                if (homeListGson == null) {
-                    Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateHomeListUI(homeListGson);
-                        homeSwipeRefresh.setRefreshing(false);
+                if (response.body() != null) {
+                    final String responseText = response.body().string();
+                    final HomeListGson homeListGson = JsonUtil.handleHomeListResponse(responseText);
+                    if (homeListGson != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHomeListUI(homeListGson);
+                                homeSwipeRefresh.setRefreshing(false);
+                            }
+                        });
                     }
-                });
+                    else {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                homeSwipeRefresh.setRefreshing(false);
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                else {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            homeSwipeRefresh.setRefreshing(false);
+                            Toast.makeText(MyApplication.getContext(),
+                                    HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
     }

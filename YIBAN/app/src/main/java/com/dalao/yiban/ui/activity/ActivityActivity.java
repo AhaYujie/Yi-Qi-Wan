@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +35,10 @@ public class ActivityActivity extends BaseActivity {
 
     private PopupWindow commentPopupWindow;
 
+    private Menu menu;
+
+    private MenuItem moreCollect;
+
     /**
      * 启动 ActivityActivity
      * @param context:
@@ -41,7 +46,7 @@ public class ActivityActivity extends BaseActivity {
      */
     public static void actionStart(Context context, String activityId) {
         Intent intent = new Intent(context, ActivityActivity.class);
-        intent.putExtra(HomeConstant.activityId, activityId);
+        intent.putExtra(HomeConstant.ACTIVITY_ID, activityId);
         context.startActivity(intent);
     }
 
@@ -83,7 +88,8 @@ public class ActivityActivity extends BaseActivity {
         switch (v.getId()) {
             // 评论
             case R.id.activity_comment_button:
-                CustomPopWindow.PopWindowViewHelper popWindowViewHelper =  CustomPopWindow.commentPopWindow(v, this);
+                CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
+                        CustomPopWindow.commentPopWindow(v, this);
                 commentEditText = popWindowViewHelper.editText;
                 commentPopupWindow = popWindowViewHelper.popupWindow;
                 break;
@@ -101,8 +107,21 @@ public class ActivityActivity extends BaseActivity {
     }
 
     /**
+     * 创建菜单栏
+     * @param menu:
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.more_menu, menu);
+        this.menu = menu;
+        this.moreCollect = menu.findItem(R.id.more_collect);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
      * Toolbar菜单栏点击事件
-     * @param item
+     * @param item:
      * @return
      */
     @Override
@@ -114,20 +133,20 @@ public class ActivityActivity extends BaseActivity {
                         Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.contest_more_collect:
+            case R.id.more_collect:
                 // TODO:收藏该活动
-                Toast.makeText(ActivityActivity.this, "collect",
+                Toast.makeText(ActivityActivity.this, "COLLECT",
                         Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.contest_more_copy:
+            case R.id.more_copy:
                 // TODO：复制该活动链接
                 Toast.makeText(ActivityActivity.this, "copy",
                         Toast.LENGTH_SHORT).show();
                 break;
 
             // 转发button弹出PopWindow
-            case R.id.contest_more_forward:
+            case R.id.more_forward:
                 CustomPopWindow.forwardPopWindow
                         (getWindow().getDecorView().findViewById(R.id.activity_comment_forward), this);
                 break;

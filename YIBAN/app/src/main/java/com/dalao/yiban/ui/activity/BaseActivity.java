@@ -21,15 +21,4 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         SystemUiUtil.changeStatusBarToWhite(this);
     }
 
-    /**
-     * 创建菜单栏
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.more_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
 }

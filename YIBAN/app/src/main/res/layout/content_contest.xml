@@ -22,32 +22,20 @@
                 android:id="@+id/contest_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="15dp"
                 android:textColor="@color/myTitle"
-                android:textSize="@dimen/my_title_size"
-                android:text="Contest Title"/>
+                android:textSize="@dimen/my_title_size"/>
 
             <TextView
                 android:id="@+id/contest_content_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingStart="10dp"
+                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
                 android:paddingRight="0dp"
                 android:paddingEnd="0dp"
                 android:textColor="@color/myHint"
-                android:textSize="@dimen/my_hint_text_size"
-                android:text="今天12:43"/>
-
-            <!--<TextView-->
-                <!--android:id="@+id/contest_content"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:padding="10dp"-->
-                <!--android:textColor="@color/myContent"-->
-                <!--android:textSize="@dimen/my_content_size"-->
-                <!--android:lineSpacingMultiplier="@string/line_spacing_multiplier"-->
-                <!--android:text="@string/my_content"/>-->
+                android:textSize="@dimen/my_hint_text_size"/>
 
             <com.sendtion.xrichtext.RichTextView
                 android:id="@+id/contest_content"
@@ -57,20 +45,34 @@
                 app:rt_view_text_size="@dimen/my_content_size"
                 app:rt_view_text_color="@color/myCommentText"
                 app:rt_view_image_height="0"
-                app:rt_view_image_bottom="10"/>
+                app:rt_view_image_bottom="10" />
 
-            <TextView
-                android:id="@+id/contest_source"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingStart="10dp"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                android:paddingBottom="5dp"
-                android:textColor="@color/myHint"
-                android:textSize="@dimen/my_hint_text_size"
-                android:text="来源：aha"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
+                    android:paddingRight="0dp"
+                    android:paddingEnd="0dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/myHint"
+                    android:textSize="@dimen/my_hint_text_size"
+                    android:text="@string/content_source"/>
+
+                <TextView
+                    android:id="@+id/contest_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textColor="@color/myHint"
+                    android:textSize="@dimen/my_hint_text_size"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -81,7 +83,7 @@
                 android:id="@+id/contest_team_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="15dp"
                 android:textColor="@color/myTitleColor"
                 android:textSize="@dimen/my_title_size"
                 android:text="@string/contest_team_title"/>

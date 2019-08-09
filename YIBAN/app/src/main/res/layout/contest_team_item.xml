@@ -12,6 +12,8 @@
         android:layout_width="@dimen/my_face_size"
         android:layout_height="@dimen/my_face_size"
         android:padding="10dp"
+        android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_yiban"/>
 
     <LinearLayout
@@ -26,28 +28,60 @@
             android:id="@+id/contest_team_person_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
             android:textColor="@color/myPersonName"
-            android:textSize="@dimen/my_team_info_size"
-            android:text="aha"/>
+            android:textSize="@dimen/my_team_info_size"/>
 
-        <TextView
-            android:id="@+id/contest_team_name"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textColor="@color/contestTeamName"
-            android:textSize="@dimen/my_team_info_size"
-            android:text="队伍:我是18的咸鱼"/>
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/contest_team_number"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/contestTeamName"
+                android:textSize="@dimen/my_team_info_size"
+                android:text="@string/contest_team"/>
+
+            <TextView
+                android:id="@+id/contest_team_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/contestTeamName"
+                android:textSize="@dimen/my_team_info_size"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textColor="@color/contestTeamNumber"
-            android:textSize="@dimen/my_team_info_size"
-            android:text="需要小伙伴6名"/>
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/contestTeamNumber"
+                android:textSize="@dimen/my_team_info_size"
+                android:text="@string/contest_team_number_left"/>
+
+            <TextView
+                android:id="@+id/contest_team_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/contestTeamNumber"
+                android:textSize="@dimen/my_team_info_size"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/contestTeamNumber"
+                android:textSize="@dimen/my_team_info_size"
+                android:text="@string/contest_team_number_right"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/contest_team_comment"
@@ -56,8 +90,7 @@
             android:padding="10dp"
             android:textColor="@color/myCommentText"
             android:textSize="@dimen/my_comment_size"
-            android:lineSpacingMultiplier="@string/line_spacing_multiplier"
-            android:text="@string/my_comment"/>
+            android:lineSpacingMultiplier="@string/line_spacing_multiplier"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -70,8 +103,7 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textColor="@color/myHint"
-                android:textSize="@dimen/my_hint_text_size"
-                android:text="现在"/>
+                android:textSize="@dimen/my_hint_text_size"/>
 
             <Button
                 android:id="@+id/contest_team_join"
