@@ -29,7 +29,7 @@
     <color name="forwardPopWindowBackground">#FFFFFF</color>
     <color name="forwardPopWindowCancel">#A7A7A9</color>
 
-    <!-- comment pop window -->
+    <!-- commentInterface pop window -->
     <color name="commentPopWindowBackground">#FFFFFF</color>
     <color name="commentPopWindowHint">#A7A7A9</color>
     <color name="commentPopWindowText">#000000</color>
@@ -49,5 +49,9 @@
     <color name="myHint">#A7A7A9</color>
     <color name="contestTeamName">#000000</color>
     <color name="contestTeamNumber">#000000</color>
+
+    <!-- view reply -->
+    <color name="viewReplyAllCommentsTitleBackground">#F0EEEE</color>
+    <color name="viewReplyText">#000000</color>
 
 </resources>

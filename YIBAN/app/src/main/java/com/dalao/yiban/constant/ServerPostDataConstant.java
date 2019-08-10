@@ -10,4 +10,6 @@ public class ServerPostDataConstant {
 
     public static final String ACTIVITY_ID = "id";
 
+    public static final String REPLY_ID = "id";
+
 }

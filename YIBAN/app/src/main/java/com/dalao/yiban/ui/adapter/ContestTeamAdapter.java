@@ -1,5 +1,6 @@
 package com.dalao.yiban.ui.adapter;
 
+import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,8 @@ import java.util.List;
 
 public class ContestTeamAdapter extends RecyclerView.Adapter<ContestTeamAdapter.ViewHolder>
     implements View.OnClickListener {
+
+    private Context context;
 
     private List<ContestGson.TeamBean> teamBeanList;
 
@@ -57,8 +60,8 @@ public class ContestTeamAdapter extends RecyclerView.Adapter<ContestTeamAdapter.
         }
     }
 
-    public ContestTeamAdapter(List<ContestGson.TeamBean> teamBeanList) {
-        this.teamBeanList = teamBeanList;
+    public ContestTeamAdapter(Context context) {
+        this.context = context;
     }
 
     @NonNull

@@ -80,13 +80,6 @@ public class CustomPopWindow {
         EditText commentEditText = (EditText) view.findViewById(R.id.comment_edit_text);
         Button commentPublishButton = (Button) view.findViewById(R.id.comment_publish_button);
 
-        commentPublishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popupWindow.dismiss();
-            }
-        });
-
         // 设置点击事件
         commentPublishButton.setOnClickListener(activity);
 

@@ -12,4 +12,6 @@ public class ServerUrlConstant {
 
     public static final String ACTIVITY_URI = SERVER_URI + "/activity/detail";
 
+    public static final String REPLY_URI = SERVER_URI + "/activity/reply";
+
 }

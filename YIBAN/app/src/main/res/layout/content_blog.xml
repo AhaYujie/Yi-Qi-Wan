@@ -91,8 +91,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/blog_comment_recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:layout_height="wrap_content">
 
             </androidx.recyclerview.widget.RecyclerView>
 

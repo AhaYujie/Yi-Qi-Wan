@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/activity_comment_face"
+        android:id="@+id/comment_face"
         android:layout_width="@dimen/my_face_size"
         android:layout_height="@dimen/my_face_size"
         android:padding="10dp"
@@ -15,15 +15,15 @@
         android:focusable="true"/>
 
     <LinearLayout
-        android:id="@+id/activity_comment_button"
+        android:id="@+id/comment_button"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/activity_comment_face"
-        android:layout_toEndOf="@+id/activity_comment_face">
+        android:layout_toRightOf="@+id/comment_face"
+        android:layout_toEndOf="@+id/comment_face">
 
         <TextView
-            android:id="@+id/activity_comment_person_name"
+            android:id="@+id/comment_person_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -31,7 +31,7 @@
             android:textSize="@dimen/my_team_info_size"/>
 
         <TextView
-            android:id="@+id/activity_comment_text"
+            android:id="@+id/comment_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -46,7 +46,7 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/activity_comment_time"
+                android:id="@+id/comment_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -54,7 +54,7 @@
                 android:textSize="@dimen/my_hint_text_size"/>
 
             <Button
-                android:id="@+id/activity_comment_reply_button"
+                android:id="@+id/comment_reply_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -68,7 +68,7 @@
                 style="?android:attr/borderlessButtonStyle"/>
 
             <LinearLayout
-                android:id="@+id/activity_comment_reply"
+                android:id="@+id/comment_reply"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
                     android:text="@string/left_parentheses"/>
 
                 <TextView
-                    android:id="@+id/activity_comment_reply_num"
+                    android:id="@+id/comment_reply_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -124,7 +124,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/activity_comment_button"
+        android:layout_below="@+id/comment_button"
         android:layout_marginTop="10dp"
         android:background="@color/boundaryLine">
     </LinearLayout>

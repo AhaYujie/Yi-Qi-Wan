@@ -124,7 +124,7 @@ public class ContestActivity extends BaseActivity {
         // 初始化RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         contestTeamRecyclerView.setLayoutManager(layoutManager);
-        contestTeamAdapter = new ContestTeamAdapter(null);
+        contestTeamAdapter = new ContestTeamAdapter(this);
         contestTeamRecyclerView.setAdapter(contestTeamAdapter);
 
         // 获取数据
@@ -256,7 +256,6 @@ public class ContestActivity extends BaseActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // TODO:返回到 MainActivity 的 home 界面
                 finish();
                 break;
 

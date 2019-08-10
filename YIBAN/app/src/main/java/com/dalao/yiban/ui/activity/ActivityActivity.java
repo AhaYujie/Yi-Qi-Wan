@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,15 +23,13 @@ import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.ActivityGson;
-import com.dalao.yiban.gson.ContestGson;
-import com.dalao.yiban.ui.adapter.ActivityCommentAdapter;
+import com.dalao.yiban.my_interface.CommentInterface;
+import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
 import com.dalao.yiban.util.JsonUtil;
 import com.dalao.yiban.util.StringUtils;
 import com.sendtion.xrichtext.RichTextView;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -42,7 +39,7 @@ import okhttp3.FormBody;
 import okhttp3.Response;
 
 
-public class ActivityActivity extends BaseActivity {
+public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     private TextView activityTitle;
 
@@ -56,7 +53,7 @@ public class ActivityActivity extends BaseActivity {
 
     private RecyclerView activityCommentRecyclerView;
 
-    private ActivityCommentAdapter activityCommentAdapter;
+    private CommentAdapter commentAdapter;
 
     private Button activityCommentButton;
 
@@ -82,7 +79,6 @@ public class ActivityActivity extends BaseActivity {
      * @param activityId:活动Id
      */
     public static void actionStart(Context context, String activityId) {
-        Log.d("yujie", "SELECT_ACTIVITY");
         Intent intent = new Intent(context, ActivityActivity.class);
         intent.putExtra(HomeConstant.ACTIVITY_ID, activityId);
         context.startActivity(intent);
@@ -96,7 +92,7 @@ public class ActivityActivity extends BaseActivity {
         // 初始化控件
         activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
         activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
-        activityCommentButton = (Button) findViewById(R.id.activity_comment_button);
+        activityCommentButton = (Button) findViewById(R.id.comment_button);
         activityTitle = (TextView) findViewById(R.id.activity_title);
         activityContentTime = (TextView) findViewById(R.id.activity_content_time);
         activityContent = (RichTextView) findViewById(R.id.activity_content);
@@ -114,11 +110,11 @@ public class ActivityActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // 初始化RecyclerView
+        // 设置RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         activityCommentRecyclerView.setLayoutManager(layoutManager);
-        activityCommentAdapter = new ActivityCommentAdapter(null);
-        activityCommentRecyclerView.setAdapter(activityCommentAdapter);
+        commentAdapter = new CommentAdapter(this, this);
+        activityCommentRecyclerView.setAdapter(commentAdapter);
 
         // 获取数据
         Intent intent = getIntent();
@@ -132,25 +128,20 @@ public class ActivityActivity extends BaseActivity {
 
     /**
      * 点击事件
-     * @param v
+     * @param v:
      */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             // 评论
-            case R.id.activity_comment_button:
-                CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
-                        CustomPopWindow.commentPopWindow(v, this);
-                commentEditText = popWindowViewHelper.editText;
-                commentPopupWindow = popWindowViewHelper.popupWindow;
+            case R.id.comment_button:
+                editCommentText();
                 break;
 
             // 发布评论
             case R.id.comment_publish_button:
-                //TODO
-                commentPopupWindow.dismiss();
-                String content = commentEditText.getText().toString();
-                Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+                // TODO
+                publishComment("-1");
                 break;
             default:
                 break;
@@ -160,7 +151,7 @@ public class ActivityActivity extends BaseActivity {
     /**
      * 创建菜单栏
      * @param menu:
-     * @return
+     * @return :
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -173,15 +164,13 @@ public class ActivityActivity extends BaseActivity {
     /**
      * Toolbar菜单栏点击事件
      * @param item:
-     * @return
+     * @return :
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // TODO:返回到MainActivity的活动列表界面
-                Toast.makeText(ActivityActivity.this, "back",
-                        Toast.LENGTH_SHORT).show();
+                finish();
                 break;
 
             case R.id.more_collect:
@@ -264,6 +253,10 @@ public class ActivityActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 刷新活动UI
+     * @param activityGson:解析后的数据
+     */
     private void updateActivityUI(final ActivityGson activityGson) {
         this.activityGson = activityGson;
         activityTitle.setText(activityGson.getTitle());
@@ -283,8 +276,29 @@ public class ActivityActivity extends BaseActivity {
             activityCommentCollect.setBackgroundResource(R.drawable.ic_collect_black);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
-        activityCommentAdapter.setCommentsBeanList(activityGson.getComments());
-        activityCommentAdapter.notifyDataSetChanged();
+        commentAdapter.setCommentsBeanList(activityGson.getComments());
+        commentAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 编辑评论
+     */
+    public void editCommentText() {
+        CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
+                CustomPopWindow.commentPopWindow(activityCommentButton, this);
+        commentEditText = popWindowViewHelper.editText;
+        commentPopupWindow = popWindowViewHelper.popupWindow;
+    }
+
+    /**
+     * 发表评论
+     * @param toUserId:回复的用户id(若无则为-1)
+     */
+    public void publishComment(String toUserId) {
+        // TODO
+        commentPopupWindow.dismiss();
+        String content = commentEditText.getText().toString();
+        Toast.makeText(this, content + " to " + toUserId, Toast.LENGTH_SHORT).show();
     }
 
 }

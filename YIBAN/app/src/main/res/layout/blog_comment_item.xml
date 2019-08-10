@@ -37,7 +37,7 @@
             android:textColor="@color/myCommentText"
             android:textSize="@dimen/my_comment_size"
             android:lineSpacingMultiplier="@string/line_spacing_multiplier"
-            android:text="@string/my_comment"/>
+            android:text="回复回复回复回复回复回复回复回复回复回复回复回复回复回复"/>
 
         <LinearLayout
             android:orientation="horizontal"
