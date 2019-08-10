@@ -6,6 +6,9 @@ import android.text.SpannableStringBuilder;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 
+import com.dalao.yiban.constant.HomeConstant;
+import com.sendtion.xrichtext.RichTextView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,6 +18,33 @@ import java.util.regex.Pattern;
  * Created by sendtion on 2016/6/24.
  */
 public class StringUtils {
+
+
+    /**
+     * 解析并刷新内容(可以含有图片)
+     * @param content:内容
+     */
+    public static void showContestContent(RichTextView richTextView, String content) {
+        richTextView.clearAllLayout();
+        List<String> textList = StringUtils.cutStringByImgTag(content);
+        for (int i = 0; i < textList.size(); i++) {
+            String text = textList.get(i);
+            if (text.contains(HomeConstant.IMAGE_TAG)) {
+                String imagePath = StringUtils.getImgSrc(text);
+                richTextView.measure(0,0);
+                if (imagePath != null){
+                    richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
+                }
+                else {
+                    richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
+                }
+            }
+            else {
+                richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
+            }
+        }
+
+    }
 
 
     /**

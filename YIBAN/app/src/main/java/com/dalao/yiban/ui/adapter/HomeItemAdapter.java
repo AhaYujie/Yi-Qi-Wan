@@ -92,12 +92,13 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 // 启动ContestActivity
-                if (categorySelected == SELECT_CONTEST)
+                if (categorySelected == SELECT_CONTEST) {
                     ContestActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
+                }
                 // 启动ActivityActivity
-                else if (categorySelected == SELECT_ACTIVITY)
-                    //TODO
+                else if (categorySelected == SELECT_ACTIVITY) {
                     ActivityActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
+                }
             }
         });
 

@@ -1,5 +1,6 @@
 package com.dalao.yiban.ui.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,21 +8,49 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.ServerPostDataConstant;
+import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.gson.ActivityGson;
+import com.dalao.yiban.gson.ContestGson;
 import com.dalao.yiban.ui.adapter.ActivityCommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
+import com.dalao.yiban.util.HttpUtil;
+import com.dalao.yiban.util.JsonUtil;
+import com.dalao.yiban.util.StringUtils;
+import com.sendtion.xrichtext.RichTextView;
+
+import org.w3c.dom.Text;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Response;
 
 
 public class ActivityActivity extends BaseActivity {
+
+    private TextView activityTitle;
+
+    private TextView activityContentTime;
+
+    private RichTextView activityContent;
+
+    private TextView activitySource;
 
     private Toolbar activityToolbar;
 
@@ -39,12 +68,21 @@ public class ActivityActivity extends BaseActivity {
 
     private MenuItem moreCollect;
 
+    private String activityId;
+
+    private String userId;
+
+    private ActivityGson activityGson;
+
+    private Button activityCommentCollect;
+
     /**
      * 启动 ActivityActivity
      * @param context:
      * @param activityId:活动Id
      */
     public static void actionStart(Context context, String activityId) {
+        Log.d("yujie", "SELECT_ACTIVITY");
         Intent intent = new Intent(context, ActivityActivity.class);
         intent.putExtra(HomeConstant.ACTIVITY_ID, activityId);
         context.startActivity(intent);
@@ -59,6 +97,11 @@ public class ActivityActivity extends BaseActivity {
         activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
         activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
         activityCommentButton = (Button) findViewById(R.id.activity_comment_button);
+        activityTitle = (TextView) findViewById(R.id.activity_title);
+        activityContentTime = (TextView) findViewById(R.id.activity_content_time);
+        activityContent = (RichTextView) findViewById(R.id.activity_content);
+        activitySource = (TextView) findViewById(R.id.activity_source);
+        activityCommentCollect = (Button) findViewById(R.id.activity_comment_collect);
 
         // 设置点击事件
         activityCommentButton.setOnClickListener(this);
@@ -74,8 +117,16 @@ public class ActivityActivity extends BaseActivity {
         // 初始化RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         activityCommentRecyclerView.setLayoutManager(layoutManager);
-        activityCommentAdapter = new ActivityCommentAdapter();
+        activityCommentAdapter = new ActivityCommentAdapter(null);
         activityCommentRecyclerView.setAdapter(activityCommentAdapter);
+
+        // 获取数据
+        Intent intent = getIntent();
+        activityId = intent.getStringExtra(HomeConstant.ACTIVITY_ID);
+        // TODO:本地获取用户id
+        userId = "1";   // test
+        // 请求服务器
+        requestDataFromServer();
 
     }
 
@@ -156,4 +207,105 @@ public class ActivityActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 请求服务器获取活动数据, 并解析刷新UI
+     */
+    private void requestDataFromServer() {
+        FormBody formBody  = new FormBody.Builder()
+                .add(ServerPostDataConstant.ACTIVITY_ID, activityId)
+                .add(ServerPostDataConstant.USER_ID, userId)
+                .build();
+        HttpUtil.sendHttpPost(ServerUrlConstant.ACTIVITY_URI, formBody, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ActivityActivity.this, HintConstant.GET_DATA_FAILED,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    final ActivityGson activityGson = JsonUtil.handleActivityResponse(responseText);
+                    if (activityGson != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateActivityUI(activityGson);
+                            }
+                        });
+                    }
+                    else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ActivityActivity.this,
+                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ActivityActivity.this,
+                                    HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void updateActivityUI(final ActivityGson activityGson) {
+        this.activityGson = activityGson;
+        activityTitle.setText(activityGson.getTitle());
+        activityContentTime.setText(activityGson.getTime());
+        activitySource.setText(activityGson.getAuthor());
+        activityContent.post(new Runnable() {
+            @Override
+            public void run() {
+                StringUtils.showContestContent(activityContent, activityGson.getContent());
+            }
+        });
+        if (activityGson.getCollection() == HomeConstant.COLLECT) {
+            activityCommentCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        }
+        else if (activityGson.getCollection() == HomeConstant.UN_COLLECT) {
+            activityCommentCollect.setBackgroundResource(R.drawable.ic_collect_black);
+            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+        }
+        activityCommentAdapter.setCommentsBeanList(activityGson.getComments());
+        activityCommentAdapter.notifyDataSetChanged();
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -352,7 +352,7 @@ public class ContestActivity extends BaseActivity {
         richTextView.post(new Runnable() {
             @Override
             public void run() {
-                showContestContent(contestGson.getContent());
+                StringUtils.showContestContent(richTextView, contestGson.getContent());
             }
         });
         if (contestGson.getCollection() == HomeConstant.COLLECT) {
@@ -365,33 +365,6 @@ public class ContestActivity extends BaseActivity {
         }
         contestTeamAdapter.setTeamBeanList(contestGson.getTeam());
         contestTeamAdapter.notifyDataSetChanged();
-    }
-
-
-    /**
-     * 解析并刷新竞赛内容
-     * @param content:竞赛内容
-     */
-    private void showContestContent(String content) {
-        richTextView.clearAllLayout();
-        List<String> textList = StringUtils.cutStringByImgTag(content);
-        for (int i = 0; i < textList.size(); i++) {
-            String text = textList.get(i);
-            if (text.contains(HomeConstant.IMAGE_TAG)) {
-                String imagePath = StringUtils.getImgSrc(text);
-                richTextView.measure(0,0);
-                if (imagePath != null){
-                    richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
-                }
-                else {
-                    richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
-                }
-            }
-            else {
-                richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
-            }
-        }
-
     }
 
 }

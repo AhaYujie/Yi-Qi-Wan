@@ -10,4 +10,6 @@ public class ServerUrlConstant {
 
     public static final String CONTEST_URI = SERVER_URI + "/compete/detail";
 
+    public static final String ACTIVITY_URI = SERVER_URI + "/activity/detail";
+
 }

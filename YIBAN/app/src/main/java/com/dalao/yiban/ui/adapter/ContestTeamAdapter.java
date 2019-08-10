@@ -73,14 +73,14 @@ public class ContestTeamAdapter extends RecyclerView.Adapter<ContestTeamAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         // 刷新UI
         ContestGson.TeamBean teamBean = teamBeanList.get(position);
-        Glide.with(MyApplication.getContext())
-                .load(ServerUrlConstant.SERVER_URI + teamBean.getAvatar())
-                .into(holder.contestTeamFace);
         holder.contestTeamPersonName.setText(teamBean.getAuthor());
         holder.contestTeamName.setText(teamBean.getName());
         holder.contestTeamNumber.setText(String.valueOf(teamBean.getCount()));
         holder.contestTeamComment.setText(teamBean.getContent());
         holder.contestTeamTime.setText(teamBean.getTime());
+        Glide.with(MyApplication.getContext())
+                .load(ServerUrlConstant.SERVER_URI + teamBean.getAvatar())
+                .into(holder.contestTeamFace);
 
         // 设置点击事件
         holder.contestTeamFace.setOnClickListener(this);

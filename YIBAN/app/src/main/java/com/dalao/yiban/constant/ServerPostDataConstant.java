@@ -8,4 +8,6 @@ public class ServerPostDataConstant {
 
     public static final String USER_ID = "userid";
 
+    public static final String ACTIVITY_ID = "id";
+
 }
