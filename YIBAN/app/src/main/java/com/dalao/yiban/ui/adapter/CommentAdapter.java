@@ -106,7 +106,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.commentReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                commentInterface.editCommentText();
+                commentInterface.editCommentText(String.valueOf(commentBean.getUserId()));
             }
         });
     }

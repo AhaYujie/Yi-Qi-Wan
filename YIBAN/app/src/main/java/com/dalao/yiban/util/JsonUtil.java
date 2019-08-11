@@ -1,5 +1,7 @@
 package com.dalao.yiban.util;
 
+import android.util.Log;
+
 import com.dalao.yiban.db.Comment;
 import com.dalao.yiban.gson.ActivityGson;
 import com.dalao.yiban.gson.CommentBean;
@@ -69,6 +71,7 @@ public class JsonUtil {
      */
     public static ReplyGson handleReplyResponse(String responseText) {
         try {
+            Log.d("yujie", responseText);
             return new Gson().fromJson(responseText, ReplyGson.class);
         }
         catch (Exception e) {

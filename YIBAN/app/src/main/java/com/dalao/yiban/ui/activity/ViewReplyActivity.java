@@ -53,6 +53,8 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
     private PopupWindow commentPopupWindow;
 
+    private String commentToUserId;
+
     // 被回复者的控件
     private ImageView commentFace;
     private TextView commentPersonName;
@@ -127,16 +129,15 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
             case R.id.view_reply_cancel_button:
                 finish();
                 break;
-            // 评论
+            // 编辑评论
             case R.id.comment_reply_button:
-                Log.d("yujie", "comment_reply_button");
-                editCommentText();
+                editCommentText("-1");
                 break;
 
             // 发布评论
             case R.id.comment_publish_button:
                 // TODO
-                publishComment("-1");
+                publishComment();
                 break;
             default:
                 break;
@@ -211,8 +212,10 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
     /**
      * 编辑评论
+     *  @param toUserId:回复的用户id(若无则为-1)
      */
-    public void editCommentText() {
+    public void editCommentText(String toUserId) {
+        this.commentToUserId =toUserId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
                 CustomPopWindow.commentPopWindow(viewReplyRecyclerView, this);
         commentEditText = popWindowViewHelper.editText;
@@ -221,13 +224,11 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
     /**
      * 发表评论
-     * @param toUserId:回复的用户id(若无则为-1)
      */
-    public void publishComment(String toUserId) {
-        // TODO
+    public void publishComment() {
         commentPopupWindow.dismiss();
         String content = commentEditText.getText().toString();
-        Toast.makeText(this, content + " to " + toUserId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, content + " to " + commentToUserId, Toast.LENGTH_SHORT).show();
     }
 
 }

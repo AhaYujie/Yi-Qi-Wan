@@ -3,6 +3,15 @@
     <!-- 行间距倍数(中文) -->
     <string name="line_spacing_multiplier">1.2</string>
 
+    <!-- 昵称最大长度 -->
+    <string name="nickname_max_length">10</string>
+
+    <!-- 队伍名称最大长度 -->
+    <string name="team_name_max_length">10</string>
+
+    <!-- 回复最大长度 -->
+    <string name="comment_max_length">150</string>
+
     <string name="left_parentheses">(</string>
     <string name="right_parentheses">)</string>
 
@@ -64,5 +73,20 @@
     <!-- view reply -->
     <string name="view_reply_all_comments">全部回复</string>
     <string name="view_reply_title">查看回复</string>
+
+    <!-- view reply -->
+    <string name="createTeamTitle">创建队伍</string>
+    <string name="createTeamName">队伍名称</string>
+    <string name="createTeamNameHint">请输入队伍名称</string>
+    <string name="createTeamNumber">队伍人数</string>
+    <string name="createTeamNumberHint">请输入队伍人数</string>
+    <string name="createTeamCommentTitle">留言</string>
+    <string name="createTeamButtonText">立即创建</string>
+
+    <!-- edit nickname -->
+    <string name="editNicknameTitle">设置昵称</string>
+    <string name="editNicknameHint">取个让别人更容易记住你的昵称吧</string>
+    <string name="editNicknameConfirmButtonText">保存</string>
+    <string name="editNicknameEditTextHint">请输入昵称</string>
 
 </resources>

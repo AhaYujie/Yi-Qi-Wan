@@ -167,11 +167,10 @@ public class ContestActivity extends BaseActivity {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
+            // 创建队伍
             case R.id.contest_team_create:
-                // TODO：启动创建队伍activity
-                Toast.makeText(ContestActivity.this, "contest_team_create",
-                        Toast.LENGTH_SHORT).show();
+                // TODO
+                CreateTeamActivity.actionStart(this, contestId);
                 break;
 
             // 在竞赛内容滑动到组队区，在组队区滑动到竞赛内容
@@ -186,7 +185,6 @@ public class ContestActivity extends BaseActivity {
                 else  {
                     contestScrollView.smoothScrollTo(0, contestTitle.getTop());
                 }
-                //
                 break;
 
             case R.id.contest_team_collect:

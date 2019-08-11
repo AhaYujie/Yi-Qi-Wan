@@ -15,6 +15,7 @@
         android:inputType="textMultiLine"
         android:maxLines="5"
         android:focusable="true"
+        android:textCursorDrawable="@drawable/edit_cursor_color"
         android:textColorHint="@color/commentPopWindowHint"
         android:textColor="@color/commentPopWindowText"
         android:textSize="@dimen/comment_text_size"

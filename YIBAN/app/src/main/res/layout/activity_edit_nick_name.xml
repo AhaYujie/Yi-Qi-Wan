@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/editNicknameBackground"
+    tools:context=".ui.activity.EditNicknameActivity">
+
+    <RelativeLayout
+        android:id="@+id/edit_nickname_title"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <Button
+            android:id="@+id/edit_nickname_cancel_button"
+            android:layout_width="@dimen/edit_nickname_cancel_size"
+            android:layout_height="@dimen/edit_nickname_cancel_size"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_cancel_black"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/edit_nickname_cancel_button"
+            android:layout_toEndOf="@+id/edit_nickname_cancel_button"
+            android:layout_centerVertical="true"
+            android:textColor="@color/editNicknameText"
+            android:textSize="@dimen/edit_nickname_title_size"
+            android:text="@string/editNicknameTitle"/>
+
+        <Button
+            android:id="@+id/edit_nickname_confirm_button"
+            android:layout_width="@dimen/edit_nickname_confirm_button_width"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:textColor="@color/editNicknameButtonText"
+            android:textSize="@dimen/edit_nickname_text_size"
+            android:text="@string/editNicknameConfirmButtonText"
+            android:background="@drawable/edit_name_confirm_button"
+            style="?android:attr/borderlessButtonStyle"/>
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/edit_nickname_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textCursorDrawable="@drawable/edit_cursor_color"
+        android:gravity="start"
+        android:maxLines="1"
+        android:maxLength="@string/nickname_max_length"
+        android:inputType="textPersonName"
+        android:textColor="@color/editNicknameText"
+        android:textColorHint="@color/editNicknameHint"
+        android:textSize="@dimen/edit_nickname_text_size"
+        android:hint="@string/editNicknameEditTextHint"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:textColor="@color/editNicknameHint"
+        android:textSize="@dimen/edit_nickname_hint_size"
+        android:text="@string/editNicknameHint"/>
+
+</LinearLayout>

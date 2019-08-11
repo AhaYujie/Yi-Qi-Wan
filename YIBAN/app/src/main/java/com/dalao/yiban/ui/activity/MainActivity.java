@@ -1,8 +1,11 @@
 package com.dalao.yiban.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
 import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
@@ -15,8 +18,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,22 +47,22 @@ public class MainActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     // 测试
-                    viewPager.setCurrentItem(0);
+                    viewPager.setCurrentItem(HomeConstant.SELECT_HOME);
                     // TODO
                     return true;
                 case R.id.navigation_community:
                     // 测试
-                    viewPager.setCurrentItem(1);
+                    viewPager.setCurrentItem(HomeConstant.SELECT_COMMUNITY);
                     // TODO
                     return true;
                 case R.id.navigation_message:
                     // 测试
-                    viewPager.setCurrentItem(2);
+                    viewPager.setCurrentItem(HomeConstant.SELECT_MESSAGE);
                     // TODO
                     return true;
                 case R.id.navigation_mine:
                     // 测试
-                    viewPager.setCurrentItem(3);
+                    viewPager.setCurrentItem(HomeConstant.SELECT_MINE);
                     // TODO
                     return true;
             }
@@ -101,6 +106,21 @@ public class MainActivity extends BaseActivity {
         fragmentList.add(MessageFragment.newInstance());
         fragmentList.add(MineFragment.newInstance());
         return fragmentList;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
+                // 保存修改
+                if (resultCode == RESULT_OK) {
+                    MineFragment mineFragment = (MineFragment) fragmentList.get(HomeConstant.SELECT_MINE);
+                    mineFragment.setNickName(data.getStringExtra(MineConstant.USER_NICKNAME));
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 }

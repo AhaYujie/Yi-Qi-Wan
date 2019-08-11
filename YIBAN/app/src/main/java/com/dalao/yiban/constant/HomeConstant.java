@@ -2,6 +2,14 @@ package com.dalao.yiban.constant;
 
 public class HomeConstant {
 
+    public static final int SELECT_HOME = 0;
+
+    public static final int SELECT_COMMUNITY = 1;
+
+    public static final int SELECT_MESSAGE = 2;
+
+    public static final int SELECT_MINE = 3;
+
     public static final int SELECT_CONTEST = 0;
 
     public static final int SELECT_ACTIVITY = 1;

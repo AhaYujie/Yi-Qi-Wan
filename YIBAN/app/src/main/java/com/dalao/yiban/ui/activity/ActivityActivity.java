@@ -2,6 +2,7 @@ package com.dalao.yiban.ui.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +42,12 @@ import okhttp3.Response;
 
 public class ActivityActivity extends BaseActivity implements CommentInterface {
 
+    private NestedScrollView activityScrollView;
+
+    private TextView activityCommentTitle;
+
+    private Button activityMoveToComment;
+
     private TextView activityTitle;
 
     private TextView activityContentTime;
@@ -73,6 +80,8 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     private Button activityCommentCollect;
 
+    private String commentToUserId;
+
     /**
      * 启动 ActivityActivity
      * @param context:
@@ -98,9 +107,13 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         activityContent = (RichTextView) findViewById(R.id.activity_content);
         activitySource = (TextView) findViewById(R.id.activity_source);
         activityCommentCollect = (Button) findViewById(R.id.activity_comment_collect);
+        activityMoveToComment = (Button) findViewById(R.id.activity_move_to_comment);
+        activityCommentTitle = (TextView) findViewById(R.id.activity_comment_title);
+        activityScrollView = (NestedScrollView) findViewById(R.id.activity_scroll_view);
 
         // 设置点击事件
         activityCommentButton.setOnClickListener(this);
+        activityMoveToComment.setOnClickListener(this);
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -135,14 +148,27 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         switch (v.getId()) {
             // 评论
             case R.id.comment_button:
-                editCommentText();
+                // TODO
+                editCommentText("-1");
                 break;
 
             // 发布评论
             case R.id.comment_publish_button:
-                // TODO
-                publishComment("-1");
+                publishComment();
                 break;
+
+            // 在活动内容滑动到评论区，在评论区滑动到活动内容
+            case R.id.activity_move_to_comment:
+                int[] position = new int[2];
+                activityCommentTitle.getLocationOnScreen(position);
+                // 滑动到组队区
+                if (position[1] > 0) {
+                    activityScrollView.smoothScrollTo(0, activityCommentTitle.getTop());
+                }
+                // 滑动到竞赛内容
+                else  {
+                    activityScrollView.smoothScrollTo(0, activityTitle.getTop());
+                }
             default:
                 break;
         }
@@ -282,8 +308,10 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     /**
      * 编辑评论
+     * @param toUserId:回复的用户id(若无则为-1)
      */
-    public void editCommentText() {
+    public void editCommentText(String toUserId) {
+        this.commentToUserId = toUserId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
                 CustomPopWindow.commentPopWindow(activityCommentButton, this);
         commentEditText = popWindowViewHelper.editText;
@@ -292,13 +320,12 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     /**
      * 发表评论
-     * @param toUserId:回复的用户id(若无则为-1)
      */
-    public void publishComment(String toUserId) {
+    public void publishComment() {
         // TODO
         commentPopupWindow.dismiss();
         String content = commentEditText.getText().toString();
-        Toast.makeText(this, content + " to " + toUserId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, content + " to " + commentToUserId, Toast.LENGTH_SHORT).show();
     }
 
 }

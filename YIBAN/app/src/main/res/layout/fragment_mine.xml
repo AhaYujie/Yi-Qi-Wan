@@ -53,7 +53,7 @@
             android:layout_margin="10dp"
             android:src="@drawable/ic_right_arrow_grey"/>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mine_face"
             android:layout_width="@dimen/mine_face_size"
             android:layout_height="@dimen/mine_face_size"
@@ -89,25 +89,15 @@
             android:text="@string/mine_username"
             android:layout_margin="15dp"/>
 
-        <ImageView
-            android:id="@+id/mine_username_icon"
-            android:layout_width="@dimen/mine_icon_size"
-            android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_right_arrow_grey"/>
-
         <TextView
             android:id="@+id/mine_username_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/mine_username_icon"
-            android:layout_toStartOf="@+id/mine_username_icon"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:textSize="@dimen/mine_value_size"
             android:textColor="@color/mine_text"
             android:text="cyj471588"/>

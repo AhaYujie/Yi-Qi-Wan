@@ -6,13 +6,13 @@ public interface CommentInterface {
 
     /**
      * 编辑评论
+     * @param toUserId:回复的用户id(若无则为-1)
      */
-    void editCommentText();
+    void editCommentText(String toUserId);
 
     /**
      * 发表评论
-     * @param toUserId:回复的用户id(若无则为-1)
      */
-    void publishComment(String toUserId);
+    void publishComment();
 
 }

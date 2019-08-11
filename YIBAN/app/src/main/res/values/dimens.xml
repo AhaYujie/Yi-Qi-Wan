@@ -49,6 +49,22 @@
     <!-- view reply -->
     <dimen name="view_reply_text_size">17sp</dimen>
     <dimen name="view_reply_cancel_size">25dp</dimen>
-    <dimen name="view_reply_title_size">25sp</dimen>
+    <dimen name="view_reply_title_size">20sp</dimen>
+
+    <!-- create team -->
+    <dimen name="create_team_cancel_size">25dp</dimen>
+    <dimen name="create_team_title_size">20sp</dimen>
+    <dimen name="create_team_text_size">17sp</dimen>
+    <dimen name="create_team_hint_size">15sp</dimen>
+    <dimen name="create_team_button_height">30dp</dimen>
+    <dimen name="create_team_frame_height">80dp</dimen>
+    <dimen name="create_team_comment_frame_height">200dp</dimen>
+
+    <!-- edit nickname -->
+    <dimen name="edit_nickname_cancel_size">25dp</dimen>
+    <dimen name="edit_nickname_title_size">20sp</dimen>
+    <dimen name="edit_nickname_text_size">17sp</dimen>
+    <dimen name="edit_nickname_hint_size">15sp</dimen>
+    <dimen name="edit_nickname_confirm_button_width">70dp</dimen>
 
 </resources>
