@@ -9,6 +9,7 @@
     <dimen name="home_item_title_size">18sp</dimen>
     <dimen name="home_item_hint_size">12sp</dimen>
     <dimen name="home_item_eye_size">18dp</dimen>
+    <dimen name="search_button_size">20dp</dimen>
 
     <!-- 社区 -->
     <dimen name="community_create_blog_button_size">20dp</dimen>
@@ -43,8 +44,8 @@
     <dimen name="my_check_comment_button_size">20dp</dimen>
     <dimen name="my_bottom_nav_icon_size">25dp</dimen>
 
-    <!-- 首页 -->
-    <dimen name="search_button_size">20dp</dimen>
+    <!-- 博客 -->
+    <dimen name="blog_author_face_size">30dp</dimen>
 
     <!-- view reply -->
     <dimen name="view_reply_text_size">17sp</dimen>
@@ -66,5 +67,9 @@
     <dimen name="edit_nickname_text_size">17sp</dimen>
     <dimen name="edit_nickname_hint_size">15sp</dimen>
     <dimen name="edit_nickname_confirm_button_width">70dp</dimen>
+
+    <!-- choose sex pop window -->
+    <dimen name="choose_sex_window_text_size">17sp</dimen>
+    <dimen name="choose_sex_window_icon_size">20dp</dimen>
 
 </resources>

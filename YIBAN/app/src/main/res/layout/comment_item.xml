@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/comment_face"
+        android:id="@+id/comment_author_face"
         android:layout_width="@dimen/my_face_size"
         android:layout_height="@dimen/my_face_size"
         android:padding="10dp"
@@ -15,12 +15,12 @@
         android:focusable="true"/>
 
     <LinearLayout
-        android:id="@+id/comment_button"
+        android:id="@+id/bottom_nav_comment"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/comment_face"
-        android:layout_toEndOf="@+id/comment_face">
+        android:layout_toRightOf="@+id/comment_author_face"
+        android:layout_toEndOf="@+id/comment_author_face">
 
         <TextView
             android:id="@+id/comment_person_name"
@@ -124,7 +124,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/comment_button"
+        android:layout_below="@+id/bottom_nav_comment"
         android:layout_marginTop="10dp"
         android:background="@color/boundaryLine">
     </LinearLayout>

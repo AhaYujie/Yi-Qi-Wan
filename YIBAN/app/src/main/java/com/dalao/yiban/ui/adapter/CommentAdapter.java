@@ -52,7 +52,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         private ViewHolder(View view) {
             super(view);
-            commentFace = (ImageView) view.findViewById(R.id.comment_face);
+            commentFace = (ImageView) view.findViewById(R.id.comment_author_face);
             commentPersonName = (TextView) view.findViewById(R.id.comment_person_name);
             commentText = (TextView) view.findViewById(R.id.comment_text);
             commentTime = (TextView) view.findViewById(R.id.comment_time);
@@ -120,7 +120,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.comment_person_name:
-            case R.id.comment_face:
+            case R.id.comment_author_face:
                 //TODO
                 Toast.makeText(MyApplication.getContext(), "click person", Toast.LENGTH_SHORT).show();
                 break;

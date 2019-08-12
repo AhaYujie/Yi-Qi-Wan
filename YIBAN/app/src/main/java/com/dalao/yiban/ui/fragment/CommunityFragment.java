@@ -3,25 +3,48 @@ package com.dalao.yiban.ui.fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.ServerPostDataConstant;
+import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.gson.CommunityBlogListGson;
+import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.adapter.CommunityBlogItemAdapter;
+import com.dalao.yiban.util.HttpUtil;
+import com.dalao.yiban.util.JsonUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Response;
+
+import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_FOLLOWING;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_HOT;
+import static com.dalao.yiban.constant.HomeConstant.SELECT_TIME;
 
 public class CommunityFragment extends BaseFragment {
 
@@ -36,6 +59,12 @@ public class CommunityFragment extends BaseFragment {
     private Spinner communitySortSpinner;
 
     private SwipeRefreshLayout communityBlogRefresh;
+
+    private Button communityCreateBlogButton;
+
+    private int sortSelected;
+
+    private CommunityBlogListGson communityBlogListGson;
 
     public CommunityFragment() {
         // Required empty public constructor
@@ -67,6 +96,8 @@ public class CommunityFragment extends BaseFragment {
         communityBlogRecyclerView = (RecyclerView) view.findViewById(R.id.community_blog_recyclerView);
         communitySortSpinner = (Spinner) view.findViewById(R.id.community_sort_spinner);
         communityBlogRefresh = (SwipeRefreshLayout) view.findViewById(R.id.community_blog_refresh);
+        communityCreateBlogButton = (Button) view.findViewById(R.id.community_create_blog_button);
+        sortSelected = SELECT_HOT;
 
         // 设置spinner
         String[] sortItems = getResources().getStringArray(R.array.community_sort_spinner);
@@ -77,12 +108,29 @@ public class CommunityFragment extends BaseFragment {
         communitySortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO
+                switch (i) {
+                    // 按热度排序
+                    case SELECT_HOT:
+                        sortSelected = SELECT_HOT;
+                        requestDataFromServer();
+                        break;
+                    // 按时间排序
+                    case SELECT_TIME:
+                        sortSelected = SELECT_TIME;
+                        requestDataFromServer();
+                        break;
+                    // 只看关注的人
+                    case SELECT_FOLLOWING:
+                        sortSelected = SELECT_FOLLOWING;
+                        requestDataFromServer();
+                        break;
+                    default:
+                        break;
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                //TODO
             }
         });
 
@@ -97,9 +145,15 @@ public class CommunityFragment extends BaseFragment {
         communityBlogRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                communityBlogRecyclerView.scrollToPosition(5);
-                communityBlogRecyclerView.smoothScrollToPosition(0);
-                communityBlogRefresh.setRefreshing(false);
+                requestDataFromServer();
+            }
+        });
+
+        // 设置点击事件
+        communityCreateBlogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
             }
         });
 
@@ -114,7 +168,9 @@ public class CommunityFragment extends BaseFragment {
      */
     @Override
     protected void onVisible() {
-        //TODO
+        // 请求服务器获取数据
+        if (isVisible && view != null)
+            requestDataFromServer();
     }
 
     /**
@@ -122,7 +178,81 @@ public class CommunityFragment extends BaseFragment {
      */
     @Override
     protected void onInvisible() {
-        //TODO
+    }
+
+    /**
+     * 从服务器获取博客列表数据并刷新UI
+     */
+    private void requestDataFromServer() {
+        communityBlogRefresh.setRefreshing(true);
+
+        FormBody formBody  = new FormBody.Builder()
+                .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
+                .build();
+
+        HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        communityBlogRefresh.setRefreshing(false);
+                        Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    final String responseText = response.body().string();
+                    final CommunityBlogListGson communityBlogListGson =
+                            JsonUtil.handleCommunityBlogListResponse(responseText);
+                    if (communityBlogListGson != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHomeListUI(communityBlogListGson);
+                            }
+                        });
+                    }
+                    else {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                communityBlogRefresh.setRefreshing(false);
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                else {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            communityBlogRefresh.setRefreshing(false);
+                            Toast.makeText(MyApplication.getContext(),
+                                    HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * 刷新列表UI
+     * @param communityBlogListGson : 解析后的json数据
+     */
+    private void updateHomeListUI(@NonNull CommunityBlogListGson communityBlogListGson) {
+        this.communityBlogListGson = communityBlogListGson;
+        communityBlogItemAdapter.setDataBeanList(this.communityBlogListGson.getData());
+        communityBlogItemAdapter.notifyDataSetChanged();
+        communityBlogRecyclerView.scrollToPosition(5);
+        communityBlogRecyclerView.smoothScrollToPosition(0);
+        communityBlogRefresh.setRefreshing(false);
     }
 
 }

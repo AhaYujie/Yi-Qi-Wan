@@ -83,7 +83,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         // 初始化控件
         viewReplyRecyclerView = (RecyclerView) findViewById(R.id.view_reply_recyclerview);
         viewReplyCancelButton = (Button) findViewById(R.id.view_reply_cancel_button);
-        commentFace = (ImageView) findViewById(R.id.comment_face);
+        commentFace = (ImageView) findViewById(R.id.comment_author_face);
         commentPersonName = (TextView) findViewById(R.id.comment_person_name);
         commentText = (TextView) findViewById(R.id.comment_text);
         commentTime = (TextView) findViewById(R.id.comment_time);

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/community_blog_item_height"
     android:background="@drawable/layout_selector"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/community_blog_title"
@@ -23,8 +24,7 @@
         android:textColor="@color/community_blog_title"
         android:maxLines="2"
         android:ellipsize="end"
-        android:lineSpacingMultiplier="@string/line_spacing_multiplier"
-        android:text="博客标题博客标题博客标题"/>
+        android:lineSpacingMultiplier="@string/line_spacing_multiplier"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/community_blog_author_face"
@@ -34,7 +34,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/ic_wechat"/>
+        android:src="@drawable/ic_yiban"/>
 
     <TextView
         android:id="@+id/community_blog_author_name"

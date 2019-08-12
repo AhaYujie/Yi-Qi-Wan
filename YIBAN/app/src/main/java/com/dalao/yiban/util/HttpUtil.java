@@ -15,8 +15,6 @@ import okhttp3.RequestBody;
  */
 public class HttpUtil {
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
     /**
      * GET请求
      * @param url:请求地址

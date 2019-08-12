@@ -12,4 +12,6 @@ public class ServerPostDataConstant {
 
     public static final String REPLY_ID = "id";
 
+    public static final String BLOG_ID = "id";
+
 }

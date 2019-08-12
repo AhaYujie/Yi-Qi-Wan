@@ -14,4 +14,8 @@ public class ServerUrlConstant {
 
     public static final String REPLY_URI = SERVER_URI + "/reply";
 
+    public static final String COMMUNITY_BLOG_LIST_URI = SERVER_URI + "/community";
+
+    public static final String BLOG_URI = SERVER_URI + "/blog/detail";
+
 }

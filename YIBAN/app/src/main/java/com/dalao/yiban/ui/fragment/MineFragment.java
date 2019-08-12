@@ -1,25 +1,28 @@
 package com.dalao.yiban.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dalao.yiban.R;
-import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
+import com.dalao.yiban.ui.custom.CustomPopWindow;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
+import static com.dalao.yiban.constant.MineConstant.FEMALE;
+import static com.dalao.yiban.constant.MineConstant.FEMALE_TEXT;
+import static com.dalao.yiban.constant.MineConstant.MALE;
+import static com.dalao.yiban.constant.MineConstant.MALE_TEXT;
+import static com.dalao.yiban.constant.MineConstant.SECRET;
+import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
 
 public class MineFragment extends BaseFragment implements View.OnClickListener {
 
@@ -27,9 +30,17 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
     private MainActivity activity;
 
-    private RelativeLayout mineNickname;
+    private RelativeLayout mineNicknameLayout;
 
     private TextView mineNicknameText;
+
+    private RelativeLayout mineSexLayout;
+
+    private PopupWindow chooseSexPopWindow;
+
+    private TextView mineSexText;
+
+    private int sexSelected;
 
     public MineFragment() {
         // Required empty public constructor
@@ -58,11 +69,14 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
         // 初始化控件
         activity = (MainActivity) getActivity();
-        mineNickname = (RelativeLayout) view.findViewById(R.id.mine_nickname);
+        mineNicknameLayout = (RelativeLayout) view.findViewById(R.id.mine_nickname_layout);
         mineNicknameText = (TextView) view.findViewById(R.id.mine_nickname_text);
+        mineSexLayout = (RelativeLayout) view.findViewById(R.id.mine_sex_layout);
+        mineSexText = (TextView) view.findViewById(R.id.mine_sex_text);
 
         // 设置点击事件
-        mineNickname.setOnClickListener(this);
+        mineNicknameLayout.setOnClickListener(this);
+        mineSexLayout.setOnClickListener(this);
 
         return view;
     }
@@ -75,8 +89,14 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             // 修改昵称
-            case R.id.mine_nickname:
+            case R.id.mine_nickname_layout:
                 EditNicknameActivity.actionStart(activity, mineNicknameText.getText().toString());
+                break;
+
+            // 修改性别
+            case R.id.mine_sex_layout:
+                chooseSexPopWindow = CustomPopWindow.chooseSexPopWindow(v, activity, sexSelected);
+                if (chooseSexPopWindow == null)
                 break;
             default:
                 break;
@@ -104,6 +124,29 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void setNickName(String nickName) {
         // TODO
         mineNicknameText.setText(nickName);
+    }
+
+    /**
+     * 设置sex
+     * @param sex:MALE_TEXT, FEMALE_TEXT, SECRET_TEXT
+     */
+    public void setSex(String sex) {
+        // TODO
+        switch (sex) {
+            case MALE_TEXT:
+                sexSelected = MALE;
+                break;
+            case FEMALE_TEXT:
+                sexSelected = FEMALE;
+                break;
+            case SECRET_TEXT:
+                sexSelected = SECRET;
+                break;
+            default:
+                break;
+        }
+        chooseSexPopWindow.dismiss();
+        mineSexText.setText(sex);
     }
 
 }

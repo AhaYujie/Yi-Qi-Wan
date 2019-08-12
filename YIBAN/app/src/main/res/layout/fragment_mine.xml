@@ -25,7 +25,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/mine_info_face"
+        android:id="@+id/mine_info_face_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_selector"
@@ -71,7 +71,7 @@
         android:background="@color/boundaryLine"/>
 
     <RelativeLayout
-        android:id="@+id/mine_username"
+        android:id="@+id/mine_username_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_selector"
@@ -109,7 +109,7 @@
         android:background="@color/boundaryLine"/>
 
     <RelativeLayout
-        android:id="@+id/mine_nickname"
+        android:id="@+id/mine_nickname_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_selector"
@@ -157,7 +157,7 @@
         android:background="@color/boundaryLine"/>
 
     <RelativeLayout
-        android:id="@+id/mine_sex"
+        android:id="@+id/mine_sex_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_selector"
@@ -205,7 +205,7 @@
         android:background="@color/boundaryLine"/>
 
     <RelativeLayout
-        android:id="@+id/mine_blog"
+        android:id="@+id/mine_blog_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -254,7 +254,7 @@
         android:background="@color/boundaryLine"/>
 
     <RelativeLayout
-        android:id="@+id/mine_collect"
+        android:id="@+id/mine_collect_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_selector"
@@ -289,7 +289,7 @@
         android:background="@color/boundaryLine"/>
 
     <RelativeLayout
-        android:id="@+id/mine_following"
+        android:id="@+id/mine_following_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_selector"

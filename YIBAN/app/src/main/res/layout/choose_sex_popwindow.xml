@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/choose_sex_popwindow"
+    android:layout_margin="20dp">
+
+    <RelativeLayout
+        android:id="@+id/choose_male_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/layout_selector"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="@dimen/choose_sex_window_text_size"
+            android:textColor="@color/chooseSexPopWindowText"
+            android:text="@string/male"/>
+
+        <ImageView
+            android:id="@+id/choose_male_icon"
+            android:layout_width="@dimen/choose_sex_window_icon_size"
+            android:layout_height="@dimen/choose_sex_window_icon_size"
+            android:layout_margin="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_confirm_blue"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/choose_female_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_below="@+id/choose_male_layout"
+        android:background="@drawable/layout_selector"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="@dimen/choose_sex_window_text_size"
+            android:textColor="@color/chooseSexPopWindowText"
+            android:text="@string/female"/>
+
+        <ImageView
+            android:id="@+id/choose_female_icon"
+            android:layout_width="@dimen/choose_sex_window_icon_size"
+            android:layout_height="@dimen/choose_sex_window_icon_size"
+            android:layout_margin="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_confirm_blue"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/choose_secret_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_below="@+id/choose_female_layout"
+        android:background="@drawable/layout_selector"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="@dimen/choose_sex_window_text_size"
+            android:textColor="@color/chooseSexPopWindowText"
+            android:text="@string/secret"/>
+
+        <ImageView
+            android:id="@+id/choose_secret_icon"
+            android:layout_width="@dimen/choose_sex_window_icon_size"
+            android:layout_height="@dimen/choose_sex_window_icon_size"
+            android:layout_margin="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_confirm_blue"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -57,6 +57,8 @@
     <string name="my_comment_reply">回复</string>
     <string name="my_no_more_comment">暂无更多评论</string>
     <string name="my_comment_reply_num">评论</string>
+    <string name="blog_follow_author_button_text">关注</string>
+    <string name="blog_unfollow_author_button_text">取消关注</string>
 
     <!-- 转发 -->
     <string name="forward_pop_window">取消</string>
@@ -88,5 +90,10 @@
     <string name="editNicknameHint">取个让别人更容易记住你的昵称吧</string>
     <string name="editNicknameConfirmButtonText">保存</string>
     <string name="editNicknameEditTextHint">请输入昵称</string>
+
+    <!-- choose sex pop window -->
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="secret">保密</string>
 
 </resources>

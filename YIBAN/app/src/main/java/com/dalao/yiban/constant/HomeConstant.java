@@ -18,6 +18,8 @@ public class HomeConstant {
 
     public static final int SELECT_TIME = 1;
 
+    public static final int SELECT_FOLLOWING = 2;
+
     public static final int COLLECT = 1;
 
     public static final int UN_COLLECT = -1;
@@ -25,8 +27,6 @@ public class HomeConstant {
     public static final String CONTEST_ID = "contest_id";
 
     public static final String ACTIVITY_ID = "activity_id";
-
-    public static final String BLOG_ID = "blog_id";
 
     public static final String USER_ID = "user_id";
 

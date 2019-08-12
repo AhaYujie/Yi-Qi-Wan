@@ -62,7 +62,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     private CommentAdapter commentAdapter;
 
-    private Button activityCommentButton;
+    private Button activityBottomNavCommentButton;
 
     private EditText commentEditText;
 
@@ -78,9 +78,11 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     private ActivityGson activityGson;
 
-    private Button activityCommentCollect;
+    private Button activityBottomNavCollect;
 
     private String commentToUserId;
+
+    private Button activityBottomNavForward;
 
     /**
      * 启动 ActivityActivity
@@ -101,19 +103,23 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         // 初始化控件
         activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
         activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
-        activityCommentButton = (Button) findViewById(R.id.comment_button);
+        activityBottomNavCommentButton = (Button) findViewById(R.id.bottom_nav_comment);
         activityTitle = (TextView) findViewById(R.id.activity_title);
         activityContentTime = (TextView) findViewById(R.id.activity_content_time);
         activityContent = (RichTextView) findViewById(R.id.activity_content);
         activitySource = (TextView) findViewById(R.id.activity_source);
-        activityCommentCollect = (Button) findViewById(R.id.activity_comment_collect);
-        activityMoveToComment = (Button) findViewById(R.id.activity_move_to_comment);
+        activityBottomNavCollect = (Button) findViewById(R.id.bottom_nav_collect);
+        activityMoveToComment = (Button) findViewById(R.id.move_to_comment);
         activityCommentTitle = (TextView) findViewById(R.id.activity_comment_title);
         activityScrollView = (NestedScrollView) findViewById(R.id.activity_scroll_view);
+        activityBottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
 
         // 设置点击事件
-        activityCommentButton.setOnClickListener(this);
+        activityBottomNavCommentButton.setOnClickListener(this);
         activityMoveToComment.setOnClickListener(this);
+        activityBottomNavCollect.setOnClickListener(this);
+        activityBottomNavForward.setOnClickListener(this);
+
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -147,7 +153,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
     public void onClick(View v) {
         switch (v.getId()) {
             // 评论
-            case R.id.comment_button:
+            case R.id.bottom_nav_comment:
                 // TODO
                 editCommentText("-1");
                 break;
@@ -158,17 +164,29 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
                 break;
 
             // 在活动内容滑动到评论区，在评论区滑动到活动内容
-            case R.id.activity_move_to_comment:
+            case R.id.move_to_comment:
                 int[] position = new int[2];
                 activityCommentTitle.getLocationOnScreen(position);
-                // 滑动到组队区
+                // 滑动到评论区
                 if (position[1] > 0) {
                     activityScrollView.smoothScrollTo(0, activityCommentTitle.getTop());
                 }
-                // 滑动到竞赛内容
+                // 滑动到活动内容
                 else  {
                     activityScrollView.smoothScrollTo(0, activityTitle.getTop());
                 }
+                break;
+
+            // 收藏
+            case R.id.bottom_nav_collect:
+                //TODO
+                Toast.makeText(this, "click collect", Toast.LENGTH_SHORT).show();
+                break;
+
+            // 转发
+            case R.id.bottom_nav_forward:
+                CustomPopWindow.forwardPopWindow(v, this);
+                break;
             default:
                 break;
         }
@@ -214,7 +232,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
             // 转发button弹出PopWindow
             case R.id.more_forward:
                 CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.activity_comment_forward), this);
+                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward), this);
                 break;
             default:
                 break;
@@ -295,11 +313,11 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
             }
         });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {
-            activityCommentCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+            activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
             moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
         else if (activityGson.getCollection() == HomeConstant.UN_COLLECT) {
-            activityCommentCollect.setBackgroundResource(R.drawable.ic_collect_black);
+            activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         commentAdapter.setCommentsBeanList(activityGson.getComments());
@@ -313,7 +331,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
     public void editCommentText(String toUserId) {
         this.commentToUserId = toUserId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
-                CustomPopWindow.commentPopWindow(activityCommentButton, this);
+                CustomPopWindow.commentPopWindow(activityBottomNavCommentButton, this);
         commentEditText = popWindowViewHelper.editText;
         commentPopupWindow = popWindowViewHelper.popupWindow;
     }

@@ -52,6 +52,9 @@
     <color name="myHint">#A7A7A9</color>
     <color name="contestTeamName">#000000</color>
     <color name="contestTeamNumber">#000000</color>
+    <color name="blogAuthorBackground">#F5F5F5</color>
+    <color name="blogFollowAuthorButtonText">#FFFFFF</color>
+    <color name="blogFollowAuthorButton">#4CB6FB</color>
 
     <!-- view reply -->
     <color name="viewReplyAllCommentsTitleBackground">#F0EEEE</color>
@@ -72,5 +75,9 @@
     <color name="editNicknameButton">#4CB6FB</color>
     <color name="editNicknameButtonText">#FFFFFF</color>
     <color name="editNicknameHint">#A7A7A9</color>
+
+    <!-- choose sex pop window -->
+    <color name="chooseSexPopWindowText">#000000</color>
+    <color name="chooseSexPopWindowBackground">#FFFFFF</color>
 
 </resources>

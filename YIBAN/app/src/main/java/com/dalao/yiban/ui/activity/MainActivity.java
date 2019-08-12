@@ -26,6 +26,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dalao.yiban.constant.MineConstant.FEMALE;
+import static com.dalao.yiban.constant.MineConstant.FEMALE_TEXT;
+import static com.dalao.yiban.constant.MineConstant.MALE;
+import static com.dalao.yiban.constant.MineConstant.MALE_TEXT;
+import static com.dalao.yiban.constant.MineConstant.SECRET;
+import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
+
 public class MainActivity extends BaseActivity {
 
     private CustomViewPager viewPager;
@@ -35,6 +42,14 @@ public class MainActivity extends BaseActivity {
     private BottomNavigationView bottomNavigationView;
 
     public CustomProgressDialog customProgressBar;
+
+    private MineFragment mineFragment;
+
+    private HomeFragment homeFragment;
+
+    private CommunityFragment communityFragment;
+
+    private MessageFragment messageFragment;
 
     // 首页，社区，消息，我的
     private List<Fragment> fragmentList;
@@ -96,15 +111,34 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     public void onClick(View v) {
-        //TODO
+        switch (v.getId()) {
+            // 选择性别男
+            case R.id.choose_male_layout:
+                mineFragment.setSex(MALE_TEXT);
+                break;
+
+            // 选择性别女
+            case R.id.choose_female_layout:
+                mineFragment.setSex(FEMALE_TEXT);
+                break;
+
+            // 选择性别男
+            case R.id.choose_secret_layout:
+                mineFragment.setSex(SECRET_TEXT);
+                break;
+        }
     }
 
     private List<Fragment> initFragmentList() {
         List<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(HomeFragment.newInstance());
-        fragmentList.add(CommunityFragment.newInstance());
-        fragmentList.add(MessageFragment.newInstance());
-        fragmentList.add(MineFragment.newInstance());
+        homeFragment = HomeFragment.newInstance();
+        communityFragment = CommunityFragment.newInstance();
+        messageFragment = MessageFragment.newInstance();
+        mineFragment = MineFragment.newInstance();
+        fragmentList.add(homeFragment);
+        fragmentList.add(communityFragment);
+        fragmentList.add(messageFragment);
+        fragmentList.add(mineFragment);
         return fragmentList;
     }
 
@@ -112,9 +146,8 @@ public class MainActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
-                // 保存修改
+                // 保存修改昵称
                 if (resultCode == RESULT_OK) {
-                    MineFragment mineFragment = (MineFragment) fragmentList.get(HomeConstant.SELECT_MINE);
                     mineFragment.setNickName(data.getStringExtra(MineConstant.USER_NICKNAME));
                 }
                 break;

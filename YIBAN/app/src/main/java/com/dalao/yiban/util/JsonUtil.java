@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.dalao.yiban.db.Comment;
 import com.dalao.yiban.gson.ActivityGson;
+import com.dalao.yiban.gson.BlogGson;
 import com.dalao.yiban.gson.CommentBean;
+import com.dalao.yiban.gson.CommunityBlogListGson;
 import com.dalao.yiban.gson.ContestGson;
 import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.gson.ReplyGson;
@@ -71,8 +73,37 @@ public class JsonUtil {
      */
     public static ReplyGson handleReplyResponse(String responseText) {
         try {
-            Log.d("yujie", responseText);
             return new Gson().fromJson(responseText, ReplyGson.class);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *  解析博客列表数据json
+     * @param responseText：返回的json数据body
+     * @return : CommunityBlogListGson
+     */
+    public static CommunityBlogListGson handleCommunityBlogListResponse(String responseText) {
+        try {
+            return new Gson().fromJson(responseText, CommunityBlogListGson.class);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *  解析博客列表数据json
+     * @param responseText：返回的json数据body
+     * @return : CommunityBlogListGson
+     */
+    public static BlogGson handleBlogResponse(String responseText) {
+        try {
+            return new Gson().fromJson(responseText, BlogGson.class);
         }
         catch (Exception e) {
             e.printStackTrace();
