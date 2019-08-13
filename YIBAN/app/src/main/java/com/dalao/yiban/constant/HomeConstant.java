@@ -36,4 +36,12 @@ public class HomeConstant {
 
     public static final String IMAGE_TAG = "<img";
 
+    public static final String ACTIVITY_TITLE = "activity_title";
+
+    public static final String ACTIVITY_CONTENT_TIME = "activity_content_time";
+
+    public static final String CONTEST_TITLE = "contest_title";
+
+    public static final String CONTEST_CONTENT_TIME = "contest_content_time";
+
 }

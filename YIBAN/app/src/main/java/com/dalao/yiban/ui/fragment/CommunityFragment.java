@@ -137,7 +137,7 @@ public class CommunityFragment extends BaseFragment {
         // 初始化RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         communityBlogRecyclerView.setLayoutManager(linearLayoutManager);
-        communityBlogItemAdapter = new CommunityBlogItemAdapter();
+        communityBlogItemAdapter = new CommunityBlogItemAdapter(activity);
         communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
 
         // 设置swipe refresh事件
@@ -169,8 +169,9 @@ public class CommunityFragment extends BaseFragment {
     @Override
     protected void onVisible() {
         // 请求服务器获取数据
-        if (isVisible && view != null)
+        if (isVisible && view != null) {
             requestDataFromServer();
+        }
     }
 
     /**

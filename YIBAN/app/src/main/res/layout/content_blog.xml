@@ -35,13 +35,13 @@
                 android:paddingRight="0dp"
                 android:paddingEnd="0dp"
                 android:textColor="@color/myHint"
-                android:textSize="@dimen/my_hint_text_size"
-                android:text="今天12:43"/>
+                android:textSize="@dimen/my_hint_text_size"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/blogAuthorBackground"
+                android:padding="10dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp">
 
@@ -52,7 +52,6 @@
                     android:layout_margin="10dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/ic_yiban"
                     android:clickable="true"
                     android:focusable="true"/>
 
@@ -66,8 +65,7 @@
                     android:textColor="@color/myContent"
                     android:textSize="@dimen/my_content_size"
                     android:clickable="true"
-                    android:focusable="true"
-                    android:text="aha"/>
+                    android:focusable="true"/>
 
                 <Button
                     android:id="@+id/blog_follow_author_button"

@@ -78,13 +78,20 @@ public class ContestActivity extends BaseActivity {
     private Menu menu;
 
     /**
-     * 启动ContestActivity
-     * @param context:
-     * @param contestId:竞赛ID
+     *
+     * @param context :
+     * @param userId : 用户id
+     * @param contestId：竞赛id
+     * @param contestTitle：竞赛标题
+     * @param contestContentTime：竞赛时间
      */
-    public static void actionStart(Context context, String contestId) {
+    public static void actionStart(Context context, String userId, String contestId,
+                                   String contestTitle, String contestContentTime) {
         Intent intent = new Intent(context, ContestActivity.class);
+        intent.putExtra(HomeConstant.USER_ID, userId);
         intent.putExtra(HomeConstant.CONTEST_ID, contestId);
+        intent.putExtra(HomeConstant.CONTEST_TITLE, contestTitle);
+        intent.putExtra(HomeConstant.CONTEST_CONTENT_TIME, contestContentTime);
         context.startActivity(intent);
     }
 
@@ -127,11 +134,13 @@ public class ContestActivity extends BaseActivity {
         contestTeamAdapter = new ContestTeamAdapter(this);
         contestTeamRecyclerView.setAdapter(contestTeamAdapter);
 
-        // 获取数据
+        // 从上个活动获取数据
         Intent intent = getIntent();
+        userId = intent.getStringExtra(HomeConstant.USER_ID);
         contestId = intent.getStringExtra(HomeConstant.CONTEST_ID);
-        // TODO:本地获取用户id
-        userId = "5";   // test
+        contestTitle.setText(intent.getStringExtra(HomeConstant.CONTEST_TITLE));
+        contestContentTime.setText(intent.getStringExtra(HomeConstant.CONTEST_TITLE));
+
         // 请求服务器
         requestDataFromServer();
 
@@ -162,7 +171,7 @@ public class ContestActivity extends BaseActivity {
 
     /**
      * 点击事件
-     * @param v
+     * @param v:
      */
     @Override
     public void onClick(View v) {
@@ -343,8 +352,6 @@ public class ContestActivity extends BaseActivity {
      */
     private void updateContestUI(@NonNull final ContestGson contestGson) {
         this.contestGson = contestGson;
-        contestTitle.setText(contestGson.getTitle());
-        contestContentTime.setText(contestGson.getTime());
         contestSource.setText(contestGson.getAuthor());
         richTextView.post(new Runnable() {
             @Override

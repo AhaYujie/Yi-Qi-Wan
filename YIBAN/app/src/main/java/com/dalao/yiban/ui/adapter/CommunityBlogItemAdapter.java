@@ -14,14 +14,18 @@ import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.gson.CommunityBlogListGson;
 import com.dalao.yiban.ui.activity.BlogActivity;
+import com.dalao.yiban.ui.activity.MainActivity;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlogItemAdapter.ViewHolder> {
+
+    private MainActivity activity;
 
     private List<CommunityBlogListGson.DataBean> dataBeanList;
 
@@ -55,7 +59,8 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
         }
     }
 
-    public CommunityBlogItemAdapter() {
+    public CommunityBlogItemAdapter(MainActivity activity) {
+        this.activity = activity;
     }
 
     @NonNull
@@ -81,7 +86,9 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
             @Override
             public void onClick(View view) {
                 // 启动BlogActivity
-                BlogActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()), dataBean.getAvatar());
+                BlogActivity.actionStart(view.getContext(), activity.userId,
+                        String.valueOf(dataBean.getId()), dataBean.getAvatar(),
+                        String.valueOf(dataBean.getAuthor()), dataBean.getTitle(), dataBean.getTime());
             }
         });
     }

@@ -165,7 +165,7 @@ public class HomeFragment extends BaseFragment {
         // 初始化RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
-        homeItemAdapter = new HomeItemAdapter(homeListGson, categorySelected);
+        homeItemAdapter = new HomeItemAdapter(homeListGson, categorySelected, activity);
         homeItemRecyclerView.setAdapter(homeItemAdapter);
 
         // 如果view可见则请求服务器获取数据

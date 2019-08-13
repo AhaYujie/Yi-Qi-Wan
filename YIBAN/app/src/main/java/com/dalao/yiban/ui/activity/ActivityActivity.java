@@ -85,13 +85,20 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
     private Button activityBottomNavForward;
 
     /**
-     * 启动 ActivityActivity
-     * @param context:
-     * @param activityId:活动Id
+     *
+     * @param context :
+     * @param userId : 用户id
+     * @param activityId : 活动id
+     * @param activityTitle : 活动标题
+     * @param activityContentTime : 活动时间
      */
-    public static void actionStart(Context context, String activityId) {
+    public static void actionStart(Context context, String userId, String activityId,
+                                   String activityTitle, String activityContentTime) {
         Intent intent = new Intent(context, ActivityActivity.class);
+        intent.putExtra(HomeConstant.USER_ID, userId);
         intent.putExtra(HomeConstant.ACTIVITY_ID, activityId);
+        intent.putExtra(HomeConstant.ACTIVITY_TITLE, activityTitle);
+        intent.putExtra(HomeConstant.ACTIVITY_CONTENT_TIME, activityContentTime);
         context.startActivity(intent);
     }
 
@@ -135,11 +142,13 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         commentAdapter = new CommentAdapter(this, this);
         activityCommentRecyclerView.setAdapter(commentAdapter);
 
-        // 获取数据
+        // 从上个活动获取数据
         Intent intent = getIntent();
+        userId = intent.getStringExtra(HomeConstant.USER_ID);
         activityId = intent.getStringExtra(HomeConstant.ACTIVITY_ID);
-        // TODO:本地获取用户id
-        userId = "1";   // test
+        activityTitle.setText(intent.getStringExtra(HomeConstant.ACTIVITY_TITLE));
+        activityContentTime.setText(intent.getStringExtra(HomeConstant.ACTIVITY_CONTENT_TIME));
+
         // 请求服务器
         requestDataFromServer();
 
@@ -303,8 +312,6 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
      */
     private void updateActivityUI(final ActivityGson activityGson) {
         this.activityGson = activityGson;
-        activityTitle.setText(activityGson.getTitle());
-        activityContentTime.setText(activityGson.getTime());
         activitySource.setText(activityGson.getAuthor());
         activityContent.post(new Runnable() {
             @Override

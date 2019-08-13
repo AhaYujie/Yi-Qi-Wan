@@ -20,18 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
-import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.CommunityConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
-import com.dalao.yiban.gson.ActivityGson;
 import com.dalao.yiban.gson.BlogGson;
 import com.dalao.yiban.my_interface.CommentInterface;
-import com.dalao.yiban.ui.adapter.BlogCommentAdapter;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
@@ -97,13 +93,23 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
     /**
      * 启动 BlogActivity
-     * @param context:
-     * @param blogId:博客Id
+     * @param context :
+     * @param userId :用户id
+     * @param blogId : 博客Id
+     * @param authorFace : 作者头像
+     * @param authorName : 作者昵称
+     * @param blogTitle : 博客标题
+     * @param blogContentTime : 博客时间
      */
-    public static void actionStart(Context context, String blogId, String authorFace) {
+    public static void actionStart(Context context, String userId, String blogId, String authorFace,
+                                   String authorName, String blogTitle, String blogContentTime) {
         Intent intent = new Intent(context, BlogActivity.class);
+        intent.putExtra(HomeConstant.USER_ID, userId);
         intent.putExtra(CommunityConstant.BLOG_ID, blogId);
         intent.putExtra(CommunityConstant.AUTHOR_FACE, authorFace);
+        intent.putExtra(CommunityConstant.AUTHOR_NAME, authorName);
+        intent.putExtra(CommunityConstant.BLOG_CONTENT_TIME, blogContentTime);
+        intent.putExtra(CommunityConstant.BLOG_TITLE, blogTitle);
         context.startActivity(intent);
     }
 
@@ -138,14 +144,16 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
         moveToComment.setOnClickListener(this);
 
         // 从上个活动获取数据
-        blogId = getIntent().getStringExtra(CommunityConstant.BLOG_ID);
+        Intent intent = getIntent();
+        userId = intent.getStringExtra(HomeConstant.USER_ID);
+        blogId = intent.getStringExtra(CommunityConstant.BLOG_ID);
+        blogAuthorName.setText(intent.getStringExtra(CommunityConstant.AUTHOR_NAME));
+        blogTitle.setText(intent.getStringExtra(CommunityConstant.BLOG_TITLE));
+        blogContentTime.setText(intent.getStringExtra(CommunityConstant.BLOG_CONTENT_TIME));
         String authorFace = getIntent().getStringExtra(CommunityConstant.AUTHOR_FACE);
         Glide.with(this)
                 .load(ServerUrlConstant.SERVER_URI + authorFace)
                 .into(blogAuthorFace);
-        // 获取用户id
-        //TODO
-        userId = "1";
 
         setSupportActionBar(blogToolbar);
         if (getSupportActionBar() != null) {
@@ -197,6 +205,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
                 else  {
                     blogScrollView.smoothScrollTo(0, blogTitle.getTop());
                 }
+                break;
 
             // 评论
             case R.id.bottom_nav_comment:
@@ -332,9 +341,6 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
      */
     private void updateActivityUI(final BlogGson blogGson) {
         this.blogGson = blogGson;
-        blogTitle.setText(blogGson.getTitle());
-        blogContentTime.setText(blogGson.getTime());
-        blogAuthorName.setText(blogGson.getAuthor());
         if (blogGson.getFollow() == CommunityConstant.FOLLOW) {
             blogFollowAuthorButton.setText(CommunityConstant.UN_FOLLOW_TEXT);
         }
