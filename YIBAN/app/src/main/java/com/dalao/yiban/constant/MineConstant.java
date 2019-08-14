@@ -18,4 +18,8 @@ public class MineConstant {
 
     public static final String USER_NICKNAME = "user_nickname";
 
+    public static final int MALE_RESPONSE = 1;
+
+    public static final int FEMALE_RESPONSE = 2;
+
 }

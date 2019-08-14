@@ -10,7 +10,6 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,14 +31,13 @@ import com.dalao.yiban.util.StringUtils;
 import com.sendtion.xrichtext.RichTextView;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ContestActivity extends BaseActivity {
+public class ContestActivity extends ActConBlogBaseActivity {
 
     private MenuItem moreCollect;
 
@@ -139,7 +137,7 @@ public class ContestActivity extends BaseActivity {
         userId = intent.getStringExtra(HomeConstant.USER_ID);
         contestId = intent.getStringExtra(HomeConstant.CONTEST_ID);
         contestTitle.setText(intent.getStringExtra(HomeConstant.CONTEST_TITLE));
-        contestContentTime.setText(intent.getStringExtra(HomeConstant.CONTEST_TITLE));
+        contestContentTime.setText(intent.getStringExtra(HomeConstant.CONTEST_CONTENT_TIME));
 
         // 请求服务器
         requestDataFromServer();
@@ -197,9 +195,7 @@ public class ContestActivity extends BaseActivity {
                 break;
 
             case R.id.contest_team_collect:
-                // TODO:收藏该竞赛，保存到本地和服务器
-                Toast.makeText(ContestActivity.this, "contest_team_collect",
-                        Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST, userId, contestId);
                 break;
 
             case R.id.forward_wechat_friend:
@@ -267,9 +263,7 @@ public class ContestActivity extends BaseActivity {
                 break;
 
             case R.id.more_collect:
-                // TODO:收藏该竞赛
-                Toast.makeText(ContestActivity.this, "COLLECT",
-                        Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST, userId, contestId);
                 break;
 
             case R.id.more_copy:
@@ -300,6 +294,7 @@ public class ContestActivity extends BaseActivity {
         HttpUtil.sendHttpPost(ServerUrlConstant.CONTEST_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                ContestActivity.this.getCallList().add(call);
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -312,6 +307,7 @@ public class ContestActivity extends BaseActivity {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                ContestActivity.this.getCallList().add(call);
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     final ContestGson contestGson = JsonUtil.handleContestResponse(responseText);
@@ -361,14 +357,26 @@ public class ContestActivity extends BaseActivity {
         });
         if (contestGson.getCollection() == HomeConstant.COLLECT) {
             contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         else if (contestGson.getCollection() == HomeConstant.UN_COLLECT) {
             contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_black);
-            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
         contestTeamAdapter.setTeamBeanList(contestGson.getTeam());
         contestTeamAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 收藏竞赛成功, 更新UI, 数据库
+     */
+    @Override
+    public void collectSuccess() {
+        //TODO:更新UI, 数据库
+        contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+        moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        contestGson.setCollection(HomeConstant.COLLECT);
     }
 
 }

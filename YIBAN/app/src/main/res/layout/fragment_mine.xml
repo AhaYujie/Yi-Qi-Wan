@@ -60,8 +60,7 @@
             android:layout_toLeftOf="@+id/mine_face_icon"
             android:layout_toStartOf="@+id/mine_face_icon"
             android:layout_centerInParent="true"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_yiban"/>
+            android:layout_margin="10dp"/>
 
     </RelativeLayout>
 
@@ -99,8 +98,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginEnd="20dp"
             android:textSize="@dimen/mine_value_size"
-            android:textColor="@color/mine_text"
-            android:text="cyj471588"/>
+            android:textColor="@color/mine_text"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -147,8 +145,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:textSize="@dimen/mine_value_size"
-            android:textColor="@color/mine_text"
-            android:text="aha"/>
+            android:textColor="@color/mine_text"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -195,8 +192,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:textSize="@dimen/mine_value_size"
-            android:textColor="@color/mine_text"
-            android:text="男"/>
+            android:textColor="@color/mine_text"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -244,8 +240,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:textSize="@dimen/mine_value_size"
-            android:textColor="@color/mine_text"
-            android:text="9篇"/>
+            android:textColor="@color/mine_text"/>
     </RelativeLayout>
 
     <LinearLayout

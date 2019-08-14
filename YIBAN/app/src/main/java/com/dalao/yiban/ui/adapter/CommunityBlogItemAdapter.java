@@ -75,7 +75,7 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final CommunityBlogListGson.DataBean dataBean = dataBeanList.get(position);
         holder.communityBlogTitle.setText(dataBean.getTitle());
-        holder.communityBlogAuthorName.setText(String.valueOf(dataBean.getAuthor()));
+        holder.communityBlogAuthorName.setText(dataBean.getAuthor());
         holder.communityBlogTime.setText(dataBean.getTime());
         holder.communityBlogPageViews.setText(String.valueOf(dataBean.getPageviews()));
         holder.communityBlogPic.setVisibility(View.GONE);
@@ -88,7 +88,8 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
                 // 启动BlogActivity
                 BlogActivity.actionStart(view.getContext(), activity.userId,
                         String.valueOf(dataBean.getId()), dataBean.getAvatar(),
-                        String.valueOf(dataBean.getAuthor()), dataBean.getTitle(), dataBean.getTime());
+                        String.valueOf(dataBean.getAuthor()), dataBean.getTitle(),
+                        dataBean.getTime(), String.valueOf(dataBean.getAuthorid()));
             }
         });
     }

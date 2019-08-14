@@ -35,7 +35,7 @@ import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
 
 public class MainActivity extends BaseActivity {
 
-    public String userId = "1"; // test
+    public String userId = "6"; // test
 
     private CustomViewPager viewPager;
 

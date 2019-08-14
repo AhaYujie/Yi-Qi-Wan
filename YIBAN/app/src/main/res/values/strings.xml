@@ -10,7 +10,7 @@
     <string name="team_name_max_length">10</string>
 
     <!-- 回复最大长度 -->
-    <string name="comment_max_length">150</string>
+    <string name="comment_max_length">300</string>
 
     <string name="left_parentheses">(</string>
     <string name="right_parentheses">)</string>

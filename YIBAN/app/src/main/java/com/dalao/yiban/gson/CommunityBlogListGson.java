@@ -4,6 +4,7 @@ import java.util.List;
 
 public class CommunityBlogListGson {
 
+
     private List<DataBean> data;
 
     public List<DataBean> getData() {
@@ -16,22 +17,38 @@ public class CommunityBlogListGson {
 
     public static class DataBean {
         /**
+         * time : 2019-08-11 20:35:24
+         * authorid : 98
+         * avatar : /static/photo/8.jpeg
+         * author : jieqiao
          * pageviews : 125
          * title : 语言还是其中一起学校.
-         * name : jieqiao
          * id : 98
-         * author : 98
-         * time : 2019-08-11 20:35:24
-         * avatar: /static/photo/8.jpeg
          */
 
+        private String time;
+        private int authorid;
+        private String avatar;
+        private String author;
         private int pageviews;
         private String title;
-        private String name;
         private int id;
-        private int author;
-        private String time;
-        private String avatar;
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
+        public int getAuthorid() {
+            return authorid;
+        }
+
+        public void setAuthorid(int authorid) {
+            this.authorid = authorid;
+        }
 
         public String getAvatar() {
             return avatar;
@@ -39,6 +56,14 @@ public class CommunityBlogListGson {
 
         public void setAvatar(String avatar) {
             this.avatar = avatar;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
         }
 
         public int getPageviews() {
@@ -57,36 +82,12 @@ public class CommunityBlogListGson {
             this.title = title;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
         public int getId() {
             return id;
         }
 
         public void setId(int id) {
             this.id = id;
-        }
-
-        public int getAuthor() {
-            return author;
-        }
-
-        public void setAuthor(int author) {
-            this.author = author;
-        }
-
-        public String getTime() {
-            return time;
-        }
-
-        public void setTime(String time) {
-            this.time = time;
         }
     }
 }

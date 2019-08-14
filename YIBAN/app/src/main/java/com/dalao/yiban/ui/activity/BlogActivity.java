@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.CommunityConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
@@ -28,6 +29,7 @@ import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.BlogGson;
 import com.dalao.yiban.my_interface.CommentInterface;
+import com.dalao.yiban.my_interface.FollowInterface;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
@@ -42,7 +44,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class BlogActivity extends BaseActivity implements CommentInterface {
+public class BlogActivity extends ActConBlogBaseActivity implements CommentInterface, FollowInterface {
 
     private Menu menu;
 
@@ -79,7 +81,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
     private TextView blogCommentTitle;
 
-    private String commentToUserId;
+    private String commentToCommentId;
 
     private EditText commentEditText;
 
@@ -90,6 +92,8 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
     private String blogId;
 
     private String userId;
+
+    private String authorId;
 
     /**
      * 启动 BlogActivity
@@ -102,7 +106,8 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
      * @param blogContentTime : 博客时间
      */
     public static void actionStart(Context context, String userId, String blogId, String authorFace,
-                                   String authorName, String blogTitle, String blogContentTime) {
+                                   String authorName, String blogTitle, String blogContentTime,
+                                   String authorId) {
         Intent intent = new Intent(context, BlogActivity.class);
         intent.putExtra(HomeConstant.USER_ID, userId);
         intent.putExtra(CommunityConstant.BLOG_ID, blogId);
@@ -110,6 +115,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
         intent.putExtra(CommunityConstant.AUTHOR_NAME, authorName);
         intent.putExtra(CommunityConstant.BLOG_CONTENT_TIME, blogContentTime);
         intent.putExtra(CommunityConstant.BLOG_TITLE, blogTitle);
+        intent.putExtra(CommunityConstant.AUTHOR_ID, authorId);
         context.startActivity(intent);
     }
 
@@ -145,6 +151,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
         // 从上个活动获取数据
         Intent intent = getIntent();
+        authorId = intent.getStringExtra(CommunityConstant.AUTHOR_ID);
         userId = intent.getStringExtra(HomeConstant.USER_ID);
         blogId = intent.getStringExtra(CommunityConstant.BLOG_ID);
         blogAuthorName.setText(intent.getStringExtra(CommunityConstant.AUTHOR_NAME));
@@ -165,7 +172,8 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         blogCommentRecyclerView.setLayoutManager(linearLayoutManager);
-        commentAdapter = new CommentAdapter(this, this);
+        commentAdapter = new CommentAdapter(this, this, userId,
+                blogId, HomeConstant.SELECT_BLOG);
         blogCommentRecyclerView.setAdapter(commentAdapter);
 
         // 请求服务器获取数据
@@ -187,10 +195,16 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
                 Toast.makeText(this, "click author", Toast.LENGTH_SHORT).show();
                 break;
 
-            // 关注作者
+            // 关注或者取消关注作者
             case R.id.blog_follow_author_button:
-                //TODO
-                Toast.makeText(this, "click follow", Toast.LENGTH_SHORT).show();
+                if (blogGson.getFollow() == CommunityConstant.UN_FOLLOW) {
+                    HttpUtil.followBlogAuthor(this, null, this,
+                            userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.FOLLOW);
+                }
+                else if (blogGson.getFollow() == CommunityConstant.FOLLOW) {
+                    HttpUtil.followBlogAuthor(this, null, this,
+                            userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.UN_FOLLOW);
+                }
                 break;
 
             // 在活动内容滑动到评论区，在评论区滑动到博客内容
@@ -209,8 +223,21 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
             // 评论
             case R.id.bottom_nav_comment:
-                // TODO
-                editCommentText("-1");
+                editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
+                break;
+
+            // 发布评论
+            case R.id.comment_publish_button:
+                String content = commentEditText.getText().toString();
+                if (!"".equals(content)) {
+                    commentPopupWindow.dismiss();
+                    HttpUtil.comment(this, this, blogId, userId,
+                            commentToCommentId, content, HomeConstant.SELECT_BLOG);
+                }
+                else {
+                    // 评论为空，不能发表
+                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             // 收藏
@@ -255,13 +282,13 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
                 break;
 
             case R.id.more_collect:
-                // TODO:收藏该活动
+                // TODO:收藏该博客
                 Toast.makeText(BlogActivity.this, "COLLECT",
                         Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.more_copy:
-                // TODO：复制该活动链接
+                // TODO：复制该博客链接
                 Toast.makeText(BlogActivity.this, "copy",
                         Toast.LENGTH_SHORT).show();
                 break;
@@ -289,6 +316,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
         HttpUtil.sendHttpPost(ServerUrlConstant.BLOG_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                BlogActivity.this.getCallList().add(call);
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -301,6 +329,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                BlogActivity.this.getCallList().add(call);
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     final BlogGson blogGson = JsonUtil.handleBlogResponse(responseText);
@@ -349,11 +378,11 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
         }
         if (blogGson.getCollection() == HomeConstant.COLLECT) {
             blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         else if (blogGson.getCollection() == HomeConstant.UN_COLLECT) {
             blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
-            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
         blogContent.post(new Runnable() {
             @Override
@@ -367,10 +396,10 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
 
     /**
      * 编辑评论
-     * @param toUserId:回复的用户id(若无则为-1)
+     * @param toCommentId:回复的评论的id(若无则为-1)
      */
-    public void editCommentText(String toUserId) {
-        this.commentToUserId = toUserId;
+    public void editCommentText(String toCommentId) {
+        this.commentToCommentId = toCommentId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
                 CustomPopWindow.commentPopWindow(blogBottomNavCommentButton, this);
         commentEditText = popWindowViewHelper.editText;
@@ -378,13 +407,45 @@ public class BlogActivity extends BaseActivity implements CommentInterface {
     }
 
     /**
-     * 发表评论
+     * 发表评论, 更新UI
      */
     public void publishComment() {
-        // TODO
-        commentPopupWindow.dismiss();
-        String content = commentEditText.getText().toString();
-        Toast.makeText(this, content + " to " + commentToUserId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
+        requestDataFromServer();
+    }
+
+    /**
+     * 收藏博客成功, 更新UI, 数据库
+     */
+    @Override
+    public void collectSuccess() {
+        //TODO : 更新UI, 数据库
+        blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+        moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        blogGson.setCollection(HomeConstant.COLLECT);
+    }
+
+    /**
+     * 关注成功, 更新UI，数据库
+     */
+    @Override
+    public void followSucceed() {
+        //TODO:更新UI，数据库
+        blogFollowAuthorButton.setText(CommunityConstant.UN_FOLLOW_TEXT);
+        Toast.makeText(this, HintConstant.BLOG_AUTHOR_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
+        blogGson.setFollow(CommunityConstant.FOLLOW);
+    }
+
+    /**
+     * 取消关注成功, 更新UI，数据库
+     */
+    @Override
+    public void unFollowSucceed() {
+        //TODO:更新UI，数据库
+        blogFollowAuthorButton.setText(CommunityConstant.FOLLOW_TEXT);
+        Toast.makeText(this, HintConstant.BLOG_AUTHOR_UN_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
+        blogGson.setFollow(CommunityConstant.UN_FOLLOW);
     }
 
 }

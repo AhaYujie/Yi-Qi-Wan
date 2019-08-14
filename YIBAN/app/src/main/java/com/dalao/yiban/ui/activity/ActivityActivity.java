@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
@@ -40,7 +41,7 @@ import okhttp3.FormBody;
 import okhttp3.Response;
 
 
-public class ActivityActivity extends BaseActivity implements CommentInterface {
+public class ActivityActivity extends ActConBlogBaseActivity implements CommentInterface {
 
     private NestedScrollView activityScrollView;
 
@@ -80,7 +81,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     private Button activityBottomNavCollect;
 
-    private String commentToUserId;
+    private String commentToCommentId;
 
     private Button activityBottomNavForward;
 
@@ -139,7 +140,8 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         // 设置RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         activityCommentRecyclerView.setLayoutManager(layoutManager);
-        commentAdapter = new CommentAdapter(this, this);
+        commentAdapter = new CommentAdapter(this, this, userId,
+                activityId, HomeConstant.SELECT_ACTIVITY);
         activityCommentRecyclerView.setAdapter(commentAdapter);
 
         // 从上个活动获取数据
@@ -163,13 +165,21 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         switch (v.getId()) {
             // 评论
             case R.id.bottom_nav_comment:
-                // TODO
-                editCommentText("-1");
+                editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
                 break;
 
             // 发布评论
             case R.id.comment_publish_button:
-                publishComment();
+                String content = commentEditText.getText().toString();
+                if (!"".equals(content)) {
+                    commentPopupWindow.dismiss();
+                    HttpUtil.comment(this, this, activityId, userId,
+                            commentToCommentId, content, HomeConstant.SELECT_ACTIVITY);
+                }
+                else {
+                // 评论为空，不能发表
+                Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+            }
                 break;
 
             // 在活动内容滑动到评论区，在评论区滑动到活动内容
@@ -260,6 +270,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         HttpUtil.sendHttpPost(ServerUrlConstant.ACTIVITY_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                ActivityActivity.this.getCallList().add(call);
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -272,6 +283,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                ActivityActivity.this.getCallList().add(call);
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     final ActivityGson activityGson = JsonUtil.handleActivityResponse(responseText);
@@ -321,11 +333,11 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
         });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         else if (activityGson.getCollection() == HomeConstant.UN_COLLECT) {
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
-            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
         commentAdapter.setCommentsBeanList(activityGson.getComments());
         commentAdapter.notifyDataSetChanged();
@@ -333,10 +345,10 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
 
     /**
      * 编辑评论
-     * @param toUserId:回复的用户id(若无则为-1)
+     * @param toCommentId:回复的评论的id(若无则为-1)
      */
-    public void editCommentText(String toUserId) {
-        this.commentToUserId = toUserId;
+    public void editCommentText(String toCommentId) {
+        this.commentToCommentId = toCommentId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
                 CustomPopWindow.commentPopWindow(activityBottomNavCommentButton, this);
         commentEditText = popWindowViewHelper.editText;
@@ -344,13 +356,23 @@ public class ActivityActivity extends BaseActivity implements CommentInterface {
     }
 
     /**
-     * 发表评论
+     * 发表评论成功，更新UI
      */
     public void publishComment() {
-        // TODO
-        commentPopupWindow.dismiss();
-        String content = commentEditText.getText().toString();
-        Toast.makeText(this, content + " to " + commentToUserId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
+        requestDataFromServer();
+    }
+
+    /**
+     * 收藏活动成功, 更新UI, 数据库
+     */
+    @Override
+    public void collectSuccess() {
+        //TODO:更新UI, 数据库
+        activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+        moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        activityGson.setCollection(HomeConstant.COLLECT);
     }
 
 }

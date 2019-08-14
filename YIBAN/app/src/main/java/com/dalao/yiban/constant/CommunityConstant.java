@@ -4,6 +4,8 @@ public class CommunityConstant {
 
     public static final String AUTHOR_FACE = "author_face";
 
+    public static final String AUTHOR_ID = "author_id";
+
     public static final String BLOG_ID = "blog_id";
 
     public static final String FOLLOW_TEXT = "关注";
@@ -15,6 +17,10 @@ public class CommunityConstant {
     public static final String BLOG_TITLE = "blog_title";
 
     public static final String BLOG_CONTENT_TIME = "blog_time";
+
+    public static final String BLOG_FOLLOW_SUCCESS_RESPONSE = "success";
+
+    public static final String BLOG_FOLLOW_ERROR_RESPONSE = "error";
 
     public static final int FOLLOW = 1;
 

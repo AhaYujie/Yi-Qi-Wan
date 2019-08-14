@@ -142,15 +142,12 @@ public class CustomPopWindow {
 
         switch (sexSelected) {
             case MALE:
-                Log.d("yujie", "1");
                 chooseMaleIcon.setVisibility(View.VISIBLE);
                 break;
             case FEMALE:
-                Log.d("yujie", "2");
                 chooseFemaleIcon.setVisibility(View.VISIBLE);
                 break;
             case SECRET:
-                Log.d("yujie", "3");
                 chooseSecretIcon.setVisibility(View.VISIBLE);
                 break;
             default:

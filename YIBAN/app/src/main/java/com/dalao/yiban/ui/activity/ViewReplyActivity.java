@@ -22,6 +22,7 @@ import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.CommentBean;
@@ -53,7 +54,13 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
     private PopupWindow commentPopupWindow;
 
-    private String commentToUserId;
+    private String commentToCommentId;
+
+    public String userId;
+
+    public String contentId;
+
+    public int category;
 
     // 被回复者的控件
     private ImageView commentFace;
@@ -68,10 +75,17 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
      * 启动 ViewReplyActivity
      * @param context:
      * @param masterCommentBean:被回复的用户的CommentBean
+     * @param userId : 用户id
+     * @param contentId : 活动或者博客的id
+     * @param category : SELECT_ACTIVITY or SELECT_BLOG
      */
-    public static void actionStart(Context context, @NonNull CommentBean masterCommentBean) {
+    public static void actionStart(Context context, @NonNull CommentBean masterCommentBean,
+                                   String userId, String contentId, int category) {
         Intent intent = new Intent(context, ViewReplyActivity.class);
         intent.putExtra(CommentConstant.COMMENT_BEAN, masterCommentBean);
+        intent.putExtra(CommentConstant.USER_ID, userId);
+        intent.putExtra(CommentConstant.CONTENT_ID, contentId);
+        intent.putExtra(CommentConstant.CATEGORY, category);
         context.startActivity(intent);
     }
 
@@ -92,7 +106,12 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         commentReply = (LinearLayout) findViewById(R.id.comment_reply);
 
         // 获取传递给这个活动的数据
-        this.masterCommentBean = (CommentBean) getIntent().getSerializableExtra(CommentConstant.COMMENT_BEAN);
+        Intent intent = getIntent();
+        userId = intent.getStringExtra(CommentConstant.USER_ID);
+        contentId = intent.getStringExtra(CommentConstant.CONTENT_ID);
+        category = intent.getIntExtra(CommentConstant.CATEGORY, CommentConstant.SELECT_CATEGORY_NONE);
+        masterCommentBean = (CommentBean) intent.getSerializableExtra(CommentConstant.COMMENT_BEAN);
+
 
         // 设置被回复者的控件
         commentPersonName.setText(masterCommentBean.getAuthor());
@@ -106,7 +125,8 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         // 设置RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         viewReplyRecyclerView.setLayoutManager(layoutManager);
-        commentAdapter = new CommentAdapter(this, this);
+        commentAdapter = new CommentAdapter(this, this, userId,
+                contentId, category);
         viewReplyRecyclerView.setAdapter(commentAdapter);
 
         // 设置点击事件
@@ -129,15 +149,24 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
             case R.id.view_reply_cancel_button:
                 finish();
                 break;
-            // 编辑评论
+
+            // 评论
             case R.id.comment_reply_button:
-                editCommentText("-1");
+                editCommentText(String.valueOf(masterCommentBean.getId()));
                 break;
 
             // 发布评论
             case R.id.comment_publish_button:
-                // TODO
-                publishComment();
+                String content = commentEditText.getText().toString();
+                if (!"".equals(content)) {
+                    commentPopupWindow.dismiss();
+                    HttpUtil.comment(this, this, contentId, userId,
+                            commentToCommentId, content, category);
+                }
+                else {
+                    // 评论为空，不能发表
+                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;
@@ -154,6 +183,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         HttpUtil.sendHttpPost(ServerUrlConstant.REPLY_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                ViewReplyActivity.this.getCallList().add(call);
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -166,6 +196,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                ViewReplyActivity.this.getCallList().add(call);
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     final ReplyGson replyGson = JsonUtil.handleReplyResponse(responseText);
@@ -212,10 +243,10 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
     /**
      * 编辑评论
-     *  @param toUserId:回复的用户id(若无则为-1)
+     *  @param toCommentId:回复的评论的id(若无则为-1)
      */
-    public void editCommentText(String toUserId) {
-        this.commentToUserId =toUserId;
+    public void editCommentText(String toCommentId) {
+        this.commentToCommentId =toCommentId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
                 CustomPopWindow.commentPopWindow(viewReplyRecyclerView, this);
         commentEditText = popWindowViewHelper.editText;
@@ -226,9 +257,8 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
      * 发表评论
      */
     public void publishComment() {
-        commentPopupWindow.dismiss();
-        String content = commentEditText.getText().toString();
-        Toast.makeText(this, content + " to " + commentToUserId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
+        requestDataFromServer();
     }
 
 }

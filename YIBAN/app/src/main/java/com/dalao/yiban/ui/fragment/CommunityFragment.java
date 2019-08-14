@@ -112,17 +112,17 @@ public class CommunityFragment extends BaseFragment {
                     // 按热度排序
                     case SELECT_HOT:
                         sortSelected = SELECT_HOT;
-                        requestDataFromServer();
+                        onVisible();
                         break;
                     // 按时间排序
                     case SELECT_TIME:
                         sortSelected = SELECT_TIME;
-                        requestDataFromServer();
+                        onVisible();
                         break;
                     // 只看关注的人
                     case SELECT_FOLLOWING:
                         sortSelected = SELECT_FOLLOWING;
-                        requestDataFromServer();
+                        onVisible();
                         break;
                     default:
                         break;
@@ -175,13 +175,6 @@ public class CommunityFragment extends BaseFragment {
     }
 
     /**
-     * 用户不可见view时进行的操作
-     */
-    @Override
-    protected void onInvisible() {
-    }
-
-    /**
      * 从服务器获取博客列表数据并刷新UI
      */
     private void requestDataFromServer() {
@@ -194,7 +187,6 @@ public class CommunityFragment extends BaseFragment {
         HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -202,10 +194,13 @@ public class CommunityFragment extends BaseFragment {
                         Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                     }
                 });
+                e.printStackTrace();
+                CommunityFragment.this.getCallList().add(call);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                CommunityFragment.this.getCallList().add(call);
                 if (response.body() != null) {
                     final String responseText = response.body().string();
                     final CommunityBlogListGson communityBlogListGson =

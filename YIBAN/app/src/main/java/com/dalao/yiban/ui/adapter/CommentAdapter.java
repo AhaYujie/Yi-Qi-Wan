@@ -32,6 +32,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     private List<CommentBean> commentsBeanList;
 
+    private String userId;
+
+    private String contentId;
+
+    private int category;
+
     public List<CommentBean> getCommentsBeanList() {
         return commentsBeanList;
     }
@@ -63,9 +69,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     }
 
-    public CommentAdapter(Context context, CommentInterface commentInterface) {
+    /**
+     *
+     * @param context :
+     * @param commentInterface :
+     * @param userId : 用户id
+     * @param contentId : 活动或博客的id
+     * @param category : SELECT_ACTIVITY or SELECT_BLOG
+     */
+    public CommentAdapter(Context context, CommentInterface commentInterface, String userId,
+                          String contentId, int category) {
         this.context = context;
         this.commentInterface = commentInterface;
+        this.userId = userId;
+        this.contentId = contentId;
+        this.category = category;
     }
 
     @NonNull
@@ -95,7 +113,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     // 启动查看回复activity
-                    ViewReplyActivity.actionStart(context, commentBean);
+                    ViewReplyActivity.actionStart(context, commentBean, userId, contentId, category);
                 }
             });
         }
@@ -106,7 +124,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.commentReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                commentInterface.editCommentText(String.valueOf(commentBean.getUserId()));
+                commentInterface.editCommentText(String.valueOf(commentBean.getId()));
             }
         });
     }
