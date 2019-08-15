@@ -29,6 +29,11 @@
     <color name="forwardPopWindowBackground">#FFFFFF</color>
     <color name="forwardPopWindowCancel">#A7A7A9</color>
 
+    <!-- 搜索框-->
+    <color name="Button_SearchBar">#FFFFFF</color>
+    <color name="UsedSearchColor">#000000</color>
+    <color name="SearchBackground">#A7A7A9</color>
+
     <!-- comment pop window -->
     <color name="commentPopWindowBackground">#FFFFFF</color>
     <color name="commentPopWindowHint">#A7A7A9</color>

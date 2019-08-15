@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#FFFFFFFF"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_bar_SearchView"
+            app:queryHint="@string/SearchHint"
+            app:iconifiedByDefault="false"
+            android:layout_width="0dp"
+            android:layout_weight="9"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:textColor="#0EC3E4"
+            android:background="#FFFFFFFF"
+            android:id="@+id/SearchBarButton"
+            android:text="@string/SearchCancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <View
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="20dp">
+        <!-- 这是间隔，我将其设置为不可以见 -->
+    </View>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <View
+        android:visibility="invisible"
+        android:layout_width="10dp"
+        android:layout_height="21dp"></View>
+
+        <TextView
+            android:textColor="@color/UsedSearchColor"
+            android:textSize="16dp"
+            android:text="@string/UsedSearch"
+            android:layout_width="0dp"
+            android:layout_weight="8"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:clickable="true"
+            android:id="@+id/UsedSearchClearImage"
+            android:src="@drawable/ic_rubbish_black"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="21dp" />
+
+        <TextView
+            android:clickable="true"
+            android:id="@+id/UsedSearchClearText"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/SearchClear"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <View
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"></View>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:visibility="visible"
+            android:id="@+id/search_bar_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+        <!-- 这里列表的数据，是曾经搜索的记录，保存在文件当中 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:id="@+id/search_bar_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+    <!-- 这是搜索的结果 -->
+</LinearLayout>

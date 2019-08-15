@@ -2,7 +2,7 @@
 
     <!-- 行间距倍数(中文) -->
     <string name="line_spacing_multiplier">1.2</string>
-    
+
     <string name="left_parentheses">(</string>
     <string name="right_parentheses">)</string>
 
@@ -26,6 +26,12 @@
     <string name="mine_blog">我的博客</string>
     <string name="mine_collect">我的收藏</string>
     <string name="mine_following">我关注的人</string>
+
+    <!-- 搜索框 -->
+    <string name="SearchHint">搜索活动、竞赛</string>
+    <string name="SearchCancel">取消</string>
+    <string name="UsedSearch">搜索历史</string>
+    <string name="SearchClear">清空</string>
 
     <!-- more menu -->
     <string name="more_collect">收藏</string>
