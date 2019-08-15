@@ -22,4 +22,6 @@ public class MineConstant {
 
     public static final int FEMALE_RESPONSE = 2;
 
+    public static final int SECRET_RESPONSE = 0;
+
 }

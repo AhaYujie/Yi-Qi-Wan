@@ -352,7 +352,7 @@ public class ContestActivity extends ActConBlogBaseActivity {
         richTextView.post(new Runnable() {
             @Override
             public void run() {
-                StringUtils.showContestContent(richTextView, contestGson.getContent());
+                StringUtils.showContent(richTextView, contestGson.getContent());
             }
         });
         if (contestGson.getCollection() == HomeConstant.COLLECT) {

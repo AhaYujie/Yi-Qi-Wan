@@ -328,7 +328,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityContent.post(new Runnable() {
             @Override
             public void run() {
-                StringUtils.showContestContent(activityContent, activityGson.getContent());
+                StringUtils.showContent(activityContent, activityGson.getContent());
             }
         });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {

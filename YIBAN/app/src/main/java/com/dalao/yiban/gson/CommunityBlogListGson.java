@@ -2,8 +2,10 @@ package com.dalao.yiban.gson;
 
 import java.util.List;
 
+/**
+ * 社区博客列表的json
+ */
 public class CommunityBlogListGson {
-
 
     private List<DataBean> data;
 

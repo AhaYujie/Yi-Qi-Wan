@@ -2,6 +2,9 @@ package com.dalao.yiban.gson;
 
 import java.util.List;
 
+/**
+ * 查看回复的json
+ */
 public class ReplyGson {
 
     private List<CommentBean> comments;

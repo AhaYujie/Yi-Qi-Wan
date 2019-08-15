@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,9 @@ import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
-import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
-import com.dalao.yiban.gson.HomeListGson;
-import com.dalao.yiban.gson.UserGson;
+import com.dalao.yiban.gson.UserInfoGson;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
@@ -36,8 +33,6 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
-import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
 import static com.dalao.yiban.constant.MineConstant.FEMALE;
 import static com.dalao.yiban.constant.MineConstant.FEMALE_RESPONSE;
 import static com.dalao.yiban.constant.MineConstant.FEMALE_TEXT;
@@ -45,6 +40,7 @@ import static com.dalao.yiban.constant.MineConstant.MALE;
 import static com.dalao.yiban.constant.MineConstant.MALE_RESPONSE;
 import static com.dalao.yiban.constant.MineConstant.MALE_TEXT;
 import static com.dalao.yiban.constant.MineConstant.SECRET;
+import static com.dalao.yiban.constant.MineConstant.SECRET_RESPONSE;
 import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
 
 public class MineFragment extends BaseFragment implements View.OnClickListener {
@@ -74,6 +70,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private RelativeLayout mineCollectLayout;
 
     private RelativeLayout mineFollowingLayout;
+
+    private TextView mineSchoolText;
 
     private int sexSelected;
 
@@ -113,6 +111,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineBlogLayout = (RelativeLayout) view.findViewById(R.id.mine_blog_layout);
         mineCollectLayout = (RelativeLayout) view.findViewById(R.id.mine_collect_layout);
         mineFollowingLayout = (RelativeLayout) view.findViewById(R.id.mine_following_layout);
+        mineSchoolText = (TextView) view.findViewById(R.id.mine_school_text);
 
         // 设置点击事件
         mineInfoFaceLayout.setOnClickListener(this);
@@ -208,13 +207,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 MineFragment.this.getCallList().add(call);
                 if (response.body() != null) {
                     final String responseText = response.body().string();
-                    Log.d("yujie", responseText);
-                    final UserGson userGson = JsonUtil.handleUserResponse(responseText);
-                    if (userGson != null) {
+                    final UserInfoGson userInfoGson = JsonUtil.handleUserResponse(responseText);
+                    if (userInfoGson != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateUserInfoUI(userGson);
+                                updateUserInfoUI(userInfoGson);
                             }
                         });
                     } else {
@@ -241,23 +239,23 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
     /**
      * 更新用户信息UI
-     * @param userGson:解析后的用户信息
+     * @param userInfoGson:解析后的用户信息
      */
-    private void updateUserInfoUI(UserGson userGson)  {
-        mineUsernameText.setText(userGson.getUser().getUsername());
-        mineNicknameText.setText(userGson.getUser().getNickname());
-        Log.d("yujie", "" + userGson.getUser().getSex());
-        if (userGson.getUser().getAvatar() == null)
-            Log.d("yujie", "is null");
-        Log.d("yujie", "" + userGson.getUser().getLevel());
-        if (userGson.getUser().getSex() == MALE_RESPONSE) {
+    private void updateUserInfoUI(UserInfoGson userInfoGson)  {
+        mineUsernameText.setText(userInfoGson.getUser().getUsername());
+        mineNicknameText.setText(userInfoGson.getUser().getNickname());
+        mineSchoolText.setText(userInfoGson.getUser().getSchool());
+        if (userInfoGson.getUser().getSex() == MALE_RESPONSE) {
             mineSexText.setText(MALE_TEXT);
         }
-        else if (userGson.getUser().getSex() == FEMALE_RESPONSE) {
+        else if (userInfoGson.getUser().getSex() == FEMALE_RESPONSE) {
             mineSexText.setText(FEMALE_TEXT);
         }
-        Glide.with(this)
-                .load(ServerUrlConstant.SERVER_URI + userGson.getUser().getAvatar())
+        else if (userInfoGson.getUser().getSex() == SECRET_RESPONSE) {
+            mineSexText.setText(SECRET_TEXT);
+        }
+        Glide.with(activity)
+                .load(ServerUrlConstant.SERVER_URI + userInfoGson.getUser().getAvatar())
                 .into(mineFace);
     }
 
@@ -275,7 +273,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * @param sex:MALE_TEXT, FEMALE_TEXT, SECRET_TEXT
      */
     public void setSex(String sex) {
-        // TODO
+        // TODO:请求服务器，数据库保存
         switch (sex) {
             case MALE_TEXT:
                 sexSelected = MALE;

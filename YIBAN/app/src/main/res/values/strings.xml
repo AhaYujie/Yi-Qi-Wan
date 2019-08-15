@@ -35,6 +35,7 @@
     <string name="mine_blog">我的博客</string>
     <string name="mine_collect">我的收藏</string>
     <string name="mine_following">我关注的人</string>
+    <string name="mine_school">学校</string>
 
     <!-- more menu -->
     <string name="more_collect">收藏</string>
@@ -95,5 +96,13 @@
     <string name="male">男</string>
     <string name="female">女</string>
     <string name="secret">保密</string>
+
+    <!-- create blog -->
+    <string name="createBlogTitle">发布博客</string>
+    <string name="createBlogPublishButtonText">发布</string>
+    <string name="createBlogContentTitleHint">添加标题</string>
+    <string name="createBlogContentHint">添加内容(至少10个字)</string>
+    <string name="createBlogContentTitleMaxLength">38</string>
+    <string name="createBlogContentMaxLength">1000</string>
 
 </resources>

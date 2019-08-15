@@ -24,7 +24,7 @@ public class StringUtils {
      * 解析并刷新内容(可以含有图片)
      * @param content:内容
      */
-    public static void showContestContent(RichTextView richTextView, String content) {
+    public static void showContent(RichTextView richTextView, String content) {
         richTextView.clearAllLayout();
         List<String> textList = StringUtils.cutStringByImgTag(content);
         for (int i = 0; i < textList.size(); i++) {

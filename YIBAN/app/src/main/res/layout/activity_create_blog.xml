@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.CreateBlogActivity"
+    android:background="@color/myBackground">
+
+    <RelativeLayout
+        android:id="@+id/create_blog_title"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/createTeamInfoBackground">
+
+        <Button
+            android:id="@+id/create_blog_cancel_button"
+            android:layout_width="@dimen/create_blog_cancel_size"
+            android:layout_height="@dimen/create_blog_cancel_size"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_cancel_black"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/createBlogText"
+            android:textSize="@dimen/create_blog_title_size"
+            android:text="@string/createBlogTitle"/>
+
+        <TextView
+            android:id="@+id/create_blog_publish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:textColor="@color/createBlogPublishText"
+            android:textSize="@dimen/create_blog_title_size"
+            android:text="@string/createBlogPublishButtonText"
+            android:clickable="true"
+            android:focusable="true"/>
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/create_blog_content_title_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_below="@+id/create_blog_title"
+        android:inputType="text"
+        android:maxLines="1"
+        android:maxLength="@string/createBlogContentTitleMaxLength"
+        android:background="@null"
+        android:gravity="start|top"
+        android:textCursorDrawable="@drawable/edit_cursor_color"
+        android:textSize="@dimen/create_blog_content_title_size"
+        android:textColor="@color/createBlogText"
+        android:textColorHint="@color/createBlogHint"
+        android:lineSpacingMultiplier="@string/line_spacing_multiplier"
+        android:hint="@string/createBlogContentTitleHint"/>
+
+    <LinearLayout
+        android:id="@+id/create_blog_up_boundary_line"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/create_blog_content_title_edit_text"
+        android:background="@color/boundaryLine">
+    </LinearLayout>
+
+    <com.sendtion.xrichtext.RichTextEditor
+        android:id="@+id/create_blog_content_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/create_blog_up_boundary_line"
+        android:layout_above="@+id/create_blog_bottom_boundary_line"
+        android:maxLength="@string/createBlogContentMaxLength"
+        app:rt_editor_text_line_space="6dp"
+        app:rt_editor_text_size="@dimen/create_blog_content_size"
+        app:rt_editor_text_color="@color/createBlogText"
+        app:rt_editor_image_height="0"
+        app:rt_editor_image_bottom="10"
+        app:rt_editor_text_init_hint="@string/createBlogContentHint" />
+
+    <LinearLayout
+        android:id="@+id/create_blog_bottom_boundary_line"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_above="@+id/create_blog_bottom_nav"
+        android:background="@color/boundaryLine">
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/create_blog_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/create_blog_bottom_nav_height"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/create_blog_bottom_nav_pic_button"
+            android:layout_width="@dimen/create_blog_bottom_nav_pic_icon_size"
+            android:layout_height="@dimen/create_blog_bottom_nav_pic_icon_size"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_pic_black"
+            style="?android:attr/borderlessButtonStyle"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

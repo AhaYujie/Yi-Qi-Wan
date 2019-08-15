@@ -387,7 +387,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         blogContent.post(new Runnable() {
             @Override
             public void run() {
-                StringUtils.showContestContent(blogContent, blogGson.getContent());
+                StringUtils.showContent(blogContent, blogGson.getContent());
             }
         });
         commentAdapter.setCommentsBeanList(blogGson.getComments());

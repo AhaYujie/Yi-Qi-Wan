@@ -1,7 +1,9 @@
 package com.dalao.yiban.gson;
 
-public class UserGson {
-
+/**
+ * 用户信息的json
+ */
+public class UserInfoGson {
 
     /**
      * user : {"sex":1,"email":"mingxue@yahoo.com","level":null,"username":"林明凭","avatar ":"/static/photo/8.jpeg","nickname":"刘雪梅","phone":"15062959620","school":"scau"}

@@ -69,6 +69,11 @@
     <color name="createTeamButtonText">#FFFFFF</color>
     <color name="createTeamInputLine">#BBBBBB</color>
 
+    <!-- create blog -->
+    <color name="createBlogText">#000000</color>
+    <color name="createBlogPublishText">#4CB6FB</color>
+    <color name="createBlogHint">#A7A7A9</color>
+
     <!-- edit nickname -->
     <color name="editNicknameBackground">#FFFFFF</color>
     <color name="editNicknameText">#000000</color>

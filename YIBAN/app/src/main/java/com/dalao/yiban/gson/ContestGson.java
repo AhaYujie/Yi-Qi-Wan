@@ -2,8 +2,10 @@ package com.dalao.yiban.gson;
 
 import java.util.List;
 
+/**
+ * 竞赛内容的json
+ */
 public class ContestGson {
-
 
     /**
      * team : [{"avatar":"/root/face/123456.png","name":"咸鱼队１","id":1,"time":"2019-08-08 22:29:12","content":"咸鱼１队简介，我们需要最帅的人40来","author":"lmp","count":40},{"avatar":"/root/face/123456222.png","name":"咸鱼队2","id":2,"time":"2019-08-08 22:29:12","content":"咸鱼２队简介，我们需要最帅的人50来","author":"lzk","count":50},{"avatar":"/root/face/123456ss.png","name":"咸鱼队3","id":3,"time":"2019-08-08 22:29:12","content":"咸鱼３队简介，我们需要最帅的人105来","author":"abc","count":105}]

@@ -1,7 +1,9 @@
 package com.dalao.yiban.gson;
 
+/**
+ * 收藏的json
+ */
 public class CollectGson {
-
 
     /**
      * msg : success

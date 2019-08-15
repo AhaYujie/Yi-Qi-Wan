@@ -7,7 +7,7 @@ import com.dalao.yiban.gson.CollectGson;
 import com.dalao.yiban.gson.ContestGson;
 import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.gson.ReplyGson;
-import com.dalao.yiban.gson.UserGson;
+import com.dalao.yiban.gson.UserInfoGson;
 import com.google.gson.Gson;
 
 
@@ -122,11 +122,11 @@ public class JsonUtil {
     /**
      *  解析用户信息数据json
      * @param responseText：返回的json数据body
-     * @return : UserGson
+     * @return : UserInfoGson
      */
-    public static UserGson handleUserResponse(String responseText) {
+    public static UserInfoGson handleUserResponse(String responseText) {
         try {
-            return new Gson().fromJson(responseText, UserGson.class);
+            return new Gson().fromJson(responseText, UserInfoGson.class);
         }
         catch (Exception e) {
             e.printStackTrace();

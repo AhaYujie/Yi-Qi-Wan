@@ -46,6 +46,14 @@
 
     <!-- 博客 -->
     <dimen name="blog_author_face_size">30dp</dimen>
+    <!-- create blog -->
+    <dimen name="create_blog_cancel_size">25dp</dimen>
+    <dimen name="create_blog_title_size">20sp</dimen>
+    <dimen name="create_blog_content_title_size">20sp</dimen>
+    <dimen name="create_blog_content_size">17sp</dimen>
+    <dimen name="create_blog_publish">20sp</dimen>
+    <dimen name="create_blog_bottom_nav_height">50dp</dimen>
+    <dimen name="create_blog_bottom_nav_pic_icon_size">30dp</dimen>
 
     <!-- view reply -->
     <dimen name="view_reply_text_size">17sp</dimen>
