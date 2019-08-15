@@ -8,13 +8,15 @@
 
     <EditText
         android:id="@+id/comment_edit_text"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:inputType="textMultiLine"
         android:maxLines="5"
+        android:maxLength="@string/comment_max_length"
         android:focusable="true"
+        android:textCursorDrawable="@drawable/edit_cursor_color"
         android:textColorHint="@color/commentPopWindowHint"
         android:textColor="@color/commentPopWindowText"
         android:textSize="@dimen/comment_text_size"

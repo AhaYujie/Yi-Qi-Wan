@@ -21,12 +21,15 @@ import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.ui.activity.ActivityActivity;
 import com.dalao.yiban.ui.activity.ContestActivity;
+import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.fragment.HomeFragment;
 
 import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
 import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
 
 public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHolder> {
+
+    private MainActivity activity;
 
     private HomeListGson homeListGson;
 
@@ -66,9 +69,10 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
         }
     }
 
-    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected) {
+    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected, MainActivity activity) {
         this.homeListGson = homeListGson;
         this.categorySelected = categorySelected;
+        this.activity = activity;
     }
 
     @NonNull
@@ -92,12 +96,15 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 // 启动ContestActivity
-                if (categorySelected == SELECT_CONTEST)
-                    ContestActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
+                if (categorySelected == SELECT_CONTEST) {
+                    ContestActivity.actionStart(view.getContext(), activity.userId,
+                            String.valueOf(dataBean.getId()), dataBean.getTitle(), dataBean.getTime());
+                }
                 // 启动ActivityActivity
-                else if (categorySelected == SELECT_ACTIVITY)
-                    //TODO
-                    ActivityActivity.actionStart(view.getContext(), String.valueOf(dataBean.getId()));
+                else if (categorySelected == SELECT_ACTIVITY) {
+                    ActivityActivity.actionStart(view.getContext(), activity.userId,
+                            String.valueOf(dataBean.getId()), dataBean.getTitle(), dataBean.getTime());
+                }
             }
         });
 

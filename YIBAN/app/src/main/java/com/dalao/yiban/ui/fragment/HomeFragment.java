@@ -165,7 +165,7 @@ public class HomeFragment extends BaseFragment {
         // 初始化RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
-        homeItemAdapter = new HomeItemAdapter(homeListGson, categorySelected);
+        homeItemAdapter = new HomeItemAdapter(homeListGson, categorySelected, activity);
         homeItemRecyclerView.setAdapter(homeItemAdapter);
 
         // 如果view可见则请求服务器获取数据
@@ -182,13 +182,6 @@ public class HomeFragment extends BaseFragment {
         // 请求服务器获取数据
         if (isVisible && view != null)
             requestDataFromServer();
-    }
-
-    /**
-     * 用户不可见view时进行的操作
-     */
-    @Override
-    protected void onInvisible() {
     }
 
     /**
@@ -220,10 +213,13 @@ public class HomeFragment extends BaseFragment {
                         Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                     }
                 });
+                e.printStackTrace();
+                HomeFragment.this.getCallList().add(call);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                HomeFragment.this.getCallList().add(call);
                 if (response.body() != null) {
                     final String responseText = response.body().string();
                     final HomeListGson homeListGson = JsonUtil.handleHomeListResponse(responseText);
@@ -232,7 +228,6 @@ public class HomeFragment extends BaseFragment {
                             @Override
                             public void run() {
                                 updateHomeListUI(homeListGson);
-                                homeSwipeRefresh.setRefreshing(false);
                             }
                         });
                     }
@@ -270,6 +265,7 @@ public class HomeFragment extends BaseFragment {
         homeItemAdapter.setHomeListGson(this.homeListGson);
         homeItemAdapter.setCategorySelected(categorySelected);
         homeItemAdapter.notifyDataSetChanged();
+        homeSwipeRefresh.setRefreshing(false);
         homeItemRecyclerView.scrollToPosition(5);
         homeItemRecyclerView.smoothScrollToPosition(0);
     }

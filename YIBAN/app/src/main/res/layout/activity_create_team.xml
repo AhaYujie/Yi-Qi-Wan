@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.CreateTeamActivity"
+    android:background="@color/mine_background">
+
+    <RelativeLayout
+        android:id="@+id/create_team_title"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/createTeamInfoBackground">
+
+        <Button
+            android:id="@+id/create_team_cancel_button"
+            android:layout_width="@dimen/create_team_cancel_size"
+            android:layout_height="@dimen/create_team_cancel_size"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_cancel_black"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/createTeamText"
+            android:textSize="@dimen/create_team_title_size"
+            android:text="@string/createTeamTitle"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/create_team_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/create_team_frame_height"
+        android:background="@color/createTeamInfoBackground"
+        android:layout_below="@id/create_team_title">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:textSize="@dimen/create_team_text_size"
+            android:textColor="@color/createTeamText"
+            android:text="@string/createTeamName"/>
+
+        <EditText
+            android:id="@+id/create_team_name_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:gravity="end"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLength="@string/team_name_max_length"
+            android:background="@null"
+            android:textCursorDrawable="@drawable/edit_cursor_color"
+            android:textSize="@dimen/create_team_text_size"
+            android:textColor="@color/createTeamText"
+            android:textColorHint="@color/createTeamHint"
+            android:hint="@string/createTeamNameHint"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/createTeamInputLine"
+            android:layout_below="@+id/create_team_name_edit_text">
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/create_team_number"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/create_team_frame_height"
+        android:background="@color/createTeamInfoBackground"
+        android:layout_below="@id/create_team_name">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:textSize="@dimen/create_team_text_size"
+            android:textColor="@color/createTeamText"
+            android:text="@string/createTeamNumber"/>
+
+        <EditText
+            android:id="@+id/create_team_number_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:gravity="end"
+            android:inputType="number"
+            android:lines="1"
+            android:maxLength="2"
+            android:background="@null"
+            android:textCursorDrawable="@drawable/edit_cursor_color"
+            android:textSize="@dimen/create_team_text_size"
+            android:textColor="@color/createTeamText"
+            android:textColorHint="@color/createTeamHint"
+            android:hint="@string/createTeamNumberHint"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/createTeamInputLine"
+            android:layout_below="@+id/create_team_number_edit_text">
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/create_team_comment_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/create_team_text_size"
+        android:textColor="@color/createTeamHint"
+        android:layout_below="@+id/create_team_number"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/createTeamCommentTitle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/create_team_comment_frame_height"
+        android:background="@color/createTeamInfoBackground"
+        android:layout_below="@+id/create_team_comment_title">
+
+        <EditText
+            android:id="@+id/create_team_comment_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            android:background="@null"
+            android:textCursorDrawable="@drawable/edit_cursor_color"
+            android:textSize="@dimen/create_team_text_size"
+            android:textColor="@color/createTeamText"
+            android:lineSpacingMultiplier="@string/line_spacing_multiplier"
+            android:maxLength="@string/comment_max_length"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/create_team_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/create_team_button"
+        android:textSize="@dimen/create_team_text_size"
+        android:textColor="@color/createTeamButtonText"
+        android:text="@string/createTeamButtonText"
+        style="?android:attr/borderlessButtonStyle" />
+
+</RelativeLayout>

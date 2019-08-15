@@ -21,6 +21,9 @@
     <!-- 分界线 -->
     <color name="boundaryLine">#FAFAFA</color>
 
+    <!-- 编辑光标颜色 -->
+    <color name="edit_cursor">#4CB6FB</color>
+
     <!-- layout点击颜色 -->
     <color name="layout_default">#FFFFFF</color>
     <color name="layout_touch">#F0F0F0</color>
@@ -29,12 +32,7 @@
     <color name="forwardPopWindowBackground">#FFFFFF</color>
     <color name="forwardPopWindowCancel">#A7A7A9</color>
 
-    <!-- 搜索框-->
-    <color name="Button_SearchBar">#FFFFFF</color>
-    <color name="UsedSearchColor">#000000</color>
-    <color name="SearchBackground">#A7A7A9</color>
-
-    <!-- comment pop window -->
+    <!-- commentInterface pop window -->
     <color name="commentPopWindowBackground">#FFFFFF</color>
     <color name="commentPopWindowHint">#A7A7A9</color>
     <color name="commentPopWindowText">#000000</color>
@@ -54,5 +52,32 @@
     <color name="myHint">#A7A7A9</color>
     <color name="contestTeamName">#000000</color>
     <color name="contestTeamNumber">#000000</color>
+    <color name="blogAuthorBackground">#F5F5F5</color>
+    <color name="blogFollowAuthorButtonText">#FFFFFF</color>
+    <color name="blogFollowAuthorButton">#4CB6FB</color>
+
+    <!-- view reply -->
+    <color name="viewReplyAllCommentsTitleBackground">#F0EEEE</color>
+    <color name="viewReplyText">#000000</color>
+
+    <!-- create team -->
+    <color name="createTeamBackground">#F5F5F5</color>
+    <color name="createTeamInfoBackground">#FFFFFF</color>
+    <color name="createTeamText">#000000</color>
+    <color name="createTeamHint">#A7A7A9</color>
+    <color name="createTeamButton">#4CB6FB</color>
+    <color name="createTeamButtonText">#FFFFFF</color>
+    <color name="createTeamInputLine">#BBBBBB</color>
+
+    <!-- edit nickname -->
+    <color name="editNicknameBackground">#FFFFFF</color>
+    <color name="editNicknameText">#000000</color>
+    <color name="editNicknameButton">#4CB6FB</color>
+    <color name="editNicknameButtonText">#FFFFFF</color>
+    <color name="editNicknameHint">#A7A7A9</color>
+
+    <!-- choose sex pop window -->
+    <color name="chooseSexPopWindowText">#000000</color>
+    <color name="chooseSexPopWindowBackground">#FFFFFF</color>
 
 </resources>

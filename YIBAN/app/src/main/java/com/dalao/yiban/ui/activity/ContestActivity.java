@@ -10,7 +10,6 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,14 +31,13 @@ import com.dalao.yiban.util.StringUtils;
 import com.sendtion.xrichtext.RichTextView;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ContestActivity extends BaseActivity {
+public class ContestActivity extends ActConBlogBaseActivity {
 
     private MenuItem moreCollect;
 
@@ -78,13 +76,20 @@ public class ContestActivity extends BaseActivity {
     private Menu menu;
 
     /**
-     * 启动ContestActivity
-     * @param context:
-     * @param contestId:竞赛ID
+     *
+     * @param context :
+     * @param userId : 用户id
+     * @param contestId：竞赛id
+     * @param contestTitle：竞赛标题
+     * @param contestContentTime：竞赛时间
      */
-    public static void actionStart(Context context, String contestId) {
+    public static void actionStart(Context context, String userId, String contestId,
+                                   String contestTitle, String contestContentTime) {
         Intent intent = new Intent(context, ContestActivity.class);
+        intent.putExtra(HomeConstant.USER_ID, userId);
         intent.putExtra(HomeConstant.CONTEST_ID, contestId);
+        intent.putExtra(HomeConstant.CONTEST_TITLE, contestTitle);
+        intent.putExtra(HomeConstant.CONTEST_CONTENT_TIME, contestContentTime);
         context.startActivity(intent);
     }
 
@@ -124,14 +129,16 @@ public class ContestActivity extends BaseActivity {
         // 初始化RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         contestTeamRecyclerView.setLayoutManager(layoutManager);
-        contestTeamAdapter = new ContestTeamAdapter(null);
+        contestTeamAdapter = new ContestTeamAdapter(this);
         contestTeamRecyclerView.setAdapter(contestTeamAdapter);
 
-        // 获取数据
+        // 从上个活动获取数据
         Intent intent = getIntent();
+        userId = intent.getStringExtra(HomeConstant.USER_ID);
         contestId = intent.getStringExtra(HomeConstant.CONTEST_ID);
-        // TODO:本地获取用户id
-        userId = "5";   // test
+        contestTitle.setText(intent.getStringExtra(HomeConstant.CONTEST_TITLE));
+        contestContentTime.setText(intent.getStringExtra(HomeConstant.CONTEST_CONTENT_TIME));
+
         // 请求服务器
         requestDataFromServer();
 
@@ -162,16 +169,15 @@ public class ContestActivity extends BaseActivity {
 
     /**
      * 点击事件
-     * @param v
+     * @param v:
      */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
+            // 创建队伍
             case R.id.contest_team_create:
-                // TODO：启动创建队伍activity
-                Toast.makeText(ContestActivity.this, "contest_team_create",
-                        Toast.LENGTH_SHORT).show();
+                // TODO
+                CreateTeamActivity.actionStart(this, contestId);
                 break;
 
             // 在竞赛内容滑动到组队区，在组队区滑动到竞赛内容
@@ -186,13 +192,10 @@ public class ContestActivity extends BaseActivity {
                 else  {
                     contestScrollView.smoothScrollTo(0, contestTitle.getTop());
                 }
-                //
                 break;
 
             case R.id.contest_team_collect:
-                // TODO:收藏该竞赛，保存到本地和服务器
-                Toast.makeText(ContestActivity.this, "contest_team_collect",
-                        Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST, userId, contestId);
                 break;
 
             case R.id.forward_wechat_friend:
@@ -256,14 +259,11 @@ public class ContestActivity extends BaseActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // TODO:返回到 MainActivity 的 home 界面
                 finish();
                 break;
 
             case R.id.more_collect:
-                // TODO:收藏该竞赛
-                Toast.makeText(ContestActivity.this, "COLLECT",
-                        Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST, userId, contestId);
                 break;
 
             case R.id.more_copy:
@@ -294,6 +294,7 @@ public class ContestActivity extends BaseActivity {
         HttpUtil.sendHttpPost(ServerUrlConstant.CONTEST_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                ContestActivity.this.getCallList().add(call);
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -306,6 +307,7 @@ public class ContestActivity extends BaseActivity {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                ContestActivity.this.getCallList().add(call);
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     final ContestGson contestGson = JsonUtil.handleContestResponse(responseText);
@@ -346,52 +348,35 @@ public class ContestActivity extends BaseActivity {
      */
     private void updateContestUI(@NonNull final ContestGson contestGson) {
         this.contestGson = contestGson;
-        contestTitle.setText(contestGson.getTitle());
-        contestContentTime.setText(contestGson.getTime());
         contestSource.setText(contestGson.getAuthor());
         richTextView.post(new Runnable() {
             @Override
             public void run() {
-                showContestContent(contestGson.getContent());
+                StringUtils.showContestContent(richTextView, contestGson.getContent());
             }
         });
         if (contestGson.getCollection() == HomeConstant.COLLECT) {
             contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         else if (contestGson.getCollection() == HomeConstant.UN_COLLECT) {
             contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_black);
-            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
         contestTeamAdapter.setTeamBeanList(contestGson.getTeam());
         contestTeamAdapter.notifyDataSetChanged();
     }
 
-
     /**
-     * 解析并刷新竞赛内容
-     * @param content:竞赛内容
+     * 收藏竞赛成功, 更新UI, 数据库
      */
-    private void showContestContent(String content) {
-        richTextView.clearAllLayout();
-        List<String> textList = StringUtils.cutStringByImgTag(content);
-        for (int i = 0; i < textList.size(); i++) {
-            String text = textList.get(i);
-            if (text.contains(HomeConstant.IMAGE_TAG)) {
-                String imagePath = StringUtils.getImgSrc(text);
-                richTextView.measure(0,0);
-                if (imagePath != null){
-                    richTextView.addImageViewAtIndex(richTextView.getLastIndex(), imagePath);
-                }
-                else {
-                    richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
-                }
-            }
-            else {
-                richTextView.addTextViewAtIndex(richTextView.getLastIndex(), text);
-            }
-        }
-
+    @Override
+    public void collectSuccess() {
+        //TODO:更新UI, 数据库
+        contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+        moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        contestGson.setCollection(HomeConstant.COLLECT);
     }
 
 }

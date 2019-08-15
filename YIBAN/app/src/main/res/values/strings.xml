@@ -3,6 +3,15 @@
     <!-- 行间距倍数(中文) -->
     <string name="line_spacing_multiplier">1.2</string>
 
+    <!-- 昵称最大长度 -->
+    <string name="nickname_max_length">10</string>
+
+    <!-- 队伍名称最大长度 -->
+    <string name="team_name_max_length">10</string>
+
+    <!-- 回复最大长度 -->
+    <string name="comment_max_length">300</string>
+
     <string name="left_parentheses">(</string>
     <string name="right_parentheses">)</string>
 
@@ -27,12 +36,6 @@
     <string name="mine_collect">我的收藏</string>
     <string name="mine_following">我关注的人</string>
 
-    <!-- 搜索框 -->
-    <string name="SearchHint">搜索活动、竞赛</string>
-    <string name="SearchCancel">取消</string>
-    <string name="UsedSearch">搜索历史</string>
-    <string name="SearchClear">清空</string>
-
     <!-- more menu -->
     <string name="more_collect">收藏</string>
     <string name="more_copy">复制链接</string>
@@ -54,6 +57,8 @@
     <string name="my_comment_reply">回复</string>
     <string name="my_no_more_comment">暂无更多评论</string>
     <string name="my_comment_reply_num">评论</string>
+    <string name="blog_follow_author_button_text">关注</string>
+    <string name="blog_unfollow_author_button_text">取消关注</string>
 
     <!-- 转发 -->
     <string name="forward_pop_window">取消</string>
@@ -63,34 +68,32 @@
     <string name="forward_qq_space">QQ空间</string>
     <string name="forward_yiban">易班</string>
 
-    <!-- comment pop window -->
+    <!-- commentInterface pop window -->
     <string name="comment_hint">说点什么</string>
     <string name="comment_publish">发表</string>
 
-    <!-- for test -->
-    <string name="my_content_text">
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！</string>
-    <string name="my_comment">
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！
-        这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！这个竞赛真的一点都不好玩！</string>
+    <!-- view reply -->
+    <string name="view_reply_all_comments">全部回复</string>
+    <string name="view_reply_title">查看回复</string>
+
+    <!-- view reply -->
+    <string name="createTeamTitle">创建队伍</string>
+    <string name="createTeamName">队伍名称</string>
+    <string name="createTeamNameHint">请输入队伍名称</string>
+    <string name="createTeamNumber">队伍人数</string>
+    <string name="createTeamNumberHint">请输入队伍人数</string>
+    <string name="createTeamCommentTitle">留言</string>
+    <string name="createTeamButtonText">立即创建</string>
+
+    <!-- edit nickname -->
+    <string name="editNicknameTitle">设置昵称</string>
+    <string name="editNicknameHint">取个让别人更容易记住你的昵称吧</string>
+    <string name="editNicknameConfirmButtonText">保存</string>
+    <string name="editNicknameEditTextHint">请输入昵称</string>
+
+    <!-- choose sex pop window -->
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="secret">保密</string>
 
 </resources>

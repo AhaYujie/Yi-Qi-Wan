@@ -10,12 +10,32 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.db.Activity;
+import com.dalao.yiban.gson.CommunityBlogListGson;
 import com.dalao.yiban.ui.activity.BlogActivity;
+import com.dalao.yiban.ui.activity.MainActivity;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlogItemAdapter.ViewHolder> {
+
+    private MainActivity activity;
+
+    private List<CommunityBlogListGson.DataBean> dataBeanList;
+
+    public List<CommunityBlogListGson.DataBean> getDataBeanList() {
+        return dataBeanList;
+    }
+
+    public void setDataBeanList(List<CommunityBlogListGson.DataBean> dataBeanList) {
+        this.dataBeanList = dataBeanList;
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -27,7 +47,7 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
         CircleImageView communityBlogAuthorFace;
         TextView communityBlogAuthorName;
 
-        public ViewHolder(View view) {
+        private ViewHolder(View view) {
             super(view);
             communityBlog = (RelativeLayout) view.findViewById(R.id.community_blog);
             communityBlogTitle = (TextView) view.findViewById(R.id.community_blog_title);
@@ -39,8 +59,8 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
         }
     }
 
-    public CommunityBlogItemAdapter() {
-        //TODO
+    public CommunityBlogItemAdapter(MainActivity activity) {
+        this.activity = activity;
     }
 
     @NonNull
@@ -53,20 +73,30 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        //TODO
+        final CommunityBlogListGson.DataBean dataBean = dataBeanList.get(position);
+        holder.communityBlogTitle.setText(dataBean.getTitle());
+        holder.communityBlogAuthorName.setText(dataBean.getAuthor());
+        holder.communityBlogTime.setText(dataBean.getTime());
+        holder.communityBlogPageViews.setText(String.valueOf(dataBean.getPageviews()));
+        holder.communityBlogPic.setVisibility(View.GONE);
+        Glide.with(MyApplication.getContext())
+                .load(ServerUrlConstant.SERVER_URI + dataBean.getAvatar())
+                .into(holder.communityBlogAuthorFace);
         holder.communityBlog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 启动BlogActivity
-                BlogActivity.actionStart(view.getContext(), "0");
+                BlogActivity.actionStart(view.getContext(), activity.userId,
+                        String.valueOf(dataBean.getId()), dataBean.getAvatar(),
+                        String.valueOf(dataBean.getAuthor()), dataBean.getTitle(),
+                        dataBean.getTime(), String.valueOf(dataBean.getAuthorid()));
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        //TODO
-        return 100;
+        return dataBeanList != null ? dataBeanList.size() : 0;
     }
 
 }
