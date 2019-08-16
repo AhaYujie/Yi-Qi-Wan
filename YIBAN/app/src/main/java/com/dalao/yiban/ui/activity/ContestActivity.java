@@ -112,12 +112,6 @@ public class ContestActivity extends ActConBlogBaseActivity {
         contestTitle = (TextView) findViewById(R.id.contest_title);
         contestToolbar = findViewById(R.id.contest_toolbar);
 
-        // 设置button点击事件
-        contestTeamCreate.setOnClickListener(this);
-        contestMoveToTeam.setOnClickListener(this);
-        contestTeamCollect.setOnClickListener(this);
-        contestTeamForward.setOnClickListener(this);
-
         setSupportActionBar(contestToolbar);
         if (getSupportActionBar() != null) {
             // 设置返回button
@@ -194,8 +188,10 @@ public class ContestActivity extends ActConBlogBaseActivity {
                 }
                 break;
 
+            // 收藏或取消收藏
             case R.id.contest_team_collect:
-                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST, userId, contestId);
+                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
+                        userId, contestId, contestGson.getCollection());
                 break;
 
             case R.id.forward_wechat_friend:
@@ -247,6 +243,8 @@ public class ContestActivity extends ActConBlogBaseActivity {
         getMenuInflater().inflate(R.menu.more_menu, menu);
         this.menu = menu;
         this.moreCollect = menu.findItem(R.id.more_collect);
+        // 获取数据前隐藏menu
+        menu.setGroupVisible(R.id.more_group, false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -263,7 +261,8 @@ public class ContestActivity extends ActConBlogBaseActivity {
                 break;
 
             case R.id.more_collect:
-                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST, userId, contestId);
+                HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
+                        userId, contestId, contestGson.getCollection());
                 break;
 
             case R.id.more_copy:
@@ -348,6 +347,12 @@ public class ContestActivity extends ActConBlogBaseActivity {
      */
     private void updateContestUI(@NonNull final ContestGson contestGson) {
         this.contestGson = contestGson;
+        // 设置button点击事件
+        contestTeamCreate.setOnClickListener(this);
+        contestMoveToTeam.setOnClickListener(this);
+        contestTeamCollect.setOnClickListener(this);
+        contestTeamForward.setOnClickListener(this);
+        menu.setGroupVisible(R.id.more_group, true);
         contestSource.setText(contestGson.getAuthor());
         richTextView.post(new Runnable() {
             @Override
@@ -368,15 +373,25 @@ public class ContestActivity extends ActConBlogBaseActivity {
     }
 
     /**
-     * 收藏竞赛成功, 更新UI, 数据库
+     * 收藏竞赛成功
      */
     @Override
     public void collectSuccess() {
-        //TODO:更新UI, 数据库
         contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
         moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         contestGson.setCollection(HomeConstant.COLLECT);
+    }
+
+    /**
+     * 取消收藏成功
+     */
+    @Override
+    public void unCollectSuccess() {
+        contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_black);
+        moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        contestGson.setCollection(HomeConstant.UN_COLLECT);
     }
 
 }

@@ -184,6 +184,7 @@ public class CommunityFragment extends BaseFragment {
 
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
+                .add(ServerPostDataConstant.USER_ID, activity.userId)
                 .build();
 
         HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {

@@ -1,6 +1,7 @@
 package com.dalao.yiban.util;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,10 @@ import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.db.Follow;
 import com.dalao.yiban.gson.CollectGson;
+import com.dalao.yiban.gson.CommentGson;
+import com.dalao.yiban.gson.FollowGson;
 import com.dalao.yiban.my_interface.CommentInterface;
 import com.dalao.yiban.my_interface.FollowInterface;
 import com.dalao.yiban.ui.activity.ActConBlogBaseActivity;
@@ -72,28 +76,50 @@ public class HttpUtil {
     }
 
     /**
-     * 收藏
+     * 收藏或取消收藏
      * @param activity : 调用这个函数的活动
      * @param categorySelected: SELECT_CONTEST or SELECT_ACTIVITY or SELECT_BLOG
      * @param userId: 用户id
      * @param contentId: 文章id
+     * @param isCollect : COLLECT or UN_COLLECT
      */
-    public static void collectContent(final ActConBlogBaseActivity activity,
-                                      final int categorySelected, String userId, String contentId) {
+    public static void collectContent(final ActConBlogBaseActivity activity, final int categorySelected,
+                                      String userId, String contentId, int isCollect) {
         String category;
         String url;
         switch (categorySelected) {
+            // 竞赛
             case HomeConstant.SELECT_CONTEST:
                 category = ServerPostDataConstant.CONTEST_ID;
-                url = ServerUrlConstant.CONTEST_COLLECT_URI;
+                if (isCollect == HomeConstant.UN_COLLECT) {
+                    // 收藏
+                    url = ServerUrlConstant.CONTEST_COLLECT_URI;
+                } else {
+                    // 取消收藏
+                    url = ServerUrlConstant.CONTEST_UN_COLLECT_URI;
+                }
                 break;
+            // 活动
             case HomeConstant.SELECT_ACTIVITY:
                 category = ServerPostDataConstant.ACTIVITY_ID;
-                url = ServerUrlConstant.ACTIVITY_COLLECT_URI;
+                if (isCollect == HomeConstant.UN_COLLECT) {
+                    // 收藏
+                    url = ServerUrlConstant.ACTIVITY_COLLECT_URI;
+                } else {
+                    // 取消收藏
+                    url = ServerUrlConstant.ACTIVITY_UN_COLLECT_URI;
+                }
                 break;
+            // 博客
             case HomeConstant.SELECT_BLOG:
                 category = ServerPostDataConstant.BLOG_ID;
-                url = ServerUrlConstant.BLOG_COLLECT_URI;
+                if (isCollect == HomeConstant.UN_COLLECT) {
+                    // 收藏
+                    url = ServerUrlConstant.BLOG_COLLECT_URI;
+                } else {
+                    // 取消收藏
+                    url = ServerUrlConstant.BLOG_UN_COLLECT_URI;
+                }
                 break;
             default:
                 Toast.makeText(MyApplication.getContext(), HintConstant.COLLECT_ERROR,
@@ -122,40 +148,40 @@ public class HttpUtil {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                activity.getCallList().add(call);
-                if (response.body() != null) {
+                try {
+                    activity.getCallList().add(call);
                     String responseText = response.body().string();
                     final CollectGson collectGson = JsonUtil.handleContestCollectResponse(responseText);
-                    if (collectGson != null) {
-                        if (collectGson.getMsg().equals(HomeConstant.CONTEST_COLLECT_SUCCESS_RESPONSE)) {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    activity.collectSuccess();
-                                }
-                            });
-                        }
-                        else if (collectGson.getMsg().equals(HomeConstant.CONTEST_COLLECT_ERROR_RESPONSE)) {
-                            Toast.makeText(MyApplication.getContext(), HintConstant.COLLECT_ERROR,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    else {
+                    if (collectGson.getMsg().equals(HomeConstant.CONTEST_COLLECT_SUCCESS_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.COLLECT_ERROR, Toast.LENGTH_SHORT).show();
+                                if (isCollect == HomeConstant.UN_COLLECT) {
+                                    // 收藏
+                                    activity.collectSuccess();
+                                } else {
+                                    // 取消收藏
+                                    activity.unCollectSuccess();
+                                }
+                            }
+                        });
+                    } else if (collectGson.getMsg().equals(HomeConstant.CONTEST_COLLECT_ERROR_RESPONSE)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 }
-                else {
+                catch (NullPointerException e) {
+                    e.printStackTrace();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MyApplication.getContext(),
-                                    HintConstant.COLLECT_ERROR, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -223,10 +249,11 @@ public class HttpUtil {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                activity.getCallList().add(call);
-                if (response.body() != null) {
+                try {
+                    activity.getCallList().add(call);
                     String responseText = response.body().string();
-                    if (responseText.equals(CommunityConstant.BLOG_FOLLOW_SUCCESS_RESPONSE)) {
+                    FollowGson followGson = JsonUtil.handleFollowResponse(responseText);
+                    if (followGson.getMsg().equals(CommunityConstant.BLOG_FOLLOW_SUCCESS_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -243,7 +270,7 @@ public class HttpUtil {
                             }
                         });
                     }
-                    else if (responseText.equals(CommunityConstant.BLOG_FOLLOW_ERROR_RESPONSE)) {
+                    else if (followGson.getMsg().equals(CommunityConstant.BLOG_FOLLOW_ERROR_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -253,7 +280,8 @@ public class HttpUtil {
                         });
                     }
                 }
-                else {
+                catch (NullPointerException e) {
+                    e.printStackTrace();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -279,24 +307,15 @@ public class HttpUtil {
     public static void comment(final BaseActivity activity, final CommentInterface commentInterface,
                                String contentId, String userId, String toCommentId, String content,
                                int category) {
-        String url;
         String categoryIdKey;
-        String commentContentKey;
-        String toCommentIdKey;
         switch (category) {
             // 活动
             case HomeConstant.SELECT_ACTIVITY:
-                url = ServerUrlConstant.ACTIVITY_COMMENT_URI;
-                categoryIdKey = ServerPostDataConstant.ACTIVITY_ID;
-                commentContentKey = ServerPostDataConstant.ACTIVITY_COMMENT_CONTENT;
-                toCommentIdKey = ServerPostDataConstant.ACTIVITY_COMMENT_TO_COMMENT_ID;
+                categoryIdKey = ServerPostDataConstant.COMMENT_ACTIVITY_ID;
                 break;
             // 博客
             case HomeConstant.SELECT_BLOG:
-                url = ServerUrlConstant.BLOG_COMMENT_URI;
-                categoryIdKey = ServerPostDataConstant.BLOG_ID;
-                commentContentKey = ServerPostDataConstant.BLOG_COMMENT_CONTENT;
-                toCommentIdKey = ServerPostDataConstant.BLOG_COMMENT_TO_COMMENT_ID;
+                categoryIdKey = ServerPostDataConstant.COMMENT_BLOG_ID;
                 break;
             default:
                 Toast.makeText(MyApplication.getContext(), HintConstant.COMMENT_ERROR,
@@ -304,14 +323,24 @@ public class HttpUtil {
                 return;
         }
 
-        FormBody formBody = new FormBody.Builder()
-                .add(categoryIdKey, contentId)
-                .add(ServerPostDataConstant.USER_ID, userId)
-                .add(commentContentKey, content)
-                .add(toCommentIdKey, toCommentId)
-                .build();
+        FormBody formBody;
+        if (toCommentId.equals(CommentConstant.COMMENT_TO_NO_ONE)) {
+            formBody = new FormBody.Builder()
+                    .add(categoryIdKey, contentId)
+                    .add(ServerPostDataConstant.USER_ID, userId)
+                    .add(ServerPostDataConstant.COMMENT_CONTENT, content)
+                    .build();
+        }
+        else {
+            formBody = new FormBody.Builder()
+                    .add(categoryIdKey, contentId)
+                    .add(ServerPostDataConstant.USER_ID, userId)
+                    .add(ServerPostDataConstant.COMMENT_CONTENT, content)
+                    .add(ServerPostDataConstant.COMMENT_TO_COMMENT_ID, toCommentId)
+                    .build();
+        }
 
-        HttpUtil.sendHttpPost(url, formBody, new Callback() {
+        HttpUtil.sendHttpPost(ServerUrlConstant.COMMENT_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.getCallList().add(call);
@@ -327,10 +356,11 @@ public class HttpUtil {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                activity.getCallList().add(call);
-                if (response.body() != null) {
+                try {
+                    activity.getCallList().add(call);
                     String responseText = response.body().string();
-                    if (responseText.equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
+                    CommentGson commentGson = JsonUtil.handleCommentResponse(responseText);
+                    if (commentGson.getMsg().equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -338,7 +368,7 @@ public class HttpUtil {
                             }
                         });
                     }
-                    else if (responseText.equals(CommentConstant.COMMENT_ERROR_RESPONSE)) {
+                    else if (commentGson.getMsg().equals(CommentConstant.COMMENT_ERROR_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -348,7 +378,8 @@ public class HttpUtil {
                         });
                     }
                 }
-                else {
+                catch (NullPointerException e) {
+                    e.printStackTrace();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

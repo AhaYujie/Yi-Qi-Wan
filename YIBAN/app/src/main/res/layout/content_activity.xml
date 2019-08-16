@@ -30,9 +30,7 @@
                 android:id="@+id/activity_content_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
                 android:paddingStart="15dp"
-                android:paddingRight="0dp"
                 android:paddingEnd="0dp"
                 android:textColor="@color/myHint"
                 android:textSize="@dimen/my_hint_text_size"/>
@@ -56,9 +54,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="15dp"
                     android:paddingStart="15dp"
-                    android:paddingRight="0dp"
                     android:paddingEnd="0dp"
                     android:paddingBottom="5dp"
                     android:textColor="@color/myHint"

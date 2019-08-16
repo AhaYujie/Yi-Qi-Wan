@@ -112,7 +112,6 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         category = intent.getIntExtra(CommentConstant.CATEGORY, CommentConstant.SELECT_CATEGORY_NONE);
         masterCommentBean = (CommentBean) intent.getSerializableExtra(CommentConstant.COMMENT_BEAN);
 
-
         // 设置被回复者的控件
         commentPersonName.setText(masterCommentBean.getAuthor());
         commentText.setText(masterCommentBean.getContent());

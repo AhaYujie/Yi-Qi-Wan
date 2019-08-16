@@ -6,7 +6,9 @@ public class HintConstant {
 
     public static final String COLLECT_SUCCESS = "收藏成功";
 
-    public static final String COLLECT_ERROR = "收藏失败, 网络出问题了";
+    public static final String UN_COLLECT_SUCCESS = "取消收藏成功";
+
+    public static final String COLLECT_ERROR = "操作失败, 网络出问题了";
 
     public static final String BLOG_AUTHOR_FOLLOW_SUCCESS = "关注成功";
 

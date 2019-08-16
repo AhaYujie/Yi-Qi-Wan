@@ -1,9 +1,9 @@
 package com.dalao.yiban.gson;
 
 /**
- * 收藏和取消收藏的json
+ * 关注博客作者返回的json
  */
-public class CollectGson {
+public class FollowGson {
 
     /**
      * msg : success

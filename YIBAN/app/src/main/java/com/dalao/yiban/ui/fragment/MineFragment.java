@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,14 +113,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineCollectLayout = (RelativeLayout) view.findViewById(R.id.mine_collect_layout);
         mineFollowingLayout = (RelativeLayout) view.findViewById(R.id.mine_following_layout);
         mineSchoolText = (TextView) view.findViewById(R.id.mine_school_text);
-
-        // 设置点击事件
-        mineInfoFaceLayout.setOnClickListener(this);
-        mineNicknameLayout.setOnClickListener(this);
-        mineSexLayout.setOnClickListener(this);
-        mineBlogLayout.setOnClickListener(this);
-        mineCollectLayout.setOnClickListener(this);
-        mineFollowingLayout.setOnClickListener(this);
 
         // 如果fragment可见，请求服务器获取数据
         onVisible();
@@ -242,6 +235,13 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * @param userInfoGson:解析后的用户信息
      */
     private void updateUserInfoUI(UserInfoGson userInfoGson)  {
+        // 设置点击事件
+        mineInfoFaceLayout.setOnClickListener(this);
+        mineNicknameLayout.setOnClickListener(this);
+        mineSexLayout.setOnClickListener(this);
+        mineBlogLayout.setOnClickListener(this);
+        mineCollectLayout.setOnClickListener(this);
+        mineFollowingLayout.setOnClickListener(this);
         mineUsernameText.setText(userInfoGson.getUser().getUsername());
         mineNicknameText.setText(userInfoGson.getUser().getNickname());
         mineSchoolText.setText(userInfoGson.getUser().getSchool());
@@ -265,6 +265,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      */
     public void setNickName(String nickName) {
         // TODO:请求服务器和保存到数据库
+
         mineNicknameText.setText(nickName);
     }
 
