@@ -28,4 +28,8 @@ public class ServerPostDataConstant {
 
     public static final String USER_INFO_USER_ID = "id";
 
+    public static final String EDIT_USER_SEX = "sex";
+
+    public static final String EDIT_USER_NICKNAME = "username";
+
 }

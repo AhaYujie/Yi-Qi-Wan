@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.UserInfoGson;
@@ -260,36 +261,49 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     }
 
     /**
-     * 设置nickname
+     * 请求服务器修改nickname
      * @param nickName:
      */
     public void setNickName(String nickName) {
-        // TODO:请求服务器和保存到数据库
+        HttpUtil.editUserInfo(activity, activity.userId, sexSelected, nickName, MineConstant.EDIT_NICKNAME);
+    }
 
+    /**
+     * 请求服务器修改sex
+     * @param sexSelected:MALE, FEMALE, SECRET
+     */
+    public void setSex(int sexSelected) {
+        chooseSexPopWindow.dismiss();
+        this.sexSelected = sexSelected;
+        HttpUtil.editUserInfo(activity, activity.userId, sexSelected, null, MineConstant.EDIT_SEX);
+    }
+
+    /**
+     * 若服务器修改昵称成功，更新昵称UI
+     */
+    public void updateNicknameUI(String nickName) {
+        Toast.makeText(activity, HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
         mineNicknameText.setText(nickName);
     }
 
     /**
-     * 设置sex
-     * @param sex:MALE_TEXT, FEMALE_TEXT, SECRET_TEXT
+     * 若服务器修改性别成功，更新性别UI
      */
-    public void setSex(String sex) {
-        // TODO:请求服务器，数据库保存
-        switch (sex) {
-            case MALE_TEXT:
-                sexSelected = MALE;
+    public void updateSexUI() {
+        Toast.makeText(activity, HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
+        switch (sexSelected) {
+            case SECRET:
+                mineSexText.setText(SECRET_TEXT);
                 break;
-            case FEMALE_TEXT:
-                sexSelected = FEMALE;
+            case MALE:
+                mineSexText.setText(MALE_TEXT);
                 break;
-            case SECRET_TEXT:
-                sexSelected = SECRET;
+            case FEMALE:
+                mineSexText.setText(FEMALE_TEXT);
                 break;
             default:
                 break;
         }
-        chooseSexPopWindow.dismiss();
-        mineSexText.setText(sex);
     }
 
 }

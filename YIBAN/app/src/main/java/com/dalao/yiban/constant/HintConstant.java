@@ -22,4 +22,7 @@ public class HintConstant {
 
     public static final String COMMENT_NOT_EMPTY = "评论不能为空";
 
+    public static final String EDIT_USER_INFO_SUCCESS = "修改成功";
+
+    public static final String EDIT_USER_INFO_ERROR = "修改失败, 网络出问题了";
 }

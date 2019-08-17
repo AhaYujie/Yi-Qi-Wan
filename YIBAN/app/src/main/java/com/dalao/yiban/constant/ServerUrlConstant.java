@@ -38,4 +38,6 @@ public class ServerUrlConstant {
 
     public static final String USER_INFO_URI = SERVER_URI + "/user/data";
 
+    public static final String EDIT_USER_INFO_URI = SERVER_URI + "/user/edit";
+
 }

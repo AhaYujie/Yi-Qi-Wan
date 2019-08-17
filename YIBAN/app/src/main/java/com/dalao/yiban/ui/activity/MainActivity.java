@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
 
     public CustomProgressDialog customProgressBar;
 
-    private MineFragment mineFragment;
+    public MineFragment mineFragment;
 
     private HomeFragment homeFragment;
 
@@ -116,17 +116,17 @@ public class MainActivity extends BaseActivity {
         switch (v.getId()) {
             // 选择性别男
             case R.id.choose_male_layout:
-                mineFragment.setSex(MALE_TEXT);
+                mineFragment.setSex(MALE);
                 break;
 
             // 选择性别女
             case R.id.choose_female_layout:
-                mineFragment.setSex(FEMALE_TEXT);
+                mineFragment.setSex(FEMALE);
                 break;
 
-            // 选择性别男
+            // 选择性别保密
             case R.id.choose_secret_layout:
-                mineFragment.setSex(SECRET_TEXT);
+                mineFragment.setSex(SECRET);
                 break;
         }
     }

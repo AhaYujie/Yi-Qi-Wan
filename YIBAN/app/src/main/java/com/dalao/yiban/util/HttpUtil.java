@@ -11,17 +11,20 @@ import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.CommunityConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.Follow;
 import com.dalao.yiban.gson.CollectGson;
 import com.dalao.yiban.gson.CommentGson;
+import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.FollowGson;
 import com.dalao.yiban.my_interface.CommentInterface;
 import com.dalao.yiban.my_interface.FollowInterface;
 import com.dalao.yiban.ui.activity.ActConBlogBaseActivity;
 import com.dalao.yiban.ui.activity.BaseActivity;
 import com.dalao.yiban.ui.activity.BlogActivity;
+import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.activity.ViewFollowingActivity;
 
 import java.io.IOException;
@@ -385,6 +388,93 @@ public class HttpUtil {
                         public void run() {
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.COMMENT_ERROR, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * 修改用户信息：昵称或性别
+     * @param activity：调用此函数的活动
+     * @param userId：用户id
+     * @param sex：SECRET or MALE or FEMALE
+     * @param nickname：昵称
+     * @param type：EDIT_NICKNAME or EDIT_SEX
+     */
+    public static void editUserInfo(MainActivity activity, String userId, int sex, String nickname,
+                                    int type) {
+        FormBody formBody;
+        if (type == MineConstant.EDIT_NICKNAME) {
+            formBody = new FormBody.Builder()
+                    .add(ServerPostDataConstant.USER_INFO_USER_ID, userId)
+                    .add(ServerPostDataConstant.EDIT_USER_NICKNAME, nickname)
+                    .build();
+        }
+        else if (type == MineConstant.EDIT_SEX) {
+            formBody = new FormBody.Builder()
+                    .add(ServerPostDataConstant.USER_INFO_USER_ID, userId)
+                    .add(ServerPostDataConstant.EDIT_USER_SEX, String.valueOf(sex))
+                    .build();
+        }
+        else {
+            Toast.makeText(MyApplication.getContext(),
+                    HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+            return ;
+        }
+
+        HttpUtil.sendHttpPost(ServerUrlConstant.EDIT_USER_INFO_URI, formBody, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                activity.getCallList().add(call);
+                e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(),
+                                HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call,@NonNull  Response response) throws IOException {
+                try {
+                    activity.getCallList().add(call);
+                    String responseText = response.body().string();
+                    Log.d("yujie", responseText);
+                    EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
+                    if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (type == MineConstant.EDIT_NICKNAME) {
+                                    activity.mineFragment.updateNicknameUI(nickname);
+                                }
+                                else {
+                                    activity.mineFragment.updateSexUI();
+                                }
+                            }
+                        });
+                    }
+                    else if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_ERROR)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                catch (NullPointerException e) {
+                    e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MyApplication.getContext(),
+                                    HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
