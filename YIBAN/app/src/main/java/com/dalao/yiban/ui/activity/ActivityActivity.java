@@ -173,7 +173,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                 else {
                 // 评论为空，不能发表
                 Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
-            }
+                }
                 break;
 
             // 在活动内容滑动到评论区，在评论区滑动到活动内容

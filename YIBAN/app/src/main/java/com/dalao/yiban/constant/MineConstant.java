@@ -4,6 +4,8 @@ public class MineConstant {
 
     public static final int EDIT_USER_NICKNAME_REQUEST_CODE = 1;
 
+    public static final int EDIT_USER_FACE_REQUEST_CODE = 2;
+
     public static final int SECRET = 0;
 
     public static final int MALE = 1;

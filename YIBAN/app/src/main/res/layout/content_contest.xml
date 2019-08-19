@@ -30,9 +30,7 @@
                 android:id="@+id/contest_content_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
                 android:paddingStart="15dp"
-                android:paddingRight="0dp"
                 android:paddingEnd="0dp"
                 android:textColor="@color/myHint"
                 android:textSize="@dimen/my_hint_text_size"/>
@@ -55,9 +53,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="15dp"
                     android:paddingStart="15dp"
-                    android:paddingRight="0dp"
                     android:paddingEnd="0dp"
                     android:paddingBottom="5dp"
                     android:textColor="@color/myHint"
@@ -74,22 +70,22 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/boundaryLine"/>
 
             <TextView
-                android:id="@+id/contest_team_title"
+                android:id="@+id/contest_comment_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
                 android:textColor="@color/myTitleColor"
                 android:textSize="@dimen/my_title_size"
-                android:text="@string/contest_team_title"/>
+                android:text="@string/my_comment_title"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/contest_team_recyclerview"
+                android:id="@+id/contest_comment_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -105,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="20dp"
-                    android:text="@string/contest_no_more_team"
+                    android:text="@string/my_no_more_comment"
                     android:textSize="@dimen/my_hint_text_size"
                     android:textColor="@color/myHint"/>
 

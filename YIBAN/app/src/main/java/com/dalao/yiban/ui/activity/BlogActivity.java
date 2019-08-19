@@ -289,7 +289,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
             // 转发button弹出PopWindow
             case R.id.more_forward:
                 CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.blog_comment_forward),
+                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward),
                                 BlogActivity.this);
                 break;
             default:

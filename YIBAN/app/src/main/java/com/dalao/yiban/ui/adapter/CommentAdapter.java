@@ -76,7 +76,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
      * @param commentInterface :
      * @param userId : 用户id
      * @param contentId : 活动或博客的id
-     * @param category : SELECT_ACTIVITY or SELECT_BLOG
+     * @param category : SELECT_ACTIVITY or SELECT_BLOG or SELECT_CONTEST
      */
     public CommentAdapter(Context context, CommentInterface commentInterface, String userId,
                           String contentId, int category) {

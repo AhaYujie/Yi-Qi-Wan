@@ -8,6 +8,7 @@ import com.dalao.yiban.gson.CommentGson;
 import com.dalao.yiban.gson.CommunityBlogListGson;
 import com.dalao.yiban.gson.CollectGson;
 import com.dalao.yiban.gson.ContestGson;
+import com.dalao.yiban.gson.CreateBlogGson;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.FollowGson;
 import com.dalao.yiban.gson.HomeListGson;
@@ -180,6 +181,21 @@ public class JsonUtil {
     public static EditUserInfoGson handleEditUserInfoResponse(String responseText) {
         try {
             return new Gson().fromJson(responseText, EditUserInfoGson.class);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *  解析关注返回的json
+     * @param responseText：返回的json数据body
+     * @return : CreateBlogGson
+     */
+    public static CreateBlogGson handleCreateBlogResponse(String responseText) {
+        try {
+            return new Gson().fromJson(responseText, CreateBlogGson.class);
         }
         catch (Exception e) {
             e.printStackTrace();

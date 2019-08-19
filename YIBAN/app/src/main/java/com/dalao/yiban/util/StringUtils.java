@@ -7,6 +7,7 @@ import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 
 import com.dalao.yiban.constant.HomeConstant;
+import com.sendtion.xrichtext.RichTextEditor;
 import com.sendtion.xrichtext.RichTextView;
 
 import java.util.ArrayList;
@@ -19,6 +20,23 @@ import java.util.regex.Pattern;
  */
 public class StringUtils {
 
+    /**
+     * 获取RichText编辑框里的内容
+     * @param richTextEditor：RichText编辑框view
+     * @return ：string类型内容
+     */
+    public static String getEditData(RichTextEditor richTextEditor) {
+        List<RichTextEditor.EditData> editList = richTextEditor.buildEditData();
+        StringBuilder content = new StringBuilder();
+        for (RichTextEditor.EditData itemData : editList) {
+            if (itemData.inputStr != null) {
+                content.append(itemData.inputStr);
+            } else if (itemData.imagePath != null) {
+                content.append("<img src=\"").append(itemData.imagePath).append("\"/>");
+            }
+        }
+        return content.toString();
+    }
 
     /**
      * 解析并刷新内容(可以含有图片)

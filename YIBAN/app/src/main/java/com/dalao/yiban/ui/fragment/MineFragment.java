@@ -1,8 +1,12 @@
 package com.dalao.yiban.ui.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,22 +21,30 @@ import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.UserInfoGson;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
 import com.dalao.yiban.util.JsonUtil;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 
+import java.io.File;
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.dalao.yiban.constant.MineConstant.FEMALE;
@@ -141,7 +153,17 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 修改头像
             case R.id.mine_info_face_layout:
-                //TODO:修改头像，请求服务器
+                // 未授权
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.
+                        WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(activity, new String[]{
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            HomeConstant.WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+                }
+                // 授权则选择图片
+                else {
+                    selectImage();
+                }
                 break;
 
             // 查看我的博客
@@ -170,6 +192,72 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         // 请求服务器获取数据
         if (isVisible && view != null)
             requestDataFromServer();
+    }
+
+    /**
+     * 传输头像给服务器
+     */
+    public void postFileToServer(File file) {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM)
+                .addFormDataPart(ServerPostDataConstant.EDIT_USER_FACE_IMAGE, file.getName(),
+                        RequestBody.create(null, file))
+                .addFormDataPart(ServerPostDataConstant.USER_INFO_USER_ID, activity.userId)
+                .addFormDataPart(ServerPostDataConstant.EDIT_USER_NICKNAME, "aha"); //TODO
+
+        HttpUtil.sendHttpPostFile(ServerUrlConstant.EDIT_USER_INFO_URI, builder, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                MineFragment.this.getCallList().add(call);
+                e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(),
+                                HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                MineFragment.this.getCallList().add(call);
+                try {
+                    activity.getCallList().add(call);
+                    String responseText = response.body().string();
+                    EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
+                    if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestDataFromServer();
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    else if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_ERROR)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                catch (NullPointerException e) {
+                    e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MyApplication.getContext(),
+                                    HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /**
@@ -304,6 +392,18 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             default:
                 break;
         }
+    }
+
+    /**
+     *  从手机本地选择图片
+     */
+    public void selectImage() {
+        Matisse.from(activity)
+                .choose(MimeType.ofImage())
+                .imageEngine(new GlideEngine())
+                .theme(R.style.Matisse_Zhihu)
+                .forResult(MineConstant.EDIT_USER_FACE_REQUEST_CODE);
+
     }
 
 }

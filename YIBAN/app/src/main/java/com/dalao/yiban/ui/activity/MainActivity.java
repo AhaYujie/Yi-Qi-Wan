@@ -1,9 +1,12 @@
 package com.dalao.yiban.ui.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
@@ -13,7 +16,9 @@ import com.dalao.yiban.ui.fragment.CommunityFragment;
 import com.dalao.yiban.ui.fragment.HomeFragment;
 import com.dalao.yiban.ui.fragment.MessageFragment;
 import com.dalao.yiban.ui.fragment.MineFragment;
+import com.dalao.yiban.util.SDCardUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.zhihu.matisse.Matisse;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,10 +153,35 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            // 修改昵称
             case MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
-                // 保存修改昵称
                 if (resultCode == RESULT_OK) {
                     mineFragment.setNickName(data.getStringExtra(MineConstant.USER_NICKNAME));
+                }
+                break;
+
+            // 修改头像
+            case MineConstant.EDIT_USER_FACE_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    List<Uri> mImages = Matisse.obtainResult(data);
+                    String imagePath = SDCardUtil.getFilePathFromUri(this, mImages.get(0));
+                    File file = new File(imagePath);
+                    mineFragment.postFileToServer(file);
+                }
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case HomeConstant.WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                }
+                else {
+                    Toast.makeText(this, HintConstant.PERMISSION_REFUSE, Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

@@ -40,4 +40,6 @@ public class ServerUrlConstant {
 
     public static final String EDIT_USER_INFO_URI = SERVER_URI + "/user/edit";
 
+    public static final String CREATE_BLOG_URI = SERVER_URI + "/blog/edit";
+
 }

@@ -25,4 +25,15 @@ public class HintConstant {
     public static final String EDIT_USER_INFO_SUCCESS = "修改成功";
 
     public static final String EDIT_USER_INFO_ERROR = "修改失败, 网络出问题了";
+
+    public static final String CREATE_BLOG_ERROR = "发表博客失败, 网络出问题了";
+
+    public static final String CREATE_BLOG_CONTENT_LESS = "内容字数小于10";
+
+    public static final String CREATE_BLOG_CONTENT_MORE = "内容字数超过1000";
+
+    public static final String CREATE_BLOG_TITLE_EMPTY = "标题不能为空";
+
+    public static final String PERMISSION_REFUSE = "拒绝权限将无法使用此功能";
+
 }

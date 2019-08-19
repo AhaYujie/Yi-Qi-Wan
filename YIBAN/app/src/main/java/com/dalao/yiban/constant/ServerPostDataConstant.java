@@ -26,10 +26,18 @@ public class ServerPostDataConstant {
 
     public static final String COMMENT_BLOG_ID = "blogid";
 
+    public static final String COMMENT_CONTEST_ID = "competeid";
+
     public static final String USER_INFO_USER_ID = "id";
 
     public static final String EDIT_USER_SEX = "sex";
 
-    public static final String EDIT_USER_NICKNAME = "username";
+    public static final String EDIT_USER_NICKNAME = "nickname";
+
+    public static final String EDIT_USER_FACE_IMAGE = "pic";
+
+    public static final String CREATE_BLOG_TITLE = "title";
+
+    public static final String CREATE_BLOG_CONTENT = "content";
 
 }

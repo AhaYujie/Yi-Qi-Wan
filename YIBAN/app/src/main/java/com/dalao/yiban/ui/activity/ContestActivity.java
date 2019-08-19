@@ -14,16 +14,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.ContestGson;
-import com.dalao.yiban.ui.adapter.ContestTeamAdapter;
+import com.dalao.yiban.my_interface.CommentInterface;
+import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
 import com.dalao.yiban.util.JsonUtil;
@@ -37,7 +41,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ContestActivity extends ActConBlogBaseActivity {
+public class ContestActivity extends ActConBlogBaseActivity implements CommentInterface {
 
     private MenuItem moreCollect;
 
@@ -47,33 +51,35 @@ public class ContestActivity extends ActConBlogBaseActivity {
 
     private RecyclerView contestTeamRecyclerView;
 
-    private ContestTeamAdapter contestTeamAdapter;
+    private CommentAdapter commentAdapter;
 
     private TextView contestTitle;
-
-    private TextView contestContentTime;
 
     private RichTextView richTextView;
 
     private TextView contestSource;
 
-    private TextView contestTeamTitle;
+    private TextView contestCommentTitle;
 
-    private Button contestTeamCreate;
+    private Button contestCommentButton;
 
-    private Button contestMoveToTeam;
+    private Button contestMoveToComment;
 
-    private Button contestTeamCollect;
+    private Button bottomNavCollect;
 
-    private Button contestTeamForward;
-
-    private Toolbar contestToolbar;
+    private Button bottomNavForward;
 
     private String contestId;
 
     private String userId;
 
     private Menu menu;
+
+    private String commentToCommentId;
+
+    private EditText commentEditText;
+
+    private PopupWindow commentPopupWindow;
 
     /**
      *
@@ -99,18 +105,18 @@ public class ContestActivity extends ActConBlogBaseActivity {
         setContentView(R.layout.activity_contest);
 
         // 初始化控件
-        contestTeamRecyclerView = (RecyclerView) findViewById(R.id.contest_team_recyclerview);
+        contestTeamRecyclerView = (RecyclerView) findViewById(R.id.contest_comment_recyclerview);
         contestScrollView = (NestedScrollView) findViewById(R.id.contest_scroll_view);
-        contestContentTime = (TextView) findViewById(R.id.contest_content_time);
-        contestTeamCreate = (Button) findViewById(R.id.contest_team_create);
-        contestMoveToTeam = (Button) findViewById(R.id.contest_move_to_team);
-        contestTeamCollect = (Button) findViewById(R.id.contest_team_collect);
-        contestTeamForward = (Button) findViewById(R.id.contest_team_forward);
-        contestTeamTitle = (TextView) findViewById(R.id.contest_team_title);
+        contestCommentButton = (Button) findViewById(R.id.bottom_nav_comment);
+        contestMoveToComment = (Button) findViewById(R.id.move_to_comment);
+        bottomNavCollect = (Button) findViewById(R.id.bottom_nav_collect);
+        bottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
+        contestCommentTitle = (TextView) findViewById(R.id.contest_comment_title);
         richTextView = (RichTextView) findViewById(R.id.contest_content);
         contestSource = (TextView) findViewById(R.id.contest_source);
         contestTitle = (TextView) findViewById(R.id.contest_title);
-        contestToolbar = findViewById(R.id.contest_toolbar);
+        TextView contestContentTime = (TextView) findViewById(R.id.contest_content_time);
+        Toolbar contestToolbar = findViewById(R.id.contest_toolbar);
 
         setSupportActionBar(contestToolbar);
         if (getSupportActionBar() != null) {
@@ -120,12 +126,6 @@ public class ContestActivity extends ActConBlogBaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // 初始化RecyclerView
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        contestTeamRecyclerView.setLayoutManager(layoutManager);
-        contestTeamAdapter = new ContestTeamAdapter(this);
-        contestTeamRecyclerView.setAdapter(contestTeamAdapter);
-
         // 从上个活动获取数据
         Intent intent = getIntent();
         userId = intent.getStringExtra(HomeConstant.USER_ID);
@@ -133,33 +133,17 @@ public class ContestActivity extends ActConBlogBaseActivity {
         contestTitle.setText(intent.getStringExtra(HomeConstant.CONTEST_TITLE));
         contestContentTime.setText(intent.getStringExtra(HomeConstant.CONTEST_CONTENT_TIME));
 
+        // 初始化RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        contestTeamRecyclerView.setLayoutManager(layoutManager);
+        commentAdapter = new CommentAdapter(this, this, userId, contestId,
+                HomeConstant.SELECT_CONTEST);
+        contestTeamRecyclerView.setAdapter(commentAdapter);
+
         // 请求服务器
         requestDataFromServer();
 
-//
-//        if (ContextCompat.checkSelfPermission(ContestActivity.this, Manifest.permission.
-//                WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(ContestActivity.this, new String[]{
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            }, 1);
-//        }
     }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                                           int[] grantResults) {
-//        switch (requestCode) {
-//            case 1:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                }
-//                else {
-//                    Toast.makeText(this, "拒接权限将无法使用此功能", Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
 
     /**
      * 点击事件
@@ -168,19 +152,32 @@ public class ContestActivity extends ActConBlogBaseActivity {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            // 创建队伍
-            case R.id.contest_team_create:
-                // TODO
-                CreateTeamActivity.actionStart(this, contestId);
+            // 编辑评论
+            case R.id.bottom_nav_comment:
+                editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
                 break;
 
-            // 在竞赛内容滑动到组队区，在组队区滑动到竞赛内容
-            case R.id.contest_move_to_team:
+            // 发布评论
+            case R.id.comment_publish_button:
+                String content = commentEditText.getText().toString();
+                if (!"".equals(content)) {
+                    commentPopupWindow.dismiss();
+                    HttpUtil.comment(this, this, contestId, userId,
+                            commentToCommentId, content, HomeConstant.SELECT_CONTEST);
+                }
+                else {
+                    // 评论为空，不能发表
+                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            // 在竞赛内容滑动到评论区，在评论区滑动到竞赛内容
+            case R.id.move_to_comment:
                 int[] position = new int[2];
-                contestTeamTitle.getLocationOnScreen(position);
-                // 滑动到组队区
+                contestCommentTitle.getLocationOnScreen(position);
+                // 滑动到评论区
                 if (position[1] > 0) {
-                    contestScrollView.smoothScrollTo(0, contestTeamTitle.getTop());
+                    contestScrollView.smoothScrollTo(0, contestCommentTitle.getTop());
                 }
                 // 滑动到竞赛内容
                 else  {
@@ -189,7 +186,7 @@ public class ContestActivity extends ActConBlogBaseActivity {
                 break;
 
             // 收藏或取消收藏
-            case R.id.contest_team_collect:
+            case R.id.bottom_nav_collect:
                 HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
                         userId, contestId, contestGson.getCollection());
                 break;
@@ -225,7 +222,7 @@ public class ContestActivity extends ActConBlogBaseActivity {
                 break;
 
             // 转发button弹出PopWindow
-            case R.id.contest_team_forward:
+            case R.id.bottom_nav_forward:
                 CustomPopWindow.forwardPopWindow(v, this);
                 break;
             default:
@@ -274,7 +271,7 @@ public class ContestActivity extends ActConBlogBaseActivity {
             // 转发button弹出PopWindow
             case R.id.more_forward:
                 CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.contest_team_forward), this);
+                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward), this);
                 break;
             default:
                 break;
@@ -348,10 +345,10 @@ public class ContestActivity extends ActConBlogBaseActivity {
     private void updateContestUI(@NonNull final ContestGson contestGson) {
         this.contestGson = contestGson;
         // 设置button点击事件
-        contestTeamCreate.setOnClickListener(this);
-        contestMoveToTeam.setOnClickListener(this);
-        contestTeamCollect.setOnClickListener(this);
-        contestTeamForward.setOnClickListener(this);
+        contestCommentButton.setOnClickListener(this);
+        contestMoveToComment.setOnClickListener(this);
+        bottomNavCollect.setOnClickListener(this);
+        bottomNavForward.setOnClickListener(this);
         menu.setGroupVisible(R.id.more_group, true);
         contestSource.setText(contestGson.getAuthor());
         richTextView.post(new Runnable() {
@@ -361,15 +358,15 @@ public class ContestActivity extends ActConBlogBaseActivity {
             }
         });
         if (contestGson.getCollection() == HomeConstant.COLLECT) {
-            contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+            bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         else if (contestGson.getCollection() == HomeConstant.UN_COLLECT) {
-            contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_black);
+            bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
             moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
-        contestTeamAdapter.setTeamBeanList(contestGson.getTeam());
-        contestTeamAdapter.notifyDataSetChanged();
+        commentAdapter.setCommentsBeanList(contestGson.getComments());
+        commentAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -377,7 +374,7 @@ public class ContestActivity extends ActConBlogBaseActivity {
      */
     @Override
     public void collectSuccess() {
-        contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_blue);
+        bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
         moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         contestGson.setCollection(HomeConstant.COLLECT);
@@ -388,10 +385,30 @@ public class ContestActivity extends ActConBlogBaseActivity {
      */
     @Override
     public void unCollectSuccess() {
-        contestTeamCollect.setBackgroundResource(R.drawable.ic_collect_black);
+        bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
         moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         contestGson.setCollection(HomeConstant.UN_COLLECT);
+    }
+
+    /**
+     * 编辑评论
+     * @param toCommentId:回复的评论的id(若无则为-1)
+     */
+    public void editCommentText(String toCommentId) {
+        this.commentToCommentId = toCommentId;
+        CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
+                CustomPopWindow.commentPopWindow(contestCommentButton, this);
+        commentEditText = popWindowViewHelper.editText;
+        commentPopupWindow = popWindowViewHelper.popupWindow;
+    }
+
+    /**
+     * 发表评论成功
+     */
+    public void publishComment() {
+        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
+        requestDataFromServer();
     }
 
 }

@@ -33,8 +33,10 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -74,6 +76,27 @@ public class HttpUtil {
         Request request = new Request.Builder()
                 .url(url)
                 .post(formBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+    /**
+     * 传输文件POST请求
+     * @param url:请求地址
+     * @param builder:RequestBody的builder
+     * @param callback:
+     */
+    public static void sendHttpPostFile(String url, MultipartBody.Builder builder,
+                                        okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10,TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
+        RequestBody requestBody = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
     }
@@ -305,7 +328,7 @@ public class HttpUtil {
      * @param userId：用户的id
      * @param toCommentId: 回复的评论的id(若无则为-1)
      * @param content：评论内容
-     * @param category：SELECT_ACTIVITY or SELECT_BLOG
+     * @param category：SELECT_ACTIVITY or SELECT_BLOG or SELECT_CONTEST
      */
     public static void comment(final BaseActivity activity, final CommentInterface commentInterface,
                                String contentId, String userId, String toCommentId, String content,
@@ -319,6 +342,10 @@ public class HttpUtil {
             // 博客
             case HomeConstant.SELECT_BLOG:
                 categoryIdKey = ServerPostDataConstant.COMMENT_BLOG_ID;
+                break;
+            // 竞赛
+            case HomeConstant.SELECT_CONTEST:
+                categoryIdKey = ServerPostDataConstant.COMMENT_CONTEST_ID;
                 break;
             default:
                 Toast.makeText(MyApplication.getContext(), HintConstant.COMMENT_ERROR,
@@ -336,7 +363,6 @@ public class HttpUtil {
         }
         else {
             formBody = new FormBody.Builder()
-                    .add(categoryIdKey, contentId)
                     .add(ServerPostDataConstant.USER_ID, userId)
                     .add(ServerPostDataConstant.COMMENT_CONTENT, content)
                     .add(ServerPostDataConstant.COMMENT_TO_COMMENT_ID, toCommentId)
@@ -443,7 +469,6 @@ public class HttpUtil {
                 try {
                     activity.getCallList().add(call);
                     String responseText = response.body().string();
-                    Log.d("yujie", responseText);
                     EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
                     if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
                         activity.runOnUiThread(new Runnable() {
