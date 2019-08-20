@@ -1,8 +1,13 @@
 package com.dalao.yiban.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.db.Contest;
 import com.dalao.yiban.db.SearchResult;
 import com.dalao.yiban.db.UsedSearch;
 import com.dalao.yiban.ui.adapter.SearchResultAdapter;
@@ -16,6 +21,7 @@ import android.widget.ImageView;
 import androidx.appcompat.widget.SearchView;
 
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +55,10 @@ public class SearchActivity extends BaseActivity {
     private List<SearchResult> temp = new ArrayList<>();
     //这是搜索结果的列表
 
-    int userid=5;//用户id，这个要靠上一个活动传递的参数来决定
+    /*Intent intent = getIntent();
+    String user_id = intent.getStringExtra(HomeConstant.USER_ID);
+    int userid=Integer.parseInt(user_id);;//用户id，这个要靠上一个活动传递的参数来决定*/
+    int userid=5;
 
     @Override
     public void onClick(View view) {
@@ -109,7 +118,14 @@ public class SearchActivity extends BaseActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(SearchActivity.this,"你想搜索的是:"+query,Toast.LENGTH_SHORT).show();
+                Toast.makeText(SearchActivity.this,"你想搜索的是:"+query+"。\n请稍等片刻(●'◡'●)",Toast.LENGTH_SHORT).show();
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                recyclerView_UsedSearch.setVisibility(View.GONE);
+                function_bar.setVisibility(View.GONE);
+                view_blank1.setVisibility(View.GONE);
+                view_blank2.setVisibility(View.GONE);
+
                 //以下是搜索接口
                 SearchResultList.clear();//先清空搜索结果
 
@@ -130,9 +146,11 @@ public class SearchActivity extends BaseActivity {
                             RequestBody formBody_competition=builder_competition.build();
                             Request request_competition=new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_competition).build();
                             Response response_competition = okHttpClient_competition.newCall(request_competition).execute();
-                            Thread.sleep(300);
                             String responseData_competition = response_competition.body().string();
+                            Thread.sleep(1000);
                             //以下是解析json
+
+
                             try{
                                 JSONObject jsnobject = new JSONObject(responseData_competition);
                                 JSONArray jsonArray = jsnobject.getJSONArray("data");
@@ -163,9 +181,12 @@ public class SearchActivity extends BaseActivity {
                             RequestBody formBody_activity=builder_activity.build();
                             Request request_activity=new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_activity).build();
                             Response response_activity = okHttpClient_activity.newCall(request_activity).execute();
-                            Thread.sleep(300);
                             String responseData_activity = response_activity.body().string();
+                            Thread.sleep(1000);
                             //以下是解析json
+
+
+
                             try{
                                 JSONObject jsnobject = new JSONObject(responseData_activity);
                                 JSONArray jsonArray = jsnobject.getJSONArray("data");
@@ -181,36 +202,26 @@ public class SearchActivity extends BaseActivity {
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
-
                         }catch (Exception e){
                             e.printStackTrace();
                         }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setVisibility(View.GONE);
+                                recyclerView_Result.setVisibility(View.VISIBLE);
+                                adapter_Result.notifyDataSetChanged();
+                            }
+                        });
                     }
+
                 }).start();
-
-                recyclerView_Result.setVisibility(View.VISIBLE);
-                recyclerView_UsedSearch.setVisibility(View.GONE);
-                function_bar.setVisibility(View.GONE);
-                view_blank1.setVisibility(View.GONE);
-                view_blank2.setVisibility(View.GONE);
-
-                for(int i=0;i<SearchResultList.size();i++)
-                    temp.add(SearchResultList.get(i));
-
-                SearchResultList.clear();
-                for(int i=0;i<temp.size();i++) {
-                    SearchResultList.add(temp.get(i));
-                    adapter_Result.notifyItemInserted(i);
-                }
-
-                adapter_Result.notifyDataSetChanged();
-                Log.e("qaq","刷新了");
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter_Result.notifyDataSetChanged();
                 return false;
             }//改变字符时的监听事件
         });
@@ -234,5 +245,14 @@ public class SearchActivity extends BaseActivity {
         //position是增加的位置
         //后面那个是list里面具体的一个实例
         //添加动画
+    }
+
+    private void delay(int ms){
+        try {
+            Thread.currentThread();
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
