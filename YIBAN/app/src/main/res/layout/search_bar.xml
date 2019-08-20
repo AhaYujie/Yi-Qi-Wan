@@ -21,7 +21,7 @@
         <Button
             android:textColor="#0EC3E4"
             android:background="#FFFFFFFF"
-            android:id="@+id/SearchBarButton"
+            android:id="@+id/SearchBarBackButton"
             android:text="@string/SearchCancel"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -30,6 +30,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/search_bar_blank1"
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="20dp">
@@ -37,6 +38,7 @@
     </View>
 
     <LinearLayout
+        android:id="@+id/search_bar_function_bar"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -73,6 +75,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/search_bar_blank2"
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="20dp"></View>

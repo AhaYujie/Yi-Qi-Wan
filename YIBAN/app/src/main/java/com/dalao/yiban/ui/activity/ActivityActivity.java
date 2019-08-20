@@ -87,7 +87,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
     /**
      *
-     * @param context :
+     * @param context :d'd
      * @param userId : 用户id
      * @param activityId : 活动id
      * @param activityTitle : 活动标题

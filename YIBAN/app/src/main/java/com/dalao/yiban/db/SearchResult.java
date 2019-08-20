@@ -1,5 +1,7 @@
 package com.dalao.yiban.db;
 
+import java.util.List;
+
 public class SearchResult {
     /**
      * pageviews : 1

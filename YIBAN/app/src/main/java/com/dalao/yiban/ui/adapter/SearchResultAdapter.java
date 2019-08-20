@@ -1,5 +1,6 @@
 package com.dalao.yiban.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,10 +73,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     }
 
     //  添加数据
-    public void addData(int position) {
+    public void addData(int position,int pageviwes,String time,String title,String author,int id) {
 //      在list中添加数据，并通知条目加入一条
-        SearchResult content1 = new SearchResult(1,"111","222","333",5);
-        mSearchResultList.add(position, content1);
+        SearchResult content = new SearchResult(pageviwes,time,title,author,id);
+        mSearchResultList.add(position, content);
         //position是增加的位置
         //后面那个是list里面具体的一个实例
         //添加动画
@@ -88,5 +89,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         //删除动画
         notifyItemRemoved(position);
         notifyDataSetChanged();
+    }
+
+    public void refresh( List<SearchResult> list) {
+        mSearchResultList = list;
     }
 }
