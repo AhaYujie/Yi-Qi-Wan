@@ -26,6 +26,7 @@ import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.CommunityBlogListGson;
 import com.dalao.yiban.gson.HomeListGson;
+import com.dalao.yiban.ui.activity.CreateBlogActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.adapter.CommunityBlogItemAdapter;
 import com.dalao.yiban.util.HttpUtil;
@@ -153,7 +154,8 @@ public class CommunityFragment extends BaseFragment {
         communityCreateBlogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                // 启动创建博客活动
+                CreateBlogActivity.actionStart(activity, activity.userId);
             }
         });
 
@@ -182,6 +184,7 @@ public class CommunityFragment extends BaseFragment {
 
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
+                .add(ServerPostDataConstant.USER_ID, activity.userId)
                 .build();
 
         HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {

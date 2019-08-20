@@ -3,7 +3,7 @@ package com.dalao.yiban.gson;
 import java.util.List;
 
 /**
- * 竞赛首页数据的json
+ * 首页竞赛和活动列表的json
  */
 public class HomeListGson {
 

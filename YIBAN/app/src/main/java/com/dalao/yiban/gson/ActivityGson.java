@@ -2,6 +2,9 @@ package com.dalao.yiban.gson;
 
 import java.util.List;
 
+/**
+ * 活动内容的json
+ */
 public class ActivityGson {
 
 

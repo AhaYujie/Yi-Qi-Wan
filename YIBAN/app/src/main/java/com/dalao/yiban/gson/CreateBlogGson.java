@@ -1,9 +1,6 @@
 package com.dalao.yiban.gson;
 
-/**
- * 收藏和取消收藏的json
- */
-public class CollectGson {
+public class CreateBlogGson {
 
     /**
      * msg : success

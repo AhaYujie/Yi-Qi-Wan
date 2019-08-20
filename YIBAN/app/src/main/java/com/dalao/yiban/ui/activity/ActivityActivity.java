@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,13 +123,6 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityScrollView = (NestedScrollView) findViewById(R.id.activity_scroll_view);
         activityBottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
 
-        // 设置点击事件
-        activityBottomNavCommentButton.setOnClickListener(this);
-        activityMoveToComment.setOnClickListener(this);
-        activityBottomNavCollect.setOnClickListener(this);
-        activityBottomNavForward.setOnClickListener(this);
-
-
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
             // 设置返回button
@@ -137,19 +131,19 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // 设置RecyclerView
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        activityCommentRecyclerView.setLayoutManager(layoutManager);
-        commentAdapter = new CommentAdapter(this, this, userId,
-                activityId, HomeConstant.SELECT_ACTIVITY);
-        activityCommentRecyclerView.setAdapter(commentAdapter);
-
         // 从上个活动获取数据
         Intent intent = getIntent();
         userId = intent.getStringExtra(HomeConstant.USER_ID);
         activityId = intent.getStringExtra(HomeConstant.ACTIVITY_ID);
         activityTitle.setText(intent.getStringExtra(HomeConstant.ACTIVITY_TITLE));
         activityContentTime.setText(intent.getStringExtra(HomeConstant.ACTIVITY_CONTENT_TIME));
+
+        // 设置RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        activityCommentRecyclerView.setLayoutManager(layoutManager);
+        commentAdapter = new CommentAdapter(this, this, userId,
+                activityId, HomeConstant.SELECT_ACTIVITY);
+        activityCommentRecyclerView.setAdapter(commentAdapter);
 
         // 请求服务器
         requestDataFromServer();
@@ -179,7 +173,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                 else {
                 // 评论为空，不能发表
                 Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
-            }
+                }
                 break;
 
             // 在活动内容滑动到评论区，在评论区滑动到活动内容
@@ -196,10 +190,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                 }
                 break;
 
-            // 收藏
+            // 收藏或取消收藏
             case R.id.bottom_nav_collect:
-                //TODO
-                Toast.makeText(this, "click collect", Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
+                        activityId, activityGson.getCollection());
                 break;
 
             // 转发
@@ -221,6 +215,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         getMenuInflater().inflate(R.menu.more_menu, menu);
         this.menu = menu;
         this.moreCollect = menu.findItem(R.id.more_collect);
+        // 获取数据前隐藏menu item
+        menu.setGroupVisible(R.id.more_group, false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -236,10 +232,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                 finish();
                 break;
 
+            // 收藏或取消收藏
             case R.id.more_collect:
-                // TODO:收藏该活动
-                Toast.makeText(ActivityActivity.this, "COLLECT",
-                        Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
+                        activityId, activityGson.getCollection());
                 break;
 
             case R.id.more_copy:
@@ -324,11 +320,17 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
      */
     private void updateActivityUI(final ActivityGson activityGson) {
         this.activityGson = activityGson;
+        // 设置点击事件
+        activityBottomNavCommentButton.setOnClickListener(this);
+        activityMoveToComment.setOnClickListener(this);
+        activityBottomNavCollect.setOnClickListener(this);
+        activityBottomNavForward.setOnClickListener(this);
         activitySource.setText(activityGson.getAuthor());
+        menu.setGroupVisible(R.id.more_group, true);
         activityContent.post(new Runnable() {
             @Override
             public void run() {
-                StringUtils.showContestContent(activityContent, activityGson.getContent());
+                StringUtils.showContent(activityContent, activityGson.getContent());
             }
         });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {
@@ -356,7 +358,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
     }
 
     /**
-     * 发表评论成功，更新UI
+     * 发表评论成功
      */
     public void publishComment() {
         Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
@@ -364,15 +366,25 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
     }
 
     /**
-     * 收藏活动成功, 更新UI, 数据库
+     * 收藏活动成功
      */
     @Override
     public void collectSuccess() {
-        //TODO:更新UI, 数据库
         activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
         moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         activityGson.setCollection(HomeConstant.COLLECT);
+    }
+
+    /**
+     * 取消收藏活动成功
+     */
+    @Override
+    public void unCollectSuccess() {
+        activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
+        moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        activityGson.setCollection(HomeConstant.UN_COLLECT);
     }
 
 }

@@ -77,7 +77,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
      * @param masterCommentBean:被回复的用户的CommentBean
      * @param userId : 用户id
      * @param contentId : 活动或者博客的id
-     * @param category : SELECT_ACTIVITY or SELECT_BLOG
+     * @param category : SELECT_ACTIVITY or SELECT_BLOG or SELECT_CONTEST
      */
     public static void actionStart(Context context, @NonNull CommentBean masterCommentBean,
                                    String userId, String contentId, int category) {
@@ -111,7 +111,6 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         contentId = intent.getStringExtra(CommentConstant.CONTENT_ID);
         category = intent.getIntExtra(CommentConstant.CATEGORY, CommentConstant.SELECT_CATEGORY_NONE);
         masterCommentBean = (CommentBean) intent.getSerializableExtra(CommentConstant.COMMENT_BEAN);
-
 
         // 设置被回复者的控件
         commentPersonName.setText(masterCommentBean.getAuthor());
@@ -204,7 +203,6 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d("yujie", "replyGson != null");
                                 updateReplyUI(replyGson);
                             }
                         });

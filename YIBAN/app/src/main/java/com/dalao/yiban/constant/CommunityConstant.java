@@ -22,8 +22,16 @@ public class CommunityConstant {
 
     public static final String BLOG_FOLLOW_ERROR_RESPONSE = "error";
 
+    public static final String CREATE_BLOG_SUCCESS = "success";
+
+    public static final String CREATE_BLOG_ERROR = "error";
+
     public static final int FOLLOW = 1;
 
     public static final int UN_FOLLOW = -1;
+
+    public static final int CREATE_BLOG_CONTENT_MIN_LENGTH = 10;
+
+    public static final int CREATE_BLOG_CONTENT_MAX_LENGTH = 1000;
 
 }

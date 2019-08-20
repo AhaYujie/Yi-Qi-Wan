@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * 评论的json
+ */
 public class CommentBean implements Serializable {
 
     /**

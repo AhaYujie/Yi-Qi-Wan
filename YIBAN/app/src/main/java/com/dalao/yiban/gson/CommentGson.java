@@ -1,9 +1,9 @@
 package com.dalao.yiban.gson;
 
 /**
- * 收藏和取消收藏的json
+ * 评论服务器返回的json
  */
-public class CollectGson {
+public class CommentGson {
 
     /**
      * msg : success

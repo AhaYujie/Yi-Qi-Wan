@@ -140,15 +140,6 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         blogScrollView = (NestedScrollView) findViewById(R.id.blog_scroll_view);
         blogCommentTitle = (TextView) findViewById(R.id.blog_comment_title);
 
-        // 设置点击事件
-        blogAuthorFace.setOnClickListener(this);
-        blogAuthorName.setOnClickListener(this);
-        blogFollowAuthorButton.setOnClickListener(this);
-        blogBottomNavCommentButton.setOnClickListener(this);
-        blogBottomNavCollect.setOnClickListener(this);
-        blogBottomNavForward.setOnClickListener(this);
-        moveToComment.setOnClickListener(this);
-
         // 从上个活动获取数据
         Intent intent = getIntent();
         authorId = intent.getStringExtra(CommunityConstant.AUTHOR_ID);
@@ -240,10 +231,10 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
                 }
                 break;
 
-            // 收藏
+            // 收藏或取消收藏
             case R.id.bottom_nav_collect:
-                //TODO
-                Toast.makeText(this, "click collect", Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
+                        blogId, blogGson.getCollection());
                 break;
 
             // 转发
@@ -265,6 +256,8 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         getMenuInflater().inflate(R.menu.more_menu, menu);
         this.menu = menu;
         this.moreCollect = menu.findItem(R.id.more_collect);
+        // 获取数据前隐藏menu
+        menu.setGroupVisible(R.id.more_group, false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -281,10 +274,10 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
                 finish();
                 break;
 
+            // 收藏或取消收藏
             case R.id.more_collect:
-                // TODO:收藏该博客
-                Toast.makeText(BlogActivity.this, "COLLECT",
-                        Toast.LENGTH_SHORT).show();
+                HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
+                        blogId, blogGson.getCollection());
                 break;
 
             case R.id.more_copy:
@@ -296,7 +289,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
             // 转发button弹出PopWindow
             case R.id.more_forward:
                 CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.blog_comment_forward),
+                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward),
                                 BlogActivity.this);
                 break;
             default:
@@ -370,6 +363,16 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
      */
     private void updateActivityUI(final BlogGson blogGson) {
         this.blogGson = blogGson;
+        menu.setGroupVisible(R.id.more_group, false);
+        // 设置点击事件
+        blogAuthorFace.setOnClickListener(this);
+        blogAuthorName.setOnClickListener(this);
+        blogFollowAuthorButton.setOnClickListener(this);
+        blogBottomNavCommentButton.setOnClickListener(this);
+        blogBottomNavCollect.setOnClickListener(this);
+        blogBottomNavForward.setOnClickListener(this);
+        moveToComment.setOnClickListener(this);
+        menu.setGroupVisible(R.id.more_group, true);
         if (blogGson.getFollow() == CommunityConstant.FOLLOW) {
             blogFollowAuthorButton.setText(CommunityConstant.UN_FOLLOW_TEXT);
         }
@@ -387,7 +390,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         blogContent.post(new Runnable() {
             @Override
             public void run() {
-                StringUtils.showContestContent(blogContent, blogGson.getContent());
+                StringUtils.showContent(blogContent, blogGson.getContent());
             }
         });
         commentAdapter.setCommentsBeanList(blogGson.getComments());
@@ -407,7 +410,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
     }
 
     /**
-     * 发表评论, 更新UI
+     * 发表评论成功
      */
     public void publishComment() {
         Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
@@ -415,15 +418,25 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
     }
 
     /**
-     * 收藏博客成功, 更新UI, 数据库
+     * 收藏博客成功
      */
     @Override
     public void collectSuccess() {
-        //TODO : 更新UI, 数据库
         blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-        moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         blogGson.setCollection(HomeConstant.COLLECT);
+    }
+
+    /**
+     * 取消收藏博客成功
+     */
+    @Override
+    public void unCollectSuccess() {
+        blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
+        moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
+        Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        blogGson.setCollection(HomeConstant.UN_COLLECT);
     }
 
     /**
@@ -431,7 +444,6 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
      */
     @Override
     public void followSucceed() {
-        //TODO:更新UI，数据库
         blogFollowAuthorButton.setText(CommunityConstant.UN_FOLLOW_TEXT);
         Toast.makeText(this, HintConstant.BLOG_AUTHOR_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
         blogGson.setFollow(CommunityConstant.FOLLOW);
@@ -442,7 +454,6 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
      */
     @Override
     public void unFollowSucceed() {
-        //TODO:更新UI，数据库
         blogFollowAuthorButton.setText(CommunityConstant.FOLLOW_TEXT);
         Toast.makeText(this, HintConstant.BLOG_AUTHOR_UN_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
         blogGson.setFollow(CommunityConstant.UN_FOLLOW);

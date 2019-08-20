@@ -2,8 +2,10 @@ package com.dalao.yiban.gson;
 
 import java.util.List;
 
+/**
+ * 博客内容的json
+ */
 public class BlogGson {
-
 
     /**
      * follow: -1

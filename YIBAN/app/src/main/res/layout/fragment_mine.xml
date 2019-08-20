@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -35,7 +34,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -47,7 +45,6 @@
             android:id="@+id/mine_face_icon"
             android:layout_width="@dimen/mine_icon_size"
             android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
@@ -57,10 +54,9 @@
             android:id="@+id/mine_face"
             android:layout_width="@dimen/mine_face_size"
             android:layout_height="@dimen/mine_face_size"
-            android:layout_toLeftOf="@+id/mine_face_icon"
             android:layout_toStartOf="@+id/mine_face_icon"
-            android:layout_centerInParent="true"
-            android:layout_margin="10dp"/>
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 
@@ -80,7 +76,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -92,10 +87,8 @@
             android:id="@+id/mine_username_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:layout_marginRight="20dp"
             android:layout_marginEnd="20dp"
             android:textSize="@dimen/mine_value_size"
             android:textColor="@color/mine_text"/>
@@ -117,7 +110,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -129,7 +121,6 @@
             android:id="@+id/mine_nickname_icon"
             android:layout_width="@dimen/mine_icon_size"
             android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
@@ -139,11 +130,8 @@
             android:id="@+id/mine_nickname_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/mine_nickname_icon"
             android:layout_toStartOf="@+id/mine_nickname_icon"
             android:layout_centerInParent="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
             android:textSize="@dimen/mine_value_size"
             android:textColor="@color/mine_text"/>
     </RelativeLayout>
@@ -164,7 +152,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -176,7 +163,6 @@
             android:id="@+id/mine_sex_icon"
             android:layout_width="@dimen/mine_icon_size"
             android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
@@ -186,11 +172,42 @@
             android:id="@+id/mine_sex_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/mine_sex_icon"
             android:layout_toStartOf="@+id/mine_sex_icon"
             android:layout_centerInParent="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
+            android:textSize="@dimen/mine_value_size"
+            android:textColor="@color/mine_text"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/boundaryLine"/>
+
+    <RelativeLayout
+        android:id="@+id/mine_school_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_selector"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:textColor="@color/mine_text"
+            android:textSize="@dimen/mine_key_size"
+            android:text="@string/mine_school"
+            android:layout_margin="15dp"/>
+
+        <TextView
+            android:id="@+id/mine_school_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="20dp"
             android:textSize="@dimen/mine_value_size"
             android:textColor="@color/mine_text"/>
     </RelativeLayout>
@@ -212,7 +229,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -224,23 +240,10 @@
             android:id="@+id/mine_blog_icon"
             android:layout_width="@dimen/mine_icon_size"
             android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
             android:src="@drawable/ic_right_arrow_grey"/>
-
-        <TextView
-            android:id="@+id/mine_blog_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/mine_blog_icon"
-            android:layout_toStartOf="@+id/mine_blog_icon"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:textSize="@dimen/mine_value_size"
-            android:textColor="@color/mine_text"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -259,7 +262,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -271,7 +273,6 @@
             android:id="@+id/mine_collect_icon"
             android:layout_width="@dimen/mine_icon_size"
             android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
@@ -294,7 +295,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:textColor="@color/mine_text"
@@ -306,7 +306,6 @@
             android:id="@+id/mine_following_icon"
             android:layout_width="@dimen/mine_icon_size"
             android:layout_height="@dimen/mine_icon_size"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"

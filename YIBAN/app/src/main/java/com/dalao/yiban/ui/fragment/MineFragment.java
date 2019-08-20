@@ -1,8 +1,12 @@
 package com.dalao.yiban.ui.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,27 +21,32 @@ import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
-import com.dalao.yiban.gson.HomeListGson;
-import com.dalao.yiban.gson.UserGson;
+import com.dalao.yiban.gson.EditUserInfoGson;
+import com.dalao.yiban.gson.UserInfoGson;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
 import com.dalao.yiban.util.JsonUtil;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 
+import java.io.File;
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
-import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
 import static com.dalao.yiban.constant.MineConstant.FEMALE;
 import static com.dalao.yiban.constant.MineConstant.FEMALE_RESPONSE;
 import static com.dalao.yiban.constant.MineConstant.FEMALE_TEXT;
@@ -45,6 +54,7 @@ import static com.dalao.yiban.constant.MineConstant.MALE;
 import static com.dalao.yiban.constant.MineConstant.MALE_RESPONSE;
 import static com.dalao.yiban.constant.MineConstant.MALE_TEXT;
 import static com.dalao.yiban.constant.MineConstant.SECRET;
+import static com.dalao.yiban.constant.MineConstant.SECRET_RESPONSE;
 import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
 
 public class MineFragment extends BaseFragment implements View.OnClickListener {
@@ -74,6 +84,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private RelativeLayout mineCollectLayout;
 
     private RelativeLayout mineFollowingLayout;
+
+    private TextView mineSchoolText;
 
     private int sexSelected;
 
@@ -113,14 +125,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineBlogLayout = (RelativeLayout) view.findViewById(R.id.mine_blog_layout);
         mineCollectLayout = (RelativeLayout) view.findViewById(R.id.mine_collect_layout);
         mineFollowingLayout = (RelativeLayout) view.findViewById(R.id.mine_following_layout);
-
-        // 设置点击事件
-        mineInfoFaceLayout.setOnClickListener(this);
-        mineNicknameLayout.setOnClickListener(this);
-        mineSexLayout.setOnClickListener(this);
-        mineBlogLayout.setOnClickListener(this);
-        mineCollectLayout.setOnClickListener(this);
-        mineFollowingLayout.setOnClickListener(this);
+        mineSchoolText = (TextView) view.findViewById(R.id.mine_school_text);
 
         // 如果fragment可见，请求服务器获取数据
         onVisible();
@@ -148,7 +153,17 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 修改头像
             case R.id.mine_info_face_layout:
-                //TODO:修改头像，请求服务器
+                // 未授权
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.
+                        WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(activity, new String[]{
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            HomeConstant.WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+                }
+                // 授权则选择图片
+                else {
+                    selectImage();
+                }
                 break;
 
             // 查看我的博客
@@ -180,6 +195,72 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     }
 
     /**
+     * 传输头像给服务器
+     */
+    public void postFileToServer(File file) {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM)
+                .addFormDataPart(ServerPostDataConstant.EDIT_USER_FACE_IMAGE, file.getName(),
+                        RequestBody.create(null, file))
+                .addFormDataPart(ServerPostDataConstant.USER_INFO_USER_ID, activity.userId)
+                .addFormDataPart(ServerPostDataConstant.EDIT_USER_NICKNAME, "aha"); //TODO
+
+        HttpUtil.sendHttpPostFile(ServerUrlConstant.EDIT_USER_INFO_URI, builder, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                MineFragment.this.getCallList().add(call);
+                e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(),
+                                HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                MineFragment.this.getCallList().add(call);
+                try {
+                    activity.getCallList().add(call);
+                    String responseText = response.body().string();
+                    EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
+                    if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestDataFromServer();
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    else if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_ERROR)) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MyApplication.getContext(),
+                                        HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                catch (NullPointerException e) {
+                    e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MyApplication.getContext(),
+                                    HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
      * 从服务器获取列表数据并刷新UI
      */
     private void requestDataFromServer() {
@@ -208,13 +289,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 MineFragment.this.getCallList().add(call);
                 if (response.body() != null) {
                     final String responseText = response.body().string();
-                    Log.d("yujie", responseText);
-                    final UserGson userGson = JsonUtil.handleUserResponse(responseText);
-                    if (userGson != null) {
+                    final UserInfoGson userInfoGson = JsonUtil.handleUserResponse(responseText);
+                    if (userInfoGson != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateUserInfoUI(userGson);
+                                updateUserInfoUI(userInfoGson);
                             }
                         });
                     } else {
@@ -241,56 +321,89 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
     /**
      * 更新用户信息UI
-     * @param userGson:解析后的用户信息
+     * @param userInfoGson:解析后的用户信息
      */
-    private void updateUserInfoUI(UserGson userGson)  {
-        mineUsernameText.setText(userGson.getUser().getUsername());
-        mineNicknameText.setText(userGson.getUser().getNickname());
-        Log.d("yujie", "" + userGson.getUser().getSex());
-        if (userGson.getUser().getAvatar() == null)
-            Log.d("yujie", "is null");
-        Log.d("yujie", "" + userGson.getUser().getLevel());
-        if (userGson.getUser().getSex() == MALE_RESPONSE) {
+    private void updateUserInfoUI(UserInfoGson userInfoGson)  {
+        // 设置点击事件
+        mineInfoFaceLayout.setOnClickListener(this);
+        mineNicknameLayout.setOnClickListener(this);
+        mineSexLayout.setOnClickListener(this);
+        mineBlogLayout.setOnClickListener(this);
+        mineCollectLayout.setOnClickListener(this);
+        mineFollowingLayout.setOnClickListener(this);
+        mineUsernameText.setText(userInfoGson.getUser().getUsername());
+        mineNicknameText.setText(userInfoGson.getUser().getNickname());
+        mineSchoolText.setText(userInfoGson.getUser().getSchool());
+        if (userInfoGson.getUser().getSex() == MALE_RESPONSE) {
             mineSexText.setText(MALE_TEXT);
         }
-        else if (userGson.getUser().getSex() == FEMALE_RESPONSE) {
+        else if (userInfoGson.getUser().getSex() == FEMALE_RESPONSE) {
             mineSexText.setText(FEMALE_TEXT);
         }
-        Glide.with(this)
-                .load(ServerUrlConstant.SERVER_URI + userGson.getUser().getAvatar())
+        else if (userInfoGson.getUser().getSex() == SECRET_RESPONSE) {
+            mineSexText.setText(SECRET_TEXT);
+        }
+        Glide.with(activity)
+                .load(ServerUrlConstant.SERVER_URI + userInfoGson.getUser().getAvatar())
                 .into(mineFace);
     }
 
     /**
-     * 设置nickname
+     * 请求服务器修改nickname
      * @param nickName:
      */
     public void setNickName(String nickName) {
-        // TODO:请求服务器和保存到数据库
+        HttpUtil.editUserInfo(activity, activity.userId, sexSelected, nickName, MineConstant.EDIT_NICKNAME);
+    }
+
+    /**
+     * 请求服务器修改sex
+     * @param sexSelected:MALE, FEMALE, SECRET
+     */
+    public void setSex(int sexSelected) {
+        chooseSexPopWindow.dismiss();
+        this.sexSelected = sexSelected;
+        HttpUtil.editUserInfo(activity, activity.userId, sexSelected, null, MineConstant.EDIT_SEX);
+    }
+
+    /**
+     * 若服务器修改昵称成功，更新昵称UI
+     */
+    public void updateNicknameUI(String nickName) {
+        Toast.makeText(activity, HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
         mineNicknameText.setText(nickName);
     }
 
     /**
-     * 设置sex
-     * @param sex:MALE_TEXT, FEMALE_TEXT, SECRET_TEXT
+     * 若服务器修改性别成功，更新性别UI
      */
-    public void setSex(String sex) {
-        // TODO
-        switch (sex) {
-            case MALE_TEXT:
-                sexSelected = MALE;
+    public void updateSexUI() {
+        Toast.makeText(activity, HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
+        switch (sexSelected) {
+            case SECRET:
+                mineSexText.setText(SECRET_TEXT);
                 break;
-            case FEMALE_TEXT:
-                sexSelected = FEMALE;
+            case MALE:
+                mineSexText.setText(MALE_TEXT);
                 break;
-            case SECRET_TEXT:
-                sexSelected = SECRET;
+            case FEMALE:
+                mineSexText.setText(FEMALE_TEXT);
                 break;
             default:
                 break;
         }
-        chooseSexPopWindow.dismiss();
-        mineSexText.setText(sex);
+    }
+
+    /**
+     *  从手机本地选择图片
+     */
+    public void selectImage() {
+        Matisse.from(activity)
+                .choose(MimeType.ofImage())
+                .imageEngine(new GlideEngine())
+                .theme(R.style.Matisse_Zhihu)
+                .forResult(MineConstant.EDIT_USER_FACE_REQUEST_CODE);
+
     }
 
 }
