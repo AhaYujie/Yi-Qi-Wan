@@ -52,7 +52,6 @@ public class SearchActivity extends BaseActivity {
     private List<UsedSearch> UsedSearchList = new ArrayList<>();
     //这是曾经搜索的列表
     private List<SearchResult> SearchResultList = new ArrayList<>();
-    private List<SearchResult> temp = new ArrayList<>();
     //这是搜索结果的列表
 
     /*Intent intent = getIntent();
@@ -120,7 +119,9 @@ public class SearchActivity extends BaseActivity {
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(SearchActivity.this,"你想搜索的是:"+query+"。\n请稍等片刻(●'◡'●)",Toast.LENGTH_SHORT).show();
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
+                TextView text_notfound = (TextView) findViewById(R.id.search_result_notfound);
                 progressBar.setVisibility(View.VISIBLE);
+                text_notfound.setVisibility(View.GONE);
                 recyclerView_UsedSearch.setVisibility(View.GONE);
                 function_bar.setVisibility(View.GONE);
                 view_blank1.setVisibility(View.GONE);
@@ -209,9 +210,15 @@ public class SearchActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                progressBar.setVisibility(View.GONE);
-                                recyclerView_Result.setVisibility(View.VISIBLE);
-                                adapter_Result.notifyDataSetChanged();
+                                if(SearchResultList.size()!=0){
+                                    progressBar.setVisibility(View.GONE);
+                                    recyclerView_Result.setVisibility(View.VISIBLE);
+                                    adapter_Result.notifyDataSetChanged();
+                                }
+                                else{
+                                    progressBar.setVisibility(View.GONE);
+                                    text_notfound.setVisibility(View.VISIBLE);
+                                }
                             }
                         });
                     }

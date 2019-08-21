@@ -29,6 +29,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/search_result_notfound"
+        android:visibility="gone"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="不好意思，你要查的关键词没有相关资料"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <ProgressBar
         android:visibility="gone"
         android:id="@+id/Search_bar_ProgressBar"
