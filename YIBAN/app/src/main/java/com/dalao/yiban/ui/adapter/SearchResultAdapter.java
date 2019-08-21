@@ -1,11 +1,9 @@
 package com.dalao.yiban.ui.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,18 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dalao.yiban.R;
 import com.dalao.yiban.db.SearchResult;
-import com.dalao.yiban.ui.activity.ActivityActivity;
-import com.dalao.yiban.ui.activity.ContestActivity;
 
 import java.util.List;
 
-
-import static com.dalao.yiban.constant.HomeConstant.SELECT_ACTIVITY;
-import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
-
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
 
-    private List<SearchResult> mSearchResultList;
+    private List<SearchResult> mSearchResultList;//
 
     static class ViewHolder extends RecyclerView.ViewHolder
     {

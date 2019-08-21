@@ -2,7 +2,6 @@ package com.dalao.yiban.ui.activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
@@ -14,34 +13,26 @@ import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.CommunityFragment;
 import com.dalao.yiban.ui.fragment.HomeFragment;
-import com.dalao.yiban.ui.fragment.MessageFragment;
 import com.dalao.yiban.ui.fragment.MineFragment;
-import com.dalao.yiban.util.SDCardUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.zhihu.matisse.Matisse;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dalao.yiban.constant.MineConstant.FEMALE;
-import static com.dalao.yiban.constant.MineConstant.FEMALE_TEXT;
 import static com.dalao.yiban.constant.MineConstant.MALE;
-import static com.dalao.yiban.constant.MineConstant.MALE_TEXT;
 import static com.dalao.yiban.constant.MineConstant.SECRET;
-import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
 
 public class MainActivity extends BaseActivity {
 
-    public String userId = "2"; // test
+    public String userId = "2"; //TODO: test
 
     private CustomViewPager viewPager;
 
@@ -57,8 +48,6 @@ public class MainActivity extends BaseActivity {
 
     private CommunityFragment communityFragment;
 
-    private MessageFragment messageFragment;
-
     // 首页，社区，消息，我的
     private List<Fragment> fragmentList;
 
@@ -69,24 +58,13 @@ public class MainActivity extends BaseActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    // 测试
                     viewPager.setCurrentItem(HomeConstant.SELECT_HOME);
-                    // TODO
                     return true;
                 case R.id.navigation_community:
-                    // 测试
                     viewPager.setCurrentItem(HomeConstant.SELECT_COMMUNITY);
-                    // TODO
-                    return true;
-                case R.id.navigation_message:
-                    // 测试
-                    viewPager.setCurrentItem(HomeConstant.SELECT_MESSAGE);
-                    // TODO
                     return true;
                 case R.id.navigation_mine:
-                    // 测试
                     viewPager.setCurrentItem(HomeConstant.SELECT_MINE);
-                    // TODO
                     return true;
             }
             return false;
@@ -100,7 +78,7 @@ public class MainActivity extends BaseActivity {
 
         // 初始化控件
         bottomNavigationView = findViewById(R.id.nav_view);
-        viewPager = (CustomViewPager) findViewById(R.id.view_pager);
+        viewPager = (CustomViewPager) findViewById(R.id.home_view_pager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         customProgressBar = new CustomProgressDialog(this);
 
@@ -110,12 +88,12 @@ public class MainActivity extends BaseActivity {
         viewPager.setAdapter(viewPagerAdapter);
         // 取消ViewPager的左右滑动切换界面动画
         viewPager.disableScroll(true);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
     }
 
     /**
      * 点击事件
-     * @param v
+     * @param v:
      */
     @Override
     public void onClick(View v) {
@@ -137,15 +115,17 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 按顺序初始化首页，社区，我的碎片
+     * @return :
+     */
     private List<Fragment> initFragmentList() {
         List<Fragment> fragmentList = new ArrayList<>();
         homeFragment = HomeFragment.newInstance();
         communityFragment = CommunityFragment.newInstance();
-        messageFragment = MessageFragment.newInstance();
         mineFragment = MineFragment.newInstance();
         fragmentList.add(homeFragment);
         fragmentList.add(communityFragment);
-        fragmentList.add(messageFragment);
         fragmentList.add(mineFragment);
         return fragmentList;
     }
@@ -163,11 +143,9 @@ public class MainActivity extends BaseActivity {
             // 修改头像
             case MineConstant.EDIT_USER_FACE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    List<Uri> mImages = Matisse.obtainResult(data);
-                    String imagePath = SDCardUtil.getFilePathFromUri(this, mImages.get(0));
-                    File file = new File(imagePath);
-                    mineFragment.postFileToServer(file);
+                    mineFragment.handleSelectedImage(data);
                 }
+                break;
             default:
                 break;
         }
@@ -177,8 +155,10 @@ public class MainActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
+            // 更改头像请求权限
             case HomeConstant.WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mineFragment.selectImage();
                 }
                 else {
                     Toast.makeText(this, HintConstant.PERMISSION_REFUSE, Toast.LENGTH_SHORT).show();

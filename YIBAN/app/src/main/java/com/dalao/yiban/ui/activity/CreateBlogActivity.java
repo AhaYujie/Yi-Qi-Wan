@@ -159,7 +159,6 @@ public class CreateBlogActivity extends BaseActivity {
                     CreateBlogGson createBlogGson = JsonUtil.handleCreateBlogResponse(responseText);
                     if (createBlogGson.getMsg().equals(CommunityConstant.CREATE_BLOG_SUCCESS)) {
                         // TODO:创建博客成功，跳转到博客内容活动
-                        Log.d("yujie", createBlogGson.getMsg());
                         finish();
                     }
                     else if (createBlogGson.getMsg().equals(CommunityConstant.CREATE_BLOG_ERROR)) {

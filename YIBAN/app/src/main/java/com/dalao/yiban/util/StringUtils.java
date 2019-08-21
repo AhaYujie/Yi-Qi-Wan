@@ -26,14 +26,19 @@ public class StringUtils {
      * @return ：string类型内容
      */
     public static String getEditData(RichTextEditor richTextEditor) {
-        List<RichTextEditor.EditData> editList = richTextEditor.buildEditData();
         StringBuilder content = new StringBuilder();
-        for (RichTextEditor.EditData itemData : editList) {
-            if (itemData.inputStr != null) {
-                content.append(itemData.inputStr);
-            } else if (itemData.imagePath != null) {
-                content.append("<img src=\"").append(itemData.imagePath).append("\"/>");
+        try {
+            List<RichTextEditor.EditData> editList = richTextEditor.buildEditData();
+            for (RichTextEditor.EditData itemData : editList) {
+                if (itemData.inputStr != null) {
+                    content.append(itemData.inputStr);
+                } else if (itemData.imagePath != null) {
+                    content.append("<img src=\"").append(itemData.imagePath).append("\"/>");
+                }
             }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
         return content.toString();
     }

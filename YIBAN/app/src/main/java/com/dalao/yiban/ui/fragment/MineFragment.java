@@ -1,7 +1,10 @@
 package com.dalao.yiban.ui.fragment;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,14 +33,19 @@ import com.dalao.yiban.gson.UserInfoGson;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
+import com.dalao.yiban.util.CommonUtil;
 import com.dalao.yiban.util.HttpUtil;
+import com.dalao.yiban.util.ImageUtils;
 import com.dalao.yiban.util.JsonUtil;
+import com.dalao.yiban.util.SDCardUtil;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.engine.impl.PicassoEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -148,7 +156,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             // 修改性别
             case R.id.mine_sex_layout:
                 chooseSexPopWindow = CustomPopWindow.chooseSexPopWindow(v, activity, sexSelected);
-                if (chooseSexPopWindow == null)
                 break;
 
             // 修改头像
@@ -197,13 +204,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     /**
      * 传输头像给服务器
      */
-    public void postFileToServer(File file) {
+    private void postFileToServer(File file) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM)
                 .addFormDataPart(ServerPostDataConstant.EDIT_USER_FACE_IMAGE, file.getName(),
                         RequestBody.create(null, file))
-                .addFormDataPart(ServerPostDataConstant.USER_INFO_USER_ID, activity.userId)
-                .addFormDataPart(ServerPostDataConstant.EDIT_USER_NICKNAME, "aha"); //TODO
+                .addFormDataPart(ServerPostDataConstant.USER_INFO_USER_ID, activity.userId);
 
         HttpUtil.sendHttpPostFile(ServerUrlConstant.EDIT_USER_INFO_URI, builder, new Callback() {
             @Override
@@ -400,10 +406,25 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     public void selectImage() {
         Matisse.from(activity)
                 .choose(MimeType.ofImage())
-                .imageEngine(new GlideEngine())
+                .imageEngine(new PicassoEngine())
                 .theme(R.style.Matisse_Zhihu)
                 .forResult(MineConstant.EDIT_USER_FACE_REQUEST_CODE);
 
+    }
+
+    /**
+     * 压缩保存选择的图片
+     * @param data：选择的图片
+     */
+    public void handleSelectedImage(Intent data) {
+        Uri imageUri = Matisse.obtainResult(data).get(0);
+        String imagePath = SDCardUtil.getFilePathFromUri(activity, imageUri);
+        int screenWidth = CommonUtil.getScreenWidth(activity);
+        int screenHeight = CommonUtil.getScreenHeight(activity);
+        Bitmap bitmap = ImageUtils.getSmallBitmap(imagePath, screenWidth, screenHeight);// 压缩图片
+        imagePath = SDCardUtil.saveToSdCard(bitmap);
+        File file = new File(imagePath);
+        postFileToServer(file);
     }
 
 }

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.LoginWayFragment"
+    android:background="@color/myBackground">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/login_way_app_icon"
+        android:layout_width="@dimen/login_app_icon_size"
+        android:layout_height="@dimen/login_app_icon_size"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/ic_yiban" />
+
+    <EditText
+        android:id="@+id/login_username_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_way_app_icon"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/login_input_frame"
+        android:textCursorDrawable="@drawable/edit_cursor_color"
+        android:inputType="text"
+        android:maxLines="1"
+        android:maxLength="@string/loginUsernameMaxLength"
+        android:gravity="center"
+        android:padding="15dp"
+        android:textSize="@dimen/login_text_size"
+        android:textColor="@color/loginText"
+        android:textColorHint="@color/loginHint"
+        android:hint="@string/loginUsernameHint"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <EditText
+        android:id="@+id/login_password_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_username_edit_text"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/login_input_frame"
+        android:textCursorDrawable="@drawable/edit_cursor_color"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:maxLength="@string/loginPasswordMaxLength"
+        android:gravity="center"
+        android:padding="15dp"
+        android:textSize="@dimen/login_text_size"
+        android:textColor="@color/loginText"
+        android:textColorHint="@color/loginHint"
+        android:hint="@string/loginPasswordHint"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/login_way_confirm_button"
+        android:layout_width="@dimen/login_confirm_button_size"
+        android:layout_height="@dimen/login_confirm_button_size"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/login_password_edit_text"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_circle_blue"
+            android:layout_centerInParent="true"/>
+
+        <ImageView
+            android:layout_width="@dimen/login_confirm_button_arrow_size"
+            android:layout_height="@dimen/login_confirm_button_arrow_size"
+            android:layout_centerInParent="true"
+            android:src="@drawable/right_arrow_white"/>
+
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="@dimen/login_yiban_icon_size"
+        android:layout_height="@dimen/login_yiban_icon_size"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_yiban"/>
+
+</RelativeLayout>

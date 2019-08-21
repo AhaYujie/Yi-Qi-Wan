@@ -85,4 +85,11 @@
     <color name="chooseSexPopWindowText">#000000</color>
     <color name="chooseSexPopWindowBackground">#FFFFFF</color>
 
+    <!-- login -->
+    <color name="loginText">#000000</color>
+    <color name="loginButton">#4CB6FB</color>
+    <color name="loginButtonText">#FFFFFF</color>
+    <color name="inputFrame">#F5F5F5</color>
+    <color name="loginHint">#A7A7A9</color>
+
 </resources>

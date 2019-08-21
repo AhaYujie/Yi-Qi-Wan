@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -86,6 +89,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
     private Button activityBottomNavForward;
 
+    private WebView activityWebView; // TODO:test html
+
     /**
      *
      * @param context :d'd
@@ -122,6 +127,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityCommentTitle = (TextView) findViewById(R.id.activity_comment_title);
         activityScrollView = (NestedScrollView) findViewById(R.id.activity_scroll_view);
         activityBottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
+        activityWebView = (WebView) findViewById(R.id.activity_content_webview); // TODO: test html
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -343,6 +349,16 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         }
         commentAdapter.setCommentsBeanList(activityGson.getComments());
         commentAdapter.notifyDataSetChanged();
+
+        // TODO: test html
+        activityWebView.setWebViewClient(new WebViewClient());
+        activityWebView.getSettings().setJavaScriptEnabled(true);
+        HomeConstant.CONTENT = HomeConstant.CONTENT.replaceAll
+                ("width=\"\\d+\"", "width=\"100%\"").replaceAll("height=\"\\d+\"", "height=\"auto\"");
+        activityWebView.loadDataWithBaseURL(null, HomeConstant.CONTENT,
+                "text/html", "utf-8", null);
+        activityContent.setVisibility(View.GONE);
+        activityWebView.setVisibility(View.VISIBLE);
     }
 
     /**
