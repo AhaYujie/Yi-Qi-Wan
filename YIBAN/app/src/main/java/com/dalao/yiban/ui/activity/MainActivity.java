@@ -2,7 +2,6 @@ package com.dalao.yiban.ui.activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
@@ -14,34 +13,26 @@ import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.CommunityFragment;
 import com.dalao.yiban.ui.fragment.HomeFragment;
-import com.dalao.yiban.ui.fragment.MessageFragment;
 import com.dalao.yiban.ui.fragment.MineFragment;
-import com.dalao.yiban.util.SDCardUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.zhihu.matisse.Matisse;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dalao.yiban.constant.MineConstant.FEMALE;
-import static com.dalao.yiban.constant.MineConstant.FEMALE_TEXT;
 import static com.dalao.yiban.constant.MineConstant.MALE;
-import static com.dalao.yiban.constant.MineConstant.MALE_TEXT;
 import static com.dalao.yiban.constant.MineConstant.SECRET;
-import static com.dalao.yiban.constant.MineConstant.SECRET_TEXT;
 
 public class MainActivity extends BaseActivity {
 
-    public String userId = "2"; // test
+    public String userId = "2"; //TODO: test
 
     private CustomViewPager viewPager;
 
@@ -87,7 +78,7 @@ public class MainActivity extends BaseActivity {
 
         // 初始化控件
         bottomNavigationView = findViewById(R.id.nav_view);
-        viewPager = (CustomViewPager) findViewById(R.id.view_pager);
+        viewPager = (CustomViewPager) findViewById(R.id.home_view_pager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         customProgressBar = new CustomProgressDialog(this);
 
@@ -124,6 +115,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 按顺序初始化首页，社区，我的碎片
+     * @return :
+     */
     private List<Fragment> initFragmentList() {
         List<Fragment> fragmentList = new ArrayList<>();
         homeFragment = HomeFragment.newInstance();
