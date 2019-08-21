@@ -341,12 +341,15 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineNicknameText.setText(userInfoGson.getUser().getNickname());
         mineSchoolText.setText(userInfoGson.getUser().getSchool());
         if (userInfoGson.getUser().getSex() == MALE_RESPONSE) {
+            sexSelected = MALE;
             mineSexText.setText(MALE_TEXT);
         }
         else if (userInfoGson.getUser().getSex() == FEMALE_RESPONSE) {
+            sexSelected = FEMALE;
             mineSexText.setText(FEMALE_TEXT);
         }
         else if (userInfoGson.getUser().getSex() == SECRET_RESPONSE) {
+            sexSelected = SECRET;
             mineSexText.setText(SECRET_TEXT);
         }
         Glide.with(activity)
@@ -408,7 +411,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 .choose(MimeType.ofImage())
                 .imageEngine(new PicassoEngine())
                 .theme(R.style.Matisse_Zhihu)
-                .forResult(MineConstant.EDIT_USER_FACE_REQUEST_CODE);
+                .forResult(HomeConstant.EDIT_USER_FACE_REQUEST_CODE);
 
     }
 

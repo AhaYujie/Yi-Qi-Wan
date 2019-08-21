@@ -32,7 +32,7 @@ public class EditNicknameActivity extends BaseActivity {
     public static void actionStart(Context context, String nickname) {
         Intent intent = new Intent(context, EditNicknameActivity.class);
         intent.putExtra(MineConstant.USER_NICKNAME, nickname);
-        ((MainActivity) context).startActivityForResult(intent, MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE);
+        ((MainActivity) context).startActivityForResult(intent, HomeConstant.EDIT_USER_NICKNAME_REQUEST_CODE);
     }
 
     @Override

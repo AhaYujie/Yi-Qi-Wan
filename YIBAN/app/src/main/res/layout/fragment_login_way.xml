@@ -4,15 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.LoginWayFragment"
+    tools:context=".ui.fragment.LoginFragment"
     android:background="@color/myBackground">
+
+    <LinearLayout
+        android:id="@+id/login_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <Button
+            android:id="@+id/login_back_button"
+            android:layout_width="@dimen/login_back_icon_size"
+            android:layout_height="@dimen/login_back_icon_size"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_left_arrow_black"
+            style="?android:attr/borderlessButtonStyle"/>
+
+    </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/login_way_app_icon"
         android:layout_width="@dimen/login_app_icon_size"
         android:layout_height="@dimen/login_app_icon_size"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
+        android:layout_below="@+id/login_top_bar"
         android:src="@drawable/ic_yiban" />
 
     <EditText

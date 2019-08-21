@@ -36,4 +36,8 @@ public class HintConstant {
 
     public static final String PERMISSION_REFUSE = "拒绝权限将无法使用此功能";
 
+    public static final String LOGIN_ERROR = "登录失败，网络出问题了";
+
+    public static final String LOGIN_SUCCESS = "登录成功";
+
 }

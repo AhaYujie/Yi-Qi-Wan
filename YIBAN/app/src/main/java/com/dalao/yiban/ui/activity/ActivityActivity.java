@@ -151,9 +151,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                 activityId, HomeConstant.SELECT_ACTIVITY);
         activityCommentRecyclerView.setAdapter(commentAdapter);
 
-        // 请求服务器
-        requestDataFromServer();
-
+        // 请求服务器获取数据刷新UI
+        requestDataFromServer(true, true);
     }
 
     /**
@@ -263,8 +262,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
     /**
      * 请求服务器获取活动数据, 并解析刷新UI
+     * @param updateContent : true则更新内容UI
+     * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer() {
+    private void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.ACTIVITY_ID, activityId)
                 .add(ServerPostDataConstant.USER_ID, userId)
@@ -293,7 +294,13 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateActivityUI(activityGson);
+                                ActivityActivity.this.activityGson = activityGson;
+                                if (updateContent) {
+                                    updateContentUI();
+                                }
+                                if (updateComment) {
+                                    updateCommentUI();
+                                }
                             }
                         });
                     }
@@ -321,11 +328,9 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
     }
 
     /**
-     * 刷新活动UI
-     * @param activityGson:解析后的数据
+     * 刷新活动内容UI
      */
-    private void updateActivityUI(final ActivityGson activityGson) {
-        this.activityGson = activityGson;
+    private void updateContentUI() {
         // 设置点击事件
         activityBottomNavCommentButton.setOnClickListener(this);
         activityMoveToComment.setOnClickListener(this);
@@ -333,12 +338,12 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityBottomNavForward.setOnClickListener(this);
         activitySource.setText(activityGson.getAuthor());
         menu.setGroupVisible(R.id.more_group, true);
-        activityContent.post(new Runnable() {
-            @Override
-            public void run() {
-                StringUtils.showContent(activityContent, activityGson.getContent());
-            }
-        });
+//        activityContent.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                StringUtils.showContent(activityContent, activityGson.getContent());
+//            }
+//        });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
@@ -347,18 +352,22 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
             moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
-        commentAdapter.setCommentsBeanList(activityGson.getComments());
-        commentAdapter.notifyDataSetChanged();
 
         // TODO: test html
         activityWebView.setWebViewClient(new WebViewClient());
         activityWebView.getSettings().setJavaScriptEnabled(true);
-        HomeConstant.CONTENT = HomeConstant.CONTENT.replaceAll
-                ("width=\"\\d+\"", "width=\"100%\"").replaceAll("height=\"\\d+\"", "height=\"auto\"");
-        activityWebView.loadDataWithBaseURL(null, HomeConstant.CONTENT,
+        activityWebView.loadDataWithBaseURL(null, activityGson.getContent(),
                 "text/html", "utf-8", null);
         activityContent.setVisibility(View.GONE);
         activityWebView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 更新评论区UI
+     */
+    private void updateCommentUI() {
+        commentAdapter.setCommentsBeanList(activityGson.getComments());
+        commentAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -378,7 +387,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
      */
     public void publishComment() {
         Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer();
+        requestDataFromServer(false, true);
+        // 刷新评论区UI
+        commentAdapter.setCommentsBeanList(activityGson.getComments());
+        commentAdapter.notifyDataSetChanged();
     }
 
     /**

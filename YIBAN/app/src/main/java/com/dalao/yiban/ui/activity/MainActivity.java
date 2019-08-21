@@ -19,6 +19,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ import static com.dalao.yiban.constant.MineConstant.SECRET;
 
 public class MainActivity extends BaseActivity {
 
-    public String userId = "2"; //TODO: test
+    public String userId;
 
     private CustomViewPager viewPager;
 
@@ -75,6 +76,10 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 从本地获取用户id，若无则跳转到登录界面
+        //TODO:本地获取用户id
+        LoginActivity.actionStart(this);
 
         // 初始化控件
         bottomNavigationView = findViewById(R.id.nav_view);
@@ -134,18 +139,28 @@ public class MainActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             // 修改昵称
-            case MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
+            case HomeConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     mineFragment.setNickName(data.getStringExtra(MineConstant.USER_NICKNAME));
                 }
                 break;
 
             // 修改头像
-            case MineConstant.EDIT_USER_FACE_REQUEST_CODE:
+            case HomeConstant.EDIT_USER_FACE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     mineFragment.handleSelectedImage(data);
                 }
                 break;
+
+            // 登录
+            case HomeConstant.LOGIN_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    userId = data.getStringExtra(HomeConstant.USER_ID);
+                    Toast.makeText(this, HintConstant.LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    finish();
+                }
             default:
                 break;
         }
@@ -164,9 +179,16 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(this, HintConstant.PERMISSION_REFUSE, Toast.LENGTH_SHORT).show();
                 }
                 break;
+
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("yujie", "main destroy");
+        super.onDestroy();
     }
 
 }

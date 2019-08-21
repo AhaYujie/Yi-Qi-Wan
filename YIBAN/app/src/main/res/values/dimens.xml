@@ -86,6 +86,7 @@
     <dimen name="login_visitor_way_text_size">15sp</dimen>
     <dimen name="login_yiban_icon_size">50dp</dimen>
     <dimen name="login_confirm_button_size">70dp</dimen>
-    <dimen name="login_confirm_button_arrow_size">30dp</dimen>
+    <dimen name="login_confirm_button_arrow_size">32dp</dimen>
+    <dimen name="login_back_icon_size">40dp</dimen>
 
 </resources>

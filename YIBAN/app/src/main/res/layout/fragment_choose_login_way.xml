@@ -16,7 +16,7 @@
         android:src="@drawable/ic_yiban" />
 
     <Button
-        android:id="@+id/choose_login_way"
+        android:id="@+id/choose_yiban_login_way"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login_app_icon"
@@ -31,10 +31,10 @@
         style="?android:attr/borderlessButtonStyle"/>
 
     <Button
-        android:id="@+id/choose_register_way"
+        android:id="@+id/choose_visitor_way"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/choose_login_way"
+        android:layout_below="@+id/choose_yiban_login_way"
         android:layout_marginTop="10dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
@@ -42,40 +42,7 @@
         android:background="@drawable/login_button"
         android:textSize="@dimen/login_text_size"
         android:textColor="@color/loginButtonText"
-        android:text="@string/registerText"
+        android:text="@string/visitorWayText"
         style="?android:attr/borderlessButtonStyle"/>
-
-    <LinearLayout
-        android:id="@+id/choose_visitor_way"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/choose_register_way"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/loginHint"
-            android:textSize="@dimen/login_visitor_way_text_size"
-            android:text="@string/visitorWayText"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/loginHint"/>
-
-    </LinearLayout>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="@dimen/login_yiban_icon_size"
-        android:layout_height="@dimen/login_yiban_icon_size"
-        android:layout_marginBottom="30dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_yiban"/>
 
 </RelativeLayout>
