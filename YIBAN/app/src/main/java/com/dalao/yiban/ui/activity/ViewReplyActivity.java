@@ -151,6 +151,12 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
             // 评论
             case R.id.comment_reply_button:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 editCommentText(String.valueOf(masterCommentBean.getId()));
                 break;
 

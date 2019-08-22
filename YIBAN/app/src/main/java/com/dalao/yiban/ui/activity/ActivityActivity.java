@@ -6,6 +6,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
@@ -89,7 +92,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
     private Button activityBottomNavForward;
 
-    private WebView activityWebView; // TODO:test html
+    private WebView activityWebView;
 
     /**
      *
@@ -164,6 +167,12 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         switch (v.getId()) {
             // 评论
             case R.id.bottom_nav_comment:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
                 break;
 
@@ -176,8 +185,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                             commentToCommentId, content, HomeConstant.SELECT_ACTIVITY);
                 }
                 else {
-                // 评论为空，不能发表
-                Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+                    // 评论为空，不能发表
+                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -197,6 +206,12 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
             // 收藏或取消收藏
             case R.id.bottom_nav_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
                         activityId, activityGson.getCollection());
                 break;
@@ -239,14 +254,21 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
             // 收藏或取消收藏
             case R.id.more_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
                         activityId, activityGson.getCollection());
                 break;
 
             case R.id.more_copy:
-                // TODO：复制该活动链接
-                Toast.makeText(ActivityActivity.this, "copy",
-                        Toast.LENGTH_SHORT).show();
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Label", activityGson.getAuthor());
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(this, HintConstant.COPY_SUCCESS, Toast.LENGTH_SHORT).show();
                 break;
 
             // 转发button弹出PopWindow
@@ -338,12 +360,6 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityBottomNavForward.setOnClickListener(this);
         activitySource.setText(activityGson.getAuthor());
         menu.setGroupVisible(R.id.more_group, true);
-//        activityContent.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                StringUtils.showContent(activityContent, activityGson.getContent());
-//            }
-//        });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
@@ -353,13 +369,26 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
             moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
 
-        // TODO: test html
-        activityWebView.setWebViewClient(new WebViewClient());
-        activityWebView.getSettings().setJavaScriptEnabled(true);
-        activityWebView.loadDataWithBaseURL(null, activityGson.getContent(),
-                "text/html", "utf-8", null);
-        activityContent.setVisibility(View.GONE);
-        activityWebView.setVisibility(View.VISIBLE);
+        // type为h5用WebView加载内容
+        if (activityGson.getType().equals(HomeConstant.CONTENT_RESPONSE_H5_TYPE)) {
+            activityContent.setVisibility(View.GONE);
+            activityWebView.setVisibility(View.VISIBLE);
+            activityWebView.setWebViewClient(new WebViewClient());
+            activityWebView.getSettings().setJavaScriptEnabled(true);
+            activityWebView.loadDataWithBaseURL(null, activityGson.getContent(),
+                    "text/html", "utf-8", null);
+        }
+        // type为word用RichText加载内容
+        else if (activityGson.getType().equals(HomeConstant.CONTENT_RESPONSE_NORMAL_TYPE)) {
+            activityContent.setVisibility(View.VISIBLE);
+            activityWebView.setVisibility(View.GONE);
+            activityContent.post(new Runnable() {
+                @Override
+                public void run() {
+                    StringUtils.showContent(activityContent, activityGson.getContent());
+                }
+            });
+        }
     }
 
     /**

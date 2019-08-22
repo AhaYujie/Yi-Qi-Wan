@@ -93,6 +93,7 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             holder.homeItemPic.setVisibility(View.GONE);
         }
         else {
+
             //设置图片圆角角度
             RoundedCorners roundedCorners= new RoundedCorners(20);
             //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗

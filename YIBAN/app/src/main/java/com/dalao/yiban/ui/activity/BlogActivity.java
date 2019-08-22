@@ -6,6 +6,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.CommunityConstant;
@@ -188,6 +191,12 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
 
             // 关注或者取消关注作者
             case R.id.blog_follow_author_button:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 if (blogGson.getFollow() == CommunityConstant.UN_FOLLOW) {
                     HttpUtil.followBlogAuthor(this, null, this,
                             userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.FOLLOW);
@@ -214,6 +223,12 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
 
             // 评论
             case R.id.bottom_nav_comment:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
                 break;
 
@@ -233,6 +248,12 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
 
             // 收藏或取消收藏
             case R.id.bottom_nav_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
                         blogId, blogGson.getCollection());
                 break;
@@ -276,14 +297,18 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
 
             // 收藏或取消收藏
             case R.id.more_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
                         blogId, blogGson.getCollection());
                 break;
 
             case R.id.more_copy:
-                // TODO：复制该博客链接
-                Toast.makeText(BlogActivity.this, "copy",
-                        Toast.LENGTH_SHORT).show();
+                //TODO: 取消此功能
                 break;
 
             // 转发button弹出PopWindow

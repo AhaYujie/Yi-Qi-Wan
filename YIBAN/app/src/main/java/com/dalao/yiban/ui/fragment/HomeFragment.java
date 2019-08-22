@@ -227,7 +227,8 @@ public class HomeFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateHomeListUI(homeListGson);
+                                HomeFragment.this.homeListGson = homeListGson;
+                                updateHomeListUI();
                             }
                         });
                     }
@@ -258,16 +259,14 @@ public class HomeFragment extends BaseFragment {
 
     /**
      * 刷新列表UI
-     * @param homeListGson : 解析后的json数据
      */
-    private void updateHomeListUI(@NonNull HomeListGson homeListGson) {
-        this.homeListGson = homeListGson;
-        homeItemAdapter.setHomeListGson(this.homeListGson);
+    private void updateHomeListUI() {
+        homeItemAdapter.setHomeListGson(homeListGson);
         homeItemAdapter.setCategorySelected(categorySelected);
         homeItemAdapter.notifyDataSetChanged();
         homeSwipeRefresh.setRefreshing(false);
-        homeItemRecyclerView.scrollToPosition(5);
-        homeItemRecyclerView.smoothScrollToPosition(0);
+        homeItemRecyclerView.scrollToPosition(0);
+        //homeItemRecyclerView.smoothScrollToPosition(0);
     }
 
 }

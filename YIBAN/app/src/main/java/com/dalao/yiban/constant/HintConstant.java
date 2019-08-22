@@ -42,4 +42,8 @@ public class HintConstant {
 
     public static final String EDIT_NICKNAME_EMPTY = "昵称不能为空";
 
+    public static final String VISITOR_NOT_ALLOW = "使用此功能前请先登录";
+
+    public static final String COPY_SUCCESS = "复制成功";
+
 }

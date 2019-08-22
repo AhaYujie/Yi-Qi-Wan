@@ -27,7 +27,7 @@
         android:background="@drawable/login_button"
         android:textSize="@dimen/login_text_size"
         android:textColor="@color/loginButtonText"
-        android:text="@string/loginText"
+        android:text="@string/yibanLoginText"
         style="?android:attr/borderlessButtonStyle"/>
 
     <Button

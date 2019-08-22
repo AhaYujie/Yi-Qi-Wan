@@ -166,6 +166,9 @@ public class MainActivity extends BaseActivity {
             case HomeConstant.LOGIN_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     viewPager.setAdapter(viewPagerAdapter);
+                    bottomNavigationView.setSelectedItemId(bottomNavigationView.getMenu()
+                            .getItem(HomeConstant.SELECT_HOME).getItemId());
+                    viewPager.setCurrentItem(HomeConstant.SELECT_HOME);
                     Toast.makeText(this, HintConstant.LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
                     userId = data.getStringExtra(HomeConstant.USER_ID);
                     User user = new User();

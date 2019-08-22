@@ -64,6 +64,6 @@ public class HomeConstant {
 
     public static final String CONTENT_RESPONSE_H5_TYPE = "h5";
 
-    public static final String CONTENT_RESPONSE_NORMAL_TYPE = "";
+    public static final String CONTENT_RESPONSE_NORMAL_TYPE = "word";
 
 }

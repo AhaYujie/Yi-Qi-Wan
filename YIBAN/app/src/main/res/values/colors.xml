@@ -17,6 +17,8 @@
     <color name="mine_background">#F5F5F5</color>
     <color name="mine_info_background">#FFFFFF</color>
     <color name="mine_text">#000000</color>
+    <color name="mine_sign_out_text">#FFFFFF</color>
+    <color name="mine_sign_out_background">	#CC0033</color>
 
     <!-- 分界线 -->
     <color name="boundaryLine">#FAFAFA</color>

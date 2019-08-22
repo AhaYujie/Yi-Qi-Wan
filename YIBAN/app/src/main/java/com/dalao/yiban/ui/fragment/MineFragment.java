@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.LinearGradient;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -15,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,9 +31,11 @@ import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
+import com.dalao.yiban.db.User;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.UserInfoGson;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
+import com.dalao.yiban.ui.activity.LoginActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.CommonUtil;
@@ -42,6 +47,8 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
+
+import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +104,14 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
     private int sexSelected;
 
+    private LinearLayout mineVisitorModeLayout;
+
+    private LinearLayout mineLoginModeLayout;
+
+    private CircleImageView mineLoginButton;
+
+    private Button mineSignOutButton;
+
     public MineFragment() {
         // Required empty public constructor
     }
@@ -134,6 +149,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineCollectLayout = (RelativeLayout) view.findViewById(R.id.mine_collect_layout);
         mineFollowingLayout = (RelativeLayout) view.findViewById(R.id.mine_following_layout);
         mineSchoolText = (TextView) view.findViewById(R.id.mine_school_text);
+        mineVisitorModeLayout = (LinearLayout) view.findViewById(R.id.mine_visitor_mode_layout);
+        mineLoginModeLayout = (LinearLayout) view.findViewById(R.id.mine_login_mode_layout);
+        mineLoginButton = (CircleImageView) view.findViewById(R.id.mine_login_button);
+        mineSignOutButton = (Button) view.findViewById(R.id.mine_sign_out_button);
 
         // 如果fragment可见，请求服务器获取数据
         onVisible();
@@ -187,6 +206,21 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             case R.id.mine_following_layout:
                 //TODO:启动查看我关注的人活动
                 break;
+
+            // 易班登录
+            case R.id.mine_login_button:
+                DataSupport.deleteAll(User.class, "severId = ?", activity.userId);
+                LoginActivity.actionStart(activity);
+                break;
+
+            // 退出登录
+            case R.id.mine_sign_out_button:
+                User user = new User();
+                user.setSeverId(HomeConstant.VISITOR_USER_ID);
+                user.updateAll("severId = ?", activity.userId);
+                activity.userId = HomeConstant.VISITOR_USER_ID;
+                mineLoginModeLayout.setVisibility(View.GONE);
+                mineVisitorModeLayout.setVisibility(View.VISIBLE);
             default:
                 break;
         }
@@ -196,9 +230,18 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * 用户可见时进行的操作
      */
     protected void onVisible() {
-        // 请求服务器获取数据
-        if (isVisible && view != null)
-            requestDataFromServer();
+        if (isVisible && view != null) {
+            // 游客模式
+            if (activity.userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                mineVisitorModeLayout.setVisibility(View.VISIBLE);
+                mineLoginModeLayout.setVisibility(View.GONE);
+                mineLoginButton.setOnClickListener(this);
+            } else {
+                mineVisitorModeLayout.setVisibility(View.GONE);
+                mineLoginModeLayout.setVisibility(View.VISIBLE);
+                requestDataFromServer();
+            }
+        }
     }
 
     /**
@@ -337,6 +380,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineBlogLayout.setOnClickListener(this);
         mineCollectLayout.setOnClickListener(this);
         mineFollowingLayout.setOnClickListener(this);
+        mineSignOutButton.setOnClickListener(this);
         mineUsernameText.setText(userInfoGson.getUser().getUsername());
         mineNicknameText.setText(userInfoGson.getUser().getNickname());
         mineSchoolText.setText(userInfoGson.getUser().getSchool());
