@@ -118,7 +118,6 @@ public class YibanLoginFragment extends BaseFragment {
         @JavascriptInterface
         @SuppressWarnings("unused")
         public void processContent(String content) {
-            Log.d("yujie", content);
             if (content.contains(LoginConstant.USER_ID)) {
                 try {
                     JSONObject jsonObject = new JSONObject(content);

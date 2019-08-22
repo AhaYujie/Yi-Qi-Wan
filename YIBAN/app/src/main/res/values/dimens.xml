@@ -5,7 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- 首页 -->
-    <dimen name="home_item_height">100dp</dimen>
+    <dimen name="home_item_height">120dp</dimen>
     <dimen name="home_item_title_size">18sp</dimen>
     <dimen name="home_item_hint_size">12sp</dimen>
     <dimen name="home_item_eye_size">18dp</dimen>

@@ -107,12 +107,6 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        Log.d("yujie", "login destroy");
-        super.onDestroy();
-    }
-
     /**
      * 带着用户id回到主页面
      * @param userId：用户id

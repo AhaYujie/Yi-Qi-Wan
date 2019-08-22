@@ -40,4 +40,6 @@ public class HintConstant {
 
     public static final String LOGIN_SUCCESS = "登录成功";
 
+    public static final String EDIT_NICKNAME_EMPTY = "昵称不能为空";
+
 }

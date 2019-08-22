@@ -23,6 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
+                android:textIsSelectable="true"
                 android:textColor="@color/myTitle"
                 android:textSize="@dimen/my_title_size"/>
 
@@ -65,6 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
+                    android:textIsSelectable="true"
                     android:textColor="@color/myHint"
                     android:textSize="@dimen/my_hint_text_size"/>
 

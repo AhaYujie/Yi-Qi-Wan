@@ -62,4 +62,8 @@ public class HomeConstant {
 
     public static final String VISITOR_USER_ID = "-1";
 
+    public static final String CONTENT_RESPONSE_H5_TYPE = "h5";
+
+    public static final String CONTENT_RESPONSE_NORMAL_TYPE = "";
+
 }

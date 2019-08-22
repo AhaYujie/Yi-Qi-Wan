@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HomeConstant;
@@ -87,8 +89,17 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
         holder.homeItemTitle.setText(dataBean.getTitle());
         holder.homeItemTime.setText(dataBean.getTime());
         holder.homeItemPageViews.setText(String.valueOf(dataBean.getPageviews()));
-        holder.homeItemPic.setVisibility(View.GONE);
-
+        if ("".equals(dataBean.getUrl())) {
+            holder.homeItemPic.setVisibility(View.GONE);
+        }
+        else {
+            //设置图片圆角角度
+            RoundedCorners roundedCorners= new RoundedCorners(20);
+            //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
+            RequestOptions options = RequestOptions.bitmapTransform(roundedCorners).override(300, 300);
+            holder.homeItemPic.setVisibility(View.VISIBLE);
+            Glide.with(activity).load(dataBean.getUrl()).apply(options).into(holder.homeItemPic);
+        }
         // layout点击事件
         holder.homeItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,11 +117,6 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             }
         });
 
-//        //设置图片圆角角度
-//        RoundedCorners roundedCorners= new RoundedCorners(20);
-//        //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
-//        RequestOptions options = RequestOptions.bitmapTransform(roundedCorners).override(300, 300);
-//        Glide.with(MyApplication.getContext()).load(R.drawable.ic_yiban).apply(options).into(holder.homeItemPic);
     }
 
     @Override

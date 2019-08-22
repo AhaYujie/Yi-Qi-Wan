@@ -8,6 +8,7 @@ import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
+import com.dalao.yiban.db.User;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
 import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
@@ -22,7 +23,10 @@ import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.Toast;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,10 +81,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 从本地获取用户id，若无则跳转到登录界面
-        //TODO:本地获取用户id
-        LoginActivity.actionStart(this);
-
         // 初始化控件
         bottomNavigationView = findViewById(R.id.nav_view);
         viewPager = (CustomViewPager) findViewById(R.id.home_view_pager);
@@ -90,10 +90,20 @@ public class MainActivity extends BaseActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentList = initFragmentList();
         viewPagerAdapter.setList(fragmentList);
-        viewPager.setAdapter(viewPagerAdapter);
         // 取消ViewPager的左右滑动切换界面动画
         viewPager.disableScroll(true);
         viewPager.setOffscreenPageLimit(2);
+
+        // 从本地获取用户id，若无则跳转到登录界面
+        List<User> userList = DataSupport.findAll(User.class);
+        if (userList != null && userList.size() != 0) {
+            userId = userList.get(0).getSeverId();
+            viewPager.setAdapter(viewPagerAdapter);
+        }
+        else {
+            LoginActivity.actionStart(this);
+        }
+
     }
 
     /**
@@ -155,8 +165,13 @@ public class MainActivity extends BaseActivity {
             // 登录
             case HomeConstant.LOGIN_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    userId = data.getStringExtra(HomeConstant.USER_ID);
+                    viewPager.setAdapter(viewPagerAdapter);
                     Toast.makeText(this, HintConstant.LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
+                    userId = data.getStringExtra(HomeConstant.USER_ID);
+                    User user = new User();
+                    user.setSeverId(userId);
+                    user.setSearchList(null);
+                    user.save();
                 }
                 else {
                     finish();
@@ -183,12 +198,6 @@ public class MainActivity extends BaseActivity {
             default:
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d("yujie", "main destroy");
-        super.onDestroy();
     }
 
 }

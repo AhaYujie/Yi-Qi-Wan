@@ -7,8 +7,8 @@ import java.util.List;
  */
 public class ActivityGson {
 
-
     /**
+     * type : h5
      * content : 活动内容内容内容<img src="http://188888888.xyz:5000/static/photo/12.png"/>　活动内容内容内容　<img src="http://188888888.xyz:5000/static/photo/123.jpg"/>活动内容内容内容　
      * title : 活动我是活动1
      * collection : 1
@@ -18,6 +18,7 @@ public class ActivityGson {
      * time : 2019-08-09 23:19:03
      */
 
+    private String type;
     private String content;
     private String title;
     private int collection;
@@ -25,6 +26,14 @@ public class ActivityGson {
     private String author;
     private String time;
     private List<CommentBean> comments;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getContent() {
         return content;

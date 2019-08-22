@@ -124,20 +124,4 @@
     <string name="loginUsernameMaxLength">12</string>
     <string name="loginPasswordMaxLength">15</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
-    <!-- login -->
-    <string name="loginText">易班登录</string>
-    <string name="registerText">注册</string>
-    <string name="visitorWayText">游客试用</string>
-    <string name="loginUsernameHint">输入账号</string>
-    <string name="loginPasswordHint">输入密码</string>
-    <string name="registerUsernameHint">设置账号, 不少于6位</string>
-    <string name="registerPasswordHint">设置密码, 不少于6位</string>
-    <string name="registerNicknameHint">设置昵称</string>
-    <string name="loginUsernameMaxLength">12</string>
-    <string name="loginPasswordMaxLength">15</string>
-
 </resources>

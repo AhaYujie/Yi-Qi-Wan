@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:textIsSelectable="true"
             android:textColor="@color/myCommentText"
             android:textSize="@dimen/my_comment_size"
             android:lineSpacingMultiplier="@string/line_spacing_multiplier"/>
