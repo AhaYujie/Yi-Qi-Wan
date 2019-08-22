@@ -358,6 +358,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityMoveToComment.setOnClickListener(this);
         activityBottomNavCollect.setOnClickListener(this);
         activityBottomNavForward.setOnClickListener(this);
+        activityTitle.setText(activityGson.getTitle());
+        activityContentTime.setText(activityGson.getTime());
         activitySource.setText(activityGson.getAuthor());
         menu.setGroupVisible(R.id.more_group, true);
         if (activityGson.getCollection() == HomeConstant.COLLECT) {

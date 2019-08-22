@@ -355,7 +355,8 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateActivityUI(blogGson);
+                                BlogActivity.this.blogGson = blogGson;
+                                updateActivityUI();
                             }
                         });
                     }
@@ -383,11 +384,9 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
     }
 
     /**
-     * 刷新活动UI
-     * @param blogGson:解析后的数据
+     * 刷新博客UI
      */
-    private void updateActivityUI(final BlogGson blogGson) {
-        this.blogGson = blogGson;
+    private void updateActivityUI() {
         menu.setGroupVisible(R.id.more_group, false);
         // 设置点击事件
         blogAuthorFace.setOnClickListener(this);
@@ -398,6 +397,10 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         blogBottomNavForward.setOnClickListener(this);
         moveToComment.setOnClickListener(this);
         menu.setGroupVisible(R.id.more_group, true);
+        blogTitle.setText(blogGson.getTitle());
+        blogContentTime.setText(blogGson.getTime());
+        blogAuthorName.setText(blogGson.getAuthor());
+        authorId = String.valueOf(blogGson.getAuthorId());
         if (blogGson.getFollow() == CommunityConstant.FOLLOW) {
             blogFollowAuthorButton.setText(CommunityConstant.UN_FOLLOW_TEXT);
         }

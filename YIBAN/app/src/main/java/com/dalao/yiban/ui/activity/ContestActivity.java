@@ -90,6 +90,8 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
 
     private WebView contestContentWebview;
 
+    private TextView contestContentTime;
+
     /**
      *
      * @param context :
@@ -125,7 +127,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
         contestSource = (TextView) findViewById(R.id.contest_source);
         contestTitle = (TextView) findViewById(R.id.contest_title);
         contestContentWebview = (WebView) findViewById(R.id.contest_content_webview);
-        TextView contestContentTime = (TextView) findViewById(R.id.contest_content_time);
+        contestContentTime = (TextView) findViewById(R.id.contest_content_time);
         Toolbar contestToolbar = findViewById(R.id.contest_toolbar);
 
         setSupportActionBar(contestToolbar);
@@ -375,6 +377,8 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
         bottomNavCollect.setOnClickListener(this);
         bottomNavForward.setOnClickListener(this);
         menu.setGroupVisible(R.id.more_group, true);
+        contestTitle.setText(contestGson.getTitle());
+        contestContentTime.setText(contestGson.getTime());
         contestSource.setText(contestGson.getAuthor());
         if (contestGson.getCollection() == HomeConstant.COLLECT) {
             bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
