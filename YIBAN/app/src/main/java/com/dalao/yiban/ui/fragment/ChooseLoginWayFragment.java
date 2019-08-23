@@ -6,14 +6,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.ui.activity.LoginActivity;
 
 public class ChooseLoginWayFragment extends BaseFragment {
 
+    private Button chooseYibanLoginWay;
+
+    private Button chooseVisitorWay;
+
+    private LoginActivity loginActivity;
+
+    private View view;
 
     public ChooseLoginWayFragment() {
         // Required empty public constructor
@@ -39,7 +49,16 @@ public class ChooseLoginWayFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_choose_login_way, container, false);
+        view =  inflater.inflate(R.layout.fragment_choose_login_way, container, false);
+
+        // 初始化控件
+        chooseYibanLoginWay = (Button) view.findViewById(R.id.choose_yiban_login_way);
+        chooseVisitorWay = (Button) view.findViewById(R.id.choose_visitor_way);
+        loginActivity = (LoginActivity) getActivity();
+
+        onVisible();
+
+        return view;
     }
 
     /**
@@ -47,7 +66,11 @@ public class ChooseLoginWayFragment extends BaseFragment {
      */
     @Override
     protected void onVisible() {
-
+        // 设置点击事件
+        if (isVisible && view != null) {
+            chooseVisitorWay.setOnClickListener(loginActivity);
+            chooseYibanLoginWay.setOnClickListener(loginActivity);
+        }
     }
 
 }

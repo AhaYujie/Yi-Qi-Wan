@@ -8,6 +8,7 @@ import java.util.List;
 public class ContestGson {
 
     /**
+     * type : h5
      * collection : 1
      * title : 竞赛标题测试１
      * content : 竞赛内容测试１
@@ -16,6 +17,7 @@ public class ContestGson {
      * pageviews : 0
      */
 
+    private String type;
     private int collection;
     private String title;
     private String content;
@@ -23,6 +25,14 @@ public class ContestGson {
     private String time;
     private int pageviews;
     private List<CommentBean> comments;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public int getCollection() {
         return collection;

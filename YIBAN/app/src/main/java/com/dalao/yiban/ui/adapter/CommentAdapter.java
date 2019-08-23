@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
+import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.CommentBean;
 import com.dalao.yiban.my_interface.CommentInterface;
@@ -125,7 +127,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.commentReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                commentInterface.editCommentText(String.valueOf(commentBean.getId()));
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    commentInterface.editCommentText(String.valueOf(commentBean.getId()));
+                }
             }
         });
     }

@@ -8,6 +8,7 @@ import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
+import com.dalao.yiban.db.User;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
 import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
@@ -19,9 +20,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.Toast;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +37,7 @@ import static com.dalao.yiban.constant.MineConstant.SECRET;
 
 public class MainActivity extends BaseActivity {
 
-    public String userId = "2"; //TODO: test
+    public String userId;
 
     private CustomViewPager viewPager;
 
@@ -85,10 +90,20 @@ public class MainActivity extends BaseActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentList = initFragmentList();
         viewPagerAdapter.setList(fragmentList);
-        viewPager.setAdapter(viewPagerAdapter);
         // 取消ViewPager的左右滑动切换界面动画
         viewPager.disableScroll(true);
         viewPager.setOffscreenPageLimit(2);
+
+        // 从本地获取用户id，若无则跳转到登录界面
+        List<User> userList = DataSupport.findAll(User.class);
+        if (userList != null && userList.size() != 0) {
+            userId = userList.get(0).getSeverId();
+            viewPager.setAdapter(viewPagerAdapter);
+        }
+        else {
+            LoginActivity.actionStart(this);
+        }
+
     }
 
     /**
@@ -134,18 +149,36 @@ public class MainActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             // 修改昵称
-            case MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
+            case HomeConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     mineFragment.setNickName(data.getStringExtra(MineConstant.USER_NICKNAME));
                 }
                 break;
 
             // 修改头像
-            case MineConstant.EDIT_USER_FACE_REQUEST_CODE:
+            case HomeConstant.EDIT_USER_FACE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     mineFragment.handleSelectedImage(data);
                 }
                 break;
+
+            // 登录
+            case HomeConstant.LOGIN_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    viewPager.setAdapter(viewPagerAdapter);
+                    bottomNavigationView.setSelectedItemId(bottomNavigationView.getMenu()
+                            .getItem(HomeConstant.SELECT_HOME).getItemId());
+                    viewPager.setCurrentItem(HomeConstant.SELECT_HOME);
+                    Toast.makeText(this, HintConstant.LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
+                    userId = data.getStringExtra(HomeConstant.USER_ID);
+                    User user = new User();
+                    user.setSeverId(userId);
+                    user.setSearchList(null);
+                    user.save();
+                }
+                else {
+                    finish();
+                }
             default:
                 break;
         }
@@ -164,6 +197,7 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(this, HintConstant.PERMISSION_REFUSE, Toast.LENGTH_SHORT).show();
                 }
                 break;
+
             default:
                 break;
         }

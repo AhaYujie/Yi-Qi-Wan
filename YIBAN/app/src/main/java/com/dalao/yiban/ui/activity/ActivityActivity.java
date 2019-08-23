@@ -6,6 +6,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
@@ -89,7 +92,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
     private Button activityBottomNavForward;
 
-    private WebView activityWebView; // TODO:test html
+    private WebView activityWebView;
 
     /**
      *
@@ -151,9 +154,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                 activityId, HomeConstant.SELECT_ACTIVITY);
         activityCommentRecyclerView.setAdapter(commentAdapter);
 
-        // 请求服务器
-        requestDataFromServer();
-
+        // 请求服务器获取数据刷新UI
+        requestDataFromServer(true, true);
     }
 
     /**
@@ -165,6 +167,12 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         switch (v.getId()) {
             // 评论
             case R.id.bottom_nav_comment:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
                 break;
 
@@ -177,8 +185,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                             commentToCommentId, content, HomeConstant.SELECT_ACTIVITY);
                 }
                 else {
-                // 评论为空，不能发表
-                Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+                    // 评论为空，不能发表
+                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -198,6 +206,12 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
             // 收藏或取消收藏
             case R.id.bottom_nav_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
                         activityId, activityGson.getCollection());
                 break;
@@ -240,14 +254,21 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
             // 收藏或取消收藏
             case R.id.more_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
                         activityId, activityGson.getCollection());
                 break;
 
             case R.id.more_copy:
-                // TODO：复制该活动链接
-                Toast.makeText(ActivityActivity.this, "copy",
-                        Toast.LENGTH_SHORT).show();
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Label", activityGson.getAuthor());
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(this, HintConstant.COPY_SUCCESS, Toast.LENGTH_SHORT).show();
                 break;
 
             // 转发button弹出PopWindow
@@ -263,8 +284,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
     /**
      * 请求服务器获取活动数据, 并解析刷新UI
+     * @param updateContent : true则更新内容UI
+     * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer() {
+    private void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.ACTIVITY_ID, activityId)
                 .add(ServerPostDataConstant.USER_ID, userId)
@@ -293,7 +316,13 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateActivityUI(activityGson);
+                                ActivityActivity.this.activityGson = activityGson;
+                                if (updateContent) {
+                                    updateContentUI();
+                                }
+                                if (updateComment) {
+                                    updateCommentUI();
+                                }
                             }
                         });
                     }
@@ -321,24 +350,18 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
     }
 
     /**
-     * 刷新活动UI
-     * @param activityGson:解析后的数据
+     * 刷新活动内容UI
      */
-    private void updateActivityUI(final ActivityGson activityGson) {
-        this.activityGson = activityGson;
+    private void updateContentUI() {
         // 设置点击事件
         activityBottomNavCommentButton.setOnClickListener(this);
         activityMoveToComment.setOnClickListener(this);
         activityBottomNavCollect.setOnClickListener(this);
         activityBottomNavForward.setOnClickListener(this);
+        activityTitle.setText(activityGson.getTitle());
+        activityContentTime.setText(activityGson.getTime());
         activitySource.setText(activityGson.getAuthor());
         menu.setGroupVisible(R.id.more_group, true);
-        activityContent.post(new Runnable() {
-            @Override
-            public void run() {
-                StringUtils.showContent(activityContent, activityGson.getContent());
-            }
-        });
         if (activityGson.getCollection() == HomeConstant.COLLECT) {
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
@@ -347,18 +370,35 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
             activityBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
             moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
+
+        // type为h5用WebView加载内容
+        if (activityGson.getType().equals(HomeConstant.CONTENT_RESPONSE_H5_TYPE)) {
+            activityContent.setVisibility(View.GONE);
+            activityWebView.setVisibility(View.VISIBLE);
+            activityWebView.setWebViewClient(new WebViewClient());
+            activityWebView.getSettings().setJavaScriptEnabled(true);
+            activityWebView.loadDataWithBaseURL(null, activityGson.getContent(),
+                    "text/html", "utf-8", null);
+        }
+        // type为word用RichText加载内容
+        else if (activityGson.getType().equals(HomeConstant.CONTENT_RESPONSE_NORMAL_TYPE)) {
+            activityContent.setVisibility(View.VISIBLE);
+            activityWebView.setVisibility(View.GONE);
+            activityContent.post(new Runnable() {
+                @Override
+                public void run() {
+                    StringUtils.showContent(activityContent, activityGson.getContent());
+                }
+            });
+        }
+    }
+
+    /**
+     * 更新评论区UI
+     */
+    private void updateCommentUI() {
         commentAdapter.setCommentsBeanList(activityGson.getComments());
         commentAdapter.notifyDataSetChanged();
-
-        // TODO: test html
-        activityWebView.setWebViewClient(new WebViewClient());
-        activityWebView.getSettings().setJavaScriptEnabled(true);
-        HomeConstant.CONTENT = HomeConstant.CONTENT.replaceAll
-                ("width=\"\\d+\"", "width=\"100%\"").replaceAll("height=\"\\d+\"", "height=\"auto\"");
-        activityWebView.loadDataWithBaseURL(null, HomeConstant.CONTENT,
-                "text/html", "utf-8", null);
-        activityContent.setVisibility(View.GONE);
-        activityWebView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -378,7 +418,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
      */
     public void publishComment() {
         Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer();
+        requestDataFromServer(false, true);
+        // 刷新评论区UI
+        commentAdapter.setCommentsBeanList(activityGson.getComments());
+        commentAdapter.notifyDataSetChanged();
     }
 
     /**

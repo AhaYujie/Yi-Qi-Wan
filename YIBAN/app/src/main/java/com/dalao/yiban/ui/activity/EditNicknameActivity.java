@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
 
@@ -32,7 +34,7 @@ public class EditNicknameActivity extends BaseActivity {
     public static void actionStart(Context context, String nickname) {
         Intent intent = new Intent(context, EditNicknameActivity.class);
         intent.putExtra(MineConstant.USER_NICKNAME, nickname);
-        ((MainActivity) context).startActivityForResult(intent, MineConstant.EDIT_USER_NICKNAME_REQUEST_CODE);
+        ((MainActivity) context).startActivityForResult(intent, HomeConstant.EDIT_USER_NICKNAME_REQUEST_CODE);
     }
 
     @Override
@@ -74,10 +76,16 @@ public class EditNicknameActivity extends BaseActivity {
 
             // 保存修改
             case R.id.edit_nickname_confirm_button:
-                Intent intent = new Intent();
-                intent.putExtra(MineConstant.USER_NICKNAME, editNicknameEditText.getText().toString());
-                setResult(RESULT_OK, intent);
-                finish();
+                // 昵称不能为空
+                if (editNicknameEditText.getText().toString().equals("")) {
+                    Toast.makeText(this, HintConstant.EDIT_NICKNAME_EMPTY, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent();
+                    intent.putExtra(MineConstant.USER_NICKNAME, editNicknameEditText.getText().toString());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
                 break;
             default:
                 break;

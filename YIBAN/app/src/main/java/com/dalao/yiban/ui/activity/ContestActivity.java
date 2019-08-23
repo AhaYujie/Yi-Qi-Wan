@@ -1,7 +1,10 @@
 package com.dalao.yiban.ui.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,16 +16,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.ContestGson;
@@ -81,6 +88,10 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
 
     private PopupWindow commentPopupWindow;
 
+    private WebView contestContentWebview;
+
+    private TextView contestContentTime;
+
     /**
      *
      * @param context :
@@ -115,7 +126,8 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
         richTextView = (RichTextView) findViewById(R.id.contest_content);
         contestSource = (TextView) findViewById(R.id.contest_source);
         contestTitle = (TextView) findViewById(R.id.contest_title);
-        TextView contestContentTime = (TextView) findViewById(R.id.contest_content_time);
+        contestContentWebview = (WebView) findViewById(R.id.contest_content_webview);
+        contestContentTime = (TextView) findViewById(R.id.contest_content_time);
         Toolbar contestToolbar = findViewById(R.id.contest_toolbar);
 
         setSupportActionBar(contestToolbar);
@@ -140,8 +152,8 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
                 HomeConstant.SELECT_CONTEST);
         contestTeamRecyclerView.setAdapter(commentAdapter);
 
-        // 请求服务器
-        requestDataFromServer();
+        // 请求服务器获得数据刷新UI
+        requestDataFromServer(true, true);
 
     }
 
@@ -154,6 +166,12 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
         switch (v.getId()) {
             // 编辑评论
             case R.id.bottom_nav_comment:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 editCommentText(CommentConstant.COMMENT_TO_NO_ONE);
                 break;
 
@@ -187,6 +205,12 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
 
             // 收藏或取消收藏
             case R.id.bottom_nav_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
                         userId, contestId, contestGson.getCollection());
                 break;
@@ -258,14 +282,21 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
                 break;
 
             case R.id.more_collect:
+                // 游客禁止使用此功能
+                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
                         userId, contestId, contestGson.getCollection());
                 break;
 
             case R.id.more_copy:
-                // TODO：复制该竞赛链接
-                Toast.makeText(ContestActivity.this, "copy",
-                        Toast.LENGTH_SHORT).show();
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Label", contestGson.getAuthor());
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(this, HintConstant.COPY_SUCCESS, Toast.LENGTH_SHORT).show();
                 break;
 
             // 转发button弹出PopWindow
@@ -281,8 +312,10 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
 
     /**
      * 请求服务器获取竞赛数据, 并解析刷新UI
+     * @param updateContent : true则更新内容UI
+     * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer() {
+    private void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.CONTEST_ID, contestId)
                 .add(ServerPostDataConstant.USER_ID, userId)
@@ -303,29 +336,24 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                ContestActivity.this.getCallList().add(call);
-                if (response.body() != null) {
+                try {
+                    ContestActivity.this.getCallList().add(call);
                     String responseText = response.body().string();
                     final ContestGson contestGson = JsonUtil.handleContestResponse(responseText);
-                    if (contestGson != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateContestUI(contestGson);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ContestActivity.this.contestGson = contestGson;
+                            if (updateContent) {
+                                updateContestContentUI();
                             }
-                        });
-                    }
-                    else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ContestActivity.this,
-                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            if (updateComment) {
+                                updateContestCommentUI();
                             }
-                        });
-                    }
+                        }
+                    });
                 }
-                else {
+                catch (NullPointerException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -333,30 +361,25 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
                                     HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                         }
                     });
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     /**
-     * 刷新竞赛UI
-     * @param contestGson:解析后的数据
+     * 刷新竞赛内容UI
      */
-    private void updateContestUI(@NonNull final ContestGson contestGson) {
-        this.contestGson = contestGson;
+    private void updateContestContentUI() {
         // 设置button点击事件
         contestCommentButton.setOnClickListener(this);
         contestMoveToComment.setOnClickListener(this);
         bottomNavCollect.setOnClickListener(this);
         bottomNavForward.setOnClickListener(this);
         menu.setGroupVisible(R.id.more_group, true);
+        contestTitle.setText(contestGson.getTitle());
+        contestContentTime.setText(contestGson.getTime());
         contestSource.setText(contestGson.getAuthor());
-        richTextView.post(new Runnable() {
-            @Override
-            public void run() {
-                StringUtils.showContent(richTextView, contestGson.getContent());
-            }
-        });
         if (contestGson.getCollection() == HomeConstant.COLLECT) {
             bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
             moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
@@ -365,12 +388,39 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
             bottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
             moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
+
+        // type为h5用WebView加载内容
+        if (contestGson.getType().equals(HomeConstant.CONTENT_RESPONSE_H5_TYPE)) {
+            richTextView.setVisibility(View.GONE);
+            contestContentWebview.setVisibility(View.VISIBLE);
+            contestContentWebview.setWebViewClient(new WebViewClient());
+            contestContentWebview.getSettings().setJavaScriptEnabled(true);
+            contestContentWebview.loadDataWithBaseURL(null, contestGson.getContent(),
+                    "text/html", "utf-8", null);
+        }
+        // type为word用RichText加载内容
+        else if (contestGson.getType().equals(HomeConstant.CONTENT_RESPONSE_NORMAL_TYPE)) {
+            richTextView.setVisibility(View.VISIBLE);
+            contestContentWebview.setVisibility(View.GONE);
+            richTextView.post(new Runnable() {
+                @Override
+                public void run() {
+                    StringUtils.showContent(richTextView, contestGson.getContent());
+                }
+            });
+        }
+    }
+
+    /**
+     * 刷新竞赛评论区UI
+     */
+    private void updateContestCommentUI() {
         commentAdapter.setCommentsBeanList(contestGson.getComments());
         commentAdapter.notifyDataSetChanged();
     }
 
     /**
-     * 收藏竞赛成功
+     * 收藏竞赛成功, 刷新UI
      */
     @Override
     public void collectSuccess() {
@@ -381,7 +431,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
     }
 
     /**
-     * 取消收藏成功
+     * 取消收藏成功, 刷新UI
      */
     @Override
     public void unCollectSuccess() {
@@ -408,7 +458,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
      */
     public void publishComment() {
         Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer();
+        requestDataFromServer(false, true);
     }
 
 }

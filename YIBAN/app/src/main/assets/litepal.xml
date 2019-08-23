@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<litepal>
+    <dbname value="Yiban"/>
+    <version value="2"/>
+    <list>
+        <mapping class="com.dalao.yiban.db.User"/>
+        <mapping class="com.dalao.yiban.db.Search"/>
+    </list>
+</litepal>

@@ -36,4 +36,14 @@ public class HintConstant {
 
     public static final String PERMISSION_REFUSE = "拒绝权限将无法使用此功能";
 
+    public static final String LOGIN_ERROR = "登录失败，网络出问题了";
+
+    public static final String LOGIN_SUCCESS = "登录成功";
+
+    public static final String EDIT_NICKNAME_EMPTY = "昵称不能为空";
+
+    public static final String VISITOR_NOT_ALLOW = "使用此功能前请先登录";
+
+    public static final String COPY_SUCCESS = "复制成功";
+
 }

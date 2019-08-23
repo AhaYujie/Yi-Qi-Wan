@@ -77,7 +77,6 @@ public class CommunityFragment extends BaseFragment {
      *
      * @return A new instance of fragment CommunityFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CommunityFragment newInstance() {
         return new CommunityFragment();
     }
@@ -154,8 +153,15 @@ public class CommunityFragment extends BaseFragment {
         communityCreateBlogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 启动创建博客活动
-                CreateBlogActivity.actionStart(activity, activity.userId);
+                // 游客禁止使用此功能
+                if (activity.userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    // 启动创建博客活动
+                    CreateBlogActivity.actionStart(activity, activity.userId);
+                }
             }
         });
 
@@ -249,9 +255,9 @@ public class CommunityFragment extends BaseFragment {
         this.communityBlogListGson = communityBlogListGson;
         communityBlogItemAdapter.setDataBeanList(this.communityBlogListGson.getData());
         communityBlogItemAdapter.notifyDataSetChanged();
-        communityBlogRecyclerView.scrollToPosition(5);
-        communityBlogRecyclerView.smoothScrollToPosition(0);
         communityBlogRefresh.setRefreshing(false);
+        communityBlogRecyclerView.scrollToPosition(0);
+        //communityBlogRecyclerView.smoothScrollToPosition(0);
     }
 
 }

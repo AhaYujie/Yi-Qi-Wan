@@ -5,7 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- 首页 -->
-    <dimen name="home_item_height">100dp</dimen>
+    <dimen name="home_item_height">120dp</dimen>
     <dimen name="home_item_title_size">18sp</dimen>
     <dimen name="home_item_hint_size">12sp</dimen>
     <dimen name="home_item_eye_size">18dp</dimen>
@@ -25,6 +25,7 @@
     <dimen name="mine_value_size">15sp</dimen>
     <dimen name="mine_icon_size">20dp</dimen>
     <dimen name="mine_face_size">50dp</dimen>
+    <dimen name="mine_login_icon_size">50dp</dimen>
 
     <!-- commentInterface pop window -->
     <dimen name="comment_text_size">14sp</dimen>
@@ -86,6 +87,7 @@
     <dimen name="login_visitor_way_text_size">15sp</dimen>
     <dimen name="login_yiban_icon_size">50dp</dimen>
     <dimen name="login_confirm_button_size">70dp</dimen>
-    <dimen name="login_confirm_button_arrow_size">30dp</dimen>
+    <dimen name="login_confirm_button_arrow_size">32dp</dimen>
+    <dimen name="login_back_icon_size">40dp</dimen>
 
 </resources>
