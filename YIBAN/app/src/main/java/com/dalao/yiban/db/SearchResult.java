@@ -16,14 +16,18 @@ public class SearchResult {
     private String title;
     private String author;
     private int id;
+    private String userid;
+    private int type;
 
-    public SearchResult(int pageviews,String time,String title,String author,int id)
+    public SearchResult(int pageviews,String time,String title,String author,int id,String userid,int type)
     {
         this.pageviews=pageviews;
         this.time=time;
         this.title=title;
         this.author=author;
         this.id=id;
+        this.userid = userid;
+        this.type=type;
     }
 
     public int getPageviews() {
@@ -64,5 +68,21 @@ public class SearchResult {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid =userid;
+    }
+
+    public int getType(){
+        return type;
+    }
+
+    public void setType(){
+        this.type=type;
     }
 }

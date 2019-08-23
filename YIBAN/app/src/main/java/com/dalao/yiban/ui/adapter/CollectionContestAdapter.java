@@ -66,7 +66,8 @@ public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionCon
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContestActivity.actionStart(v.getContext(),);
+                ContestActivity.actionStart(v.getContext(),searchResult.getUserid(),
+                        Integer.toString(searchResult.getId()),searchResult.getTitle(),searchResult.getTime());
             }
         });
     }
@@ -75,4 +76,5 @@ public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionCon
 public int getItemCount() {
         return mList.size();
         }
-        }
+
+}

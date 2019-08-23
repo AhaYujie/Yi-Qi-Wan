@@ -70,7 +70,8 @@ public class MyBlogAdapter extends RecyclerView.Adapter<MyBlogAdapter.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BlogActivity.actionStart(v.getContext(),Integer.toString(userid),Integer.toString(id),null,null,title,null,null);
+                BlogActivity.actionStart(v.getContext(),Integer.toString(userid),Integer.toString(id),null,
+                        null,title,collectBlog.getTime(),null);
             }
         });
     }

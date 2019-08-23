@@ -70,6 +70,13 @@ public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAd
         holder.pageviews.setText(Integer.toString(collectBlog.getPageviews()));
         holder.time.setText(collectBlog.getTime());
         holder.title.setText(collectBlog.getTitle());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BlogActivity.actionStart(v.getContext(),Integer.toString(collectBlog.getUserid()),Integer.toString(collectBlog.getId()),
+                        null,null,collectBlog.getTitle(),collectBlog.getTime(),null);Integer.toString(collectBlog.getId());
+            }
+        });
     }
 
     @NonNull

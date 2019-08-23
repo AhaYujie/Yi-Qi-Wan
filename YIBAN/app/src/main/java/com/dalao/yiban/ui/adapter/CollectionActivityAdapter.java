@@ -62,6 +62,13 @@ public class CollectionActivityAdapter extends RecyclerView.Adapter<CollectionAc
         holder.pageviews.setText(Integer.toString(searchResult.getPageviews()));
         holder.time.setText(searchResult.getTime());
         holder.title.setText(searchResult.getTitle());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityActivity.actionStart(v.getContext(),searchResult.getUserid(),Integer.toString(searchResult.getId()),
+                searchResult.getTitle(),searchResult.getTime());
+            }
+        });
 
     }
 

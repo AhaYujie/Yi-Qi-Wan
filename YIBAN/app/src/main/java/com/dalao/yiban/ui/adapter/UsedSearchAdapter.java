@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.dalao.yiban.R;
 import com.dalao.yiban.db.UsedSearch;
+import com.dalao.yiban.ui.activity.SearchActivity;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,8 @@ import java.util.List;
 public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.ViewHolder> {
 
     private List<UsedSearch> mUsedSearchList;
+
+    SearchActivity context;
 
     static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -30,9 +33,10 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
         }
     }
 
-    public UsedSearchAdapter(List<UsedSearch> UsedSearchList)
+    public UsedSearchAdapter(List<UsedSearch> UsedSearchList,SearchActivity context)
     {
         mUsedSearchList = UsedSearchList;
+        this.context=context;
     }
 
     @NonNull
@@ -54,11 +58,20 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
                 removeData(position);
             }
         });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.TouchContent(usedSearch.getContent());
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return mUsedSearchList.size();
+        if(mUsedSearchList.size()<=10)
+            return mUsedSearchList.size();
+        else
+            return 10;
     }
 
     //  添加数据

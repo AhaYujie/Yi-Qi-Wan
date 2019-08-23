@@ -231,7 +231,7 @@ public class CollectionActivity extends BaseActivity {
                                         String title = jsonObject.getString("title");
                                         int pageviews = jsonObject.getInt("pageviews");
                                         int id = jsonObject.getInt("id");
-                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id);
+                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1);
                                         ActivityList.add(content);
                                     }
                                 } catch (Exception e) {
@@ -364,7 +364,7 @@ public class CollectionActivity extends BaseActivity {
                                         String title = jsonObject.getString("title");
                                         int pageviews = jsonObject.getInt("pageviews");
                                         int id = jsonObject.getInt("id");
-                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id);
+                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,0);
                                         ContestList.add(content);
                                     }
                                 } catch (Exception e) {

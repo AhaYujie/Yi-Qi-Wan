@@ -10,7 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.db.Contest;
 import com.dalao.yiban.db.SearchResult;
+import com.dalao.yiban.ui.activity.ActivityActivity;
+import com.dalao.yiban.ui.activity.ContestActivity;
+import com.dalao.yiban.ui.activity.SearchActivity;
 
 import java.util.List;
 
@@ -57,33 +61,19 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.title.setText(searchResult.getTitle());
         holder.time.setText(searchResult.getTime());
         holder.pageviews.setText(Integer.toString(searchResult.getPageviews()));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(searchResult.getType()==0)
+                    ContestActivity.actionStart(v.getContext(),searchResult.getUserid(),Integer.toString(searchResult.getId()),searchResult.getTitle(),searchResult.getTime());
+                else
+                    ActivityActivity.actionStart(v.getContext(),searchResult.getUserid(),Integer.toString(searchResult.getId()),searchResult.getTitle(),searchResult.getTime());
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mSearchResultList.size();
-    }
-
-    //  添加数据
-    public void addData(int position,int pageviwes,String time,String title,String author,int id) {
-//      在list中添加数据，并通知条目加入一条
-        SearchResult content = new SearchResult(pageviwes,time,title,author,id);
-        mSearchResultList.add(position, content);
-        //position是增加的位置
-        //后面那个是list里面具体的一个实例
-        //添加动画
-        notifyItemInserted(position);
-    }
-
-    //  删除数据
-    public void removeData(int position) {
-        mSearchResultList.remove(position);
-        //删除动画
-        notifyItemRemoved(position);
-        notifyDataSetChanged();
-    }
-
-    public void refresh( List<SearchResult> list) {
-        mSearchResultList = list;
     }
 }

@@ -26,7 +26,11 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.security.auth.login.LoginException;
 
@@ -59,15 +64,56 @@ public class SearchActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
+    final String FILE_NAME = "used_search";
+
+    private boolean deng(String a,String b){
+        if(a.equals(b))
+            return true;
+        else
+            return false;
+    }
+
+    private List<UsedSearch> Rip(List<UsedSearch> UsedSearchList){
+
+        for(int i=0;i<UsedSearchList.size();i++){
+            UsedSearch a = UsedSearchList.get(i);
+            int j;
+            for(j=0;j<i;j++){
+                UsedSearch b = UsedSearchList.get(j);
+                if(deng(a.getContent(),b.getContent())==true)
+                    break;
+            }
+            if(j!=i)
+                UsedSearchList.remove(i);
+        }
+
+        return UsedSearchList;
+    }
+
     private List<UsedSearch> UsedSearchList = new ArrayList<>();
     //这是曾经搜索的列表
     private List<SearchResult> SearchResultList = new ArrayList<>();
     //这是搜索结果的列表
 
     //从上一个活动获取数据
-    Intent intent = getIntent();
+    /*Intent intent = getIntent();
     String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-    int userid=Integer.parseInt(HomeConstant.USER_ID);
+    int userid=Integer.parseInt(HomeConstant.USER_ID);*/
+    String user_id = "2";
+    int userid =2;
+
+    private RecyclerView recyclerView_Result ;
+    private RecyclerView recyclerView_UsedSearch ;
+    private TextView textview_clear;
+    private ImageView imageView_clear ;
+    private Button button_back ;
+    private View view_blank1 ;
+    private View view_blank2 ;
+    private LinearLayout function_bar ;
+    private ProgressBar progressBar;
+    private TextView text_notfound;
+    //搜索历史那一栏
+    private SearchView searchView;
 
     @Override
     public void onClick(View view) {
@@ -79,19 +125,31 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_bar);
 
-        RecyclerView recyclerView_UsedSearch = (RecyclerView) findViewById(R.id.search_bar_RecyclerView);
+        recyclerView_Result = (RecyclerView) findViewById(R.id.search_bar_result);
+        recyclerView_UsedSearch = (RecyclerView) findViewById(R.id.search_bar_RecyclerView);
+        textview_clear = (TextView) findViewById(R.id.UsedSearchClearText);
+        imageView_clear = (ImageView) findViewById(R.id.UsedSearchClearImage);
+        button_back = (Button) findViewById(R.id.SearchBarBackButton);
+        view_blank1 = (View) findViewById(R.id.search_bar_blank1);
+        view_blank2 = (View) findViewById(R.id.search_bar_blank2);
+        function_bar = (LinearLayout) findViewById(R.id.search_bar_function_bar);
+        //搜索历史那一栏
+        searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
+        progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
+        text_notfound = (TextView) findViewById(R.id.search_result_notfound);
+
         LinearLayoutManager layoutManager_UsedSearch = new LinearLayoutManager(this);
         recyclerView_UsedSearch.setLayoutManager(layoutManager_UsedSearch);
-        final UsedSearchAdapter adapter_UsedSearch = new UsedSearchAdapter(UsedSearchList);
+        final UsedSearchAdapter adapter_UsedSearch = new UsedSearchAdapter(UsedSearchList,SearchActivity.this);
         recyclerView_UsedSearch.setAdapter(adapter_UsedSearch);
 
-        RecyclerView recyclerView_Result = (RecyclerView) findViewById(R.id.search_bar_result);
         LinearLayoutManager layoutManager_Result = new LinearLayoutManager(this);
         recyclerView_Result.setLayoutManager(layoutManager_Result);
-        final SearchResultAdapter adapter_Result = new SearchResultAdapter(SearchResultList);
+        SearchResultAdapter adapter_Result = new SearchResultAdapter(SearchResultList);
         recyclerView_Result.setAdapter(adapter_Result);
 
         //搜索记录初始化
+        if(userid!=-1){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -125,6 +183,8 @@ public class SearchActivity extends BaseActivity {
                     e.printStackTrace();
                 }
 
+                UsedSearchList=Rip(UsedSearchList);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -136,9 +196,22 @@ public class SearchActivity extends BaseActivity {
                 });
             }
         }).start();
+        }
+        else{
+            try{
+                FileInputStream fileInputStream = openFileInput(FILE_NAME);
+                byte[] buff = new byte[1024];
+                int hasRead = 0;
+                StringBuilder sb = new StringBuilder("");
+                while((hasRead = fileInputStream.read(buff))>0)
+                    sb.append(new String(buff,0,hasRead));
+                fileInputStream.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
 
-        TextView textview_clear = (TextView) findViewById(R.id.UsedSearchClearText);
         textview_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,7 +219,7 @@ public class SearchActivity extends BaseActivity {
                 adapter_UsedSearch.notifyDataSetChanged();//刷新动画
             }
         });
-        ImageView imageView_clear = (ImageView) findViewById(R.id.UsedSearchClearImage);
+
         imageView_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,7 +227,7 @@ public class SearchActivity extends BaseActivity {
                 adapter_UsedSearch.notifyDataSetChanged();//刷新动画
             }
         });
-        Button button_back = (Button) findViewById(R.id.SearchBarBackButton);
+
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -162,20 +235,21 @@ public class SearchActivity extends BaseActivity {
             }
         });
 
-        View view_blank1 = (View) findViewById(R.id.search_bar_blank1);
-        View view_blank2 = (View) findViewById(R.id.search_bar_blank2);
-        LinearLayout function_bar = (LinearLayout) findViewById(R.id.search_bar_function_bar);
-        //搜索历史那一栏
-
-        SearchView searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
         searchView.setSubmitButtonEnabled(true);//显示提交按钮
         searchView.setIconifiedByDefault(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
-                ProgressBar progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
-                TextView text_notfound = (TextView) findViewById(R.id.search_result_notfound);
+                try {
+                    FileOutputStream fileInputStream = openFileOutput(FILE_NAME,MODE_APPEND);
+                    PrintStream ps = new PrintStream(fileInputStream);
+                    ps.println(UsedSearchList);
+                    ps.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 progressBar.setVisibility(View.VISIBLE);
                 text_notfound.setVisibility(View.GONE);
                 recyclerView_UsedSearch.setVisibility(View.GONE);
@@ -204,7 +278,6 @@ public class SearchActivity extends BaseActivity {
                             Request request_competition = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_competition).build();
                             Response response_competition = okHttpClient_competition.newCall(request_competition).execute();
                             String responseData_competition = response_competition.body().string();
-                            Thread.sleep(1000);
                             //以下是解析json
 
 
@@ -217,7 +290,7 @@ public class SearchActivity extends BaseActivity {
                                     String title = jsonObject.getString("title");
                                     int pageviews = jsonObject.getInt("pageviews");
                                     int id = jsonObject.getInt("id");
-                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id);
+                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,Integer.toString(userid),0);
                                     SearchResultList.add(content);
                                     //Log.e("qaq",Integer.toString(SearchResultList.size()));
                                 }
@@ -249,7 +322,7 @@ public class SearchActivity extends BaseActivity {
                                     String title = jsonObject.getString("title");
                                     int pageviews = jsonObject.getInt("pageviews");
                                     int id = jsonObject.getInt("id");
-                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id);
+                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1);
                                     SearchResultList.add(content);
                                 }
                             } catch (Exception e) {
@@ -258,6 +331,8 @@ public class SearchActivity extends BaseActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -283,5 +358,113 @@ public class SearchActivity extends BaseActivity {
                 return false;
             }//改变字符时的监听事件
         });
+    }
+
+    public void TouchContent(String query){
+        //搜索历史那一栏
+        searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
+        progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
+        text_notfound = (TextView) findViewById(R.id.search_result_notfound);
+
+        progressBar.setVisibility(View.VISIBLE);
+        text_notfound.setVisibility(View.GONE);
+        recyclerView_UsedSearch.setVisibility(View.GONE);
+        function_bar.setVisibility(View.GONE);
+        view_blank1.setVisibility(View.GONE);
+        view_blank2.setVisibility(View.GONE);
+
+        //以下是搜索接口
+        SearchResultList.clear();//先清空搜索结果
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //以下是POST方法
+                    HashMap<String, String> paramsMap_competition = new HashMap<>();//用哈希表来存参数
+                    paramsMap_competition.put("competition", query);
+                    paramsMap_competition.put("userid", Integer.toString(userid));
+                    FormBody.Builder builder_competition = new FormBody.Builder();
+                    for (String key : paramsMap_competition.keySet()) {
+                        //追加表单信息
+                        builder_competition.add(key, paramsMap_competition.get(key));
+                    }
+                    OkHttpClient okHttpClient_competition = new OkHttpClient();
+                    RequestBody formBody_competition = builder_competition.build();
+                    Request request_competition = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_competition).build();
+                    Response response_competition = okHttpClient_competition.newCall(request_competition).execute();
+                    String responseData_competition = response_competition.body().string();
+                    Thread.sleep(1000);
+                    //以下是解析json
+
+
+                    try {
+                        JSONObject jsnobject = new JSONObject(responseData_competition);
+                        JSONArray jsonArray = jsnobject.getJSONArray("data");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String time = jsonObject.getString("time");
+                            String title = jsonObject.getString("title");
+                            int pageviews = jsonObject.getInt("pageviews");
+                            int id = jsonObject.getInt("id");
+                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,Integer.toString(userid),0);
+                            SearchResultList.add(content);
+                            //Log.e("qaq",Integer.toString(SearchResultList.size()));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    HashMap<String, String> paramsMap_activity = new HashMap<>();//用哈希表来存参数
+                    paramsMap_activity.put("activity", query);
+                    paramsMap_activity.put("userid", Integer.toString(userid));
+                    FormBody.Builder builder_activity = new FormBody.Builder();
+                    for (String key : paramsMap_activity.keySet()) {
+                        //追加表单信息
+                        builder_activity.add(key, paramsMap_activity.get(key));
+                    }
+                    OkHttpClient okHttpClient_activity = new OkHttpClient();
+                    RequestBody formBody_activity = builder_activity.build();
+                    Request request_activity = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_activity).build();
+                    Response response_activity = okHttpClient_activity.newCall(request_activity).execute();
+                    String responseData_activity = response_activity.body().string();
+                    //以下是解析json
+                    try {
+                        JSONObject jsnobject = new JSONObject(responseData_activity);
+                        JSONArray jsonArray = jsnobject.getJSONArray("data");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String time = jsonObject.getString("time");
+                            String title = jsonObject.getString("title");
+                            int pageviews = jsonObject.getInt("pageviews");
+                            int id = jsonObject.getInt("id");
+                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1);
+                            SearchResultList.add(content);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                UsedSearchList=Rip(UsedSearchList);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (SearchResultList.size() != 0) {
+                            progressBar.setVisibility(View.GONE);
+                            recyclerView_Result.setVisibility(View.VISIBLE);
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            text_notfound.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+
+        }).start();
     }
 }
