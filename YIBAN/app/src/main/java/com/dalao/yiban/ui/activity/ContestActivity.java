@@ -33,7 +33,9 @@ import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.ContestGson;
+import com.dalao.yiban.my_interface.CollectInterface;
 import com.dalao.yiban.my_interface.CommentInterface;
+import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
@@ -48,15 +50,14 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ContestActivity extends ActConBlogBaseActivity implements CommentInterface {
+public class ContestActivity extends BaseActivity implements CommentInterface, CollectInterface,
+        RequestDataInterface {
 
     private MenuItem moreCollect;
 
     private ContestGson contestGson = null;
 
     private NestedScrollView contestScrollView;
-
-    private RecyclerView contestTeamRecyclerView;
 
     private CommentAdapter commentAdapter;
 
@@ -116,7 +117,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
         setContentView(R.layout.activity_contest);
 
         // 初始化控件
-        contestTeamRecyclerView = (RecyclerView) findViewById(R.id.contest_comment_recyclerview);
+        RecyclerView contestTeamRecyclerView = (RecyclerView) findViewById(R.id.contest_comment_recyclerview);
         contestScrollView = (NestedScrollView) findViewById(R.id.contest_scroll_view);
         contestCommentButton = (Button) findViewById(R.id.bottom_nav_comment);
         contestMoveToComment = (Button) findViewById(R.id.move_to_comment);
@@ -177,16 +178,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
 
             // 发布评论
             case R.id.comment_publish_button:
-                String content = commentEditText.getText().toString();
-                if (!"".equals(content)) {
-                    commentPopupWindow.dismiss();
-                    HttpUtil.comment(this, this, contestId, userId,
-                            commentToCommentId, content, HomeConstant.SELECT_CONTEST);
-                }
-                else {
-                    // 评论为空，不能发表
-                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
-                }
+                publishComment();
                 break;
 
             // 在竞赛内容滑动到评论区，在评论区滑动到竞赛内容
@@ -212,7 +204,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
                     break;
                 }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
-                        userId, contestId, contestGson.getCollection());
+                        userId, contestId, contestGson.getCollection(), this);
                 break;
 
             case R.id.forward_wechat_friend:
@@ -289,7 +281,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
                     break;
                 }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_CONTEST,
-                        userId, contestId, contestGson.getCollection());
+                        userId, contestId, contestGson.getCollection(), this);
                 break;
 
             case R.id.more_copy:
@@ -315,7 +307,7 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
      * @param updateContent : true则更新内容UI
      * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
+    public void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.CONTEST_ID, contestId)
                 .add(ServerPostDataConstant.USER_ID, userId)
@@ -457,8 +449,15 @@ public class ContestActivity extends ActConBlogBaseActivity implements CommentIn
      * 发表评论成功
      */
     public void publishComment() {
-        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer(false, true);
+        String content = commentEditText.getText().toString();
+        if ("".equals(content)) {
+            // 评论为空，不能发表
+            Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        commentPopupWindow.dismiss();
+        HttpUtil.comment(this, this, contestId, userId,
+                commentToCommentId, content, HomeConstant.SELECT_CONTEST);
     }
 
 }

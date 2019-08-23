@@ -2,17 +2,20 @@ package com.dalao.yiban.ui.custom;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.dalao.yiban.constant.HintConstant;
+
 public class CustomProgressDialog {
 
-    private final Activity activity;
+    private final Context context;
 
     private ProgressDialog progressDialog;
 
-    public CustomProgressDialog(Activity activity) {
-        this.activity = activity;
+    public CustomProgressDialog(Context context) {
+        this.context = context;
     }
 
     /**
@@ -20,8 +23,8 @@ public class CustomProgressDialog {
      */
     public void showProgressBar() {
         if (progressDialog == null) {
-            progressDialog = new ProgressDialog(activity);
-            progressDialog.setMessage("正在加载...");
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(HintConstant.LOADING);
             progressDialog.setCanceledOnTouchOutside(false);
         }
         progressDialog.show();

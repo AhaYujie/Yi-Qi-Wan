@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.dalao.yiban.R;
 import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.ui.activity.BaseActivity;
+import com.dalao.yiban.ui.fragment.BaseFragment;
 import com.dalao.yiban.util.SystemUiUtil;
 
 import static com.dalao.yiban.constant.MineConstant.FEMALE;
@@ -112,6 +113,52 @@ public class CustomPopWindow {
         });
 
         return new PopWindowViewHelper(popupWindow, commentEditText);
+    }
+
+    /**
+     * 退出pop window
+     * @param v:参照view
+     * @param activity:当前活动
+     * @return : 返回popwindow和edittext的实例
+     */
+    public static PopupWindow signOutPopWindow(View v, final BaseActivity activity) {
+        // 透明化屏幕其他区域
+        SystemUiUtil.backgroundAlpha(activity, 0.6f);
+
+        View view = LayoutInflater.from(activity).
+                inflate(R.layout.sign_out_popwindow, null, false);
+
+        final PopupWindow popupWindow = new PopupWindow(view, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        // 初始化控件
+        Button signOutPopwindowCancelButton = (Button) view.findViewById(R.id.sign_out_popwindow_cancel_button);
+        Button signOutPopwindowConfirmButton = (Button) view.findViewById(R.id.sign_out_popwindow_confirm_button);
+
+        // 设置点击事件
+        signOutPopwindowConfirmButton.setOnClickListener(activity);
+        signOutPopwindowCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupWindow.dismiss();
+            }
+        });
+
+        popupWindow.setAnimationStyle(R.style.popWindowAnim);
+        popupWindow.setFocusable(true);
+        popupWindow.setTouchable(true);
+        popupWindow.setOutsideTouchable(true);
+
+        popupWindow.showAtLocation(activity.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                // popupWindow消失的时候恢复成原来的透明度
+                SystemUiUtil.backgroundAlpha(activity, 1f);
+            }
+        });
+        return popupWindow;
     }
 
     /**

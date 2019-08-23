@@ -108,9 +108,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
     private LinearLayout mineLoginModeLayout;
 
-    private CircleImageView mineLoginButton;
+    private Button mineLoginButton;
 
     private Button mineSignOutButton;
+
+    private PopupWindow signOutPopWindow;
 
     public MineFragment() {
         // Required empty public constructor
@@ -151,7 +153,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineSchoolText = (TextView) view.findViewById(R.id.mine_school_text);
         mineVisitorModeLayout = (LinearLayout) view.findViewById(R.id.mine_visitor_mode_layout);
         mineLoginModeLayout = (LinearLayout) view.findViewById(R.id.mine_login_mode_layout);
-        mineLoginButton = (CircleImageView) view.findViewById(R.id.mine_login_button);
+        mineLoginButton = (Button) view.findViewById(R.id.mine_login_button);
         mineSignOutButton = (Button) view.findViewById(R.id.mine_sign_out_button);
 
         // 如果fragment可见，请求服务器获取数据
@@ -215,12 +217,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 退出登录
             case R.id.mine_sign_out_button:
-                User user = new User();
-                user.setSeverId(HomeConstant.VISITOR_USER_ID);
-                user.updateAll("severId = ?", activity.userId);
-                activity.userId = HomeConstant.VISITOR_USER_ID;
-                mineLoginModeLayout.setVisibility(View.GONE);
-                mineVisitorModeLayout.setVisibility(View.VISIBLE);
+                signOutPopWindow = CustomPopWindow.signOutPopWindow(v, activity);
             default:
                 break;
         }
@@ -472,6 +469,20 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         imagePath = SDCardUtil.saveToSdCard(bitmap);
         File file = new File(imagePath);
         postFileToServer(file);
+    }
+
+    /**
+     * 退出登录
+     */
+    public void signOut() {
+        signOutPopWindow.dismiss();
+        User user = new User();
+        user.setSeverId(HomeConstant.VISITOR_USER_ID);
+        user.updateAll("severId = ?", activity.userId);
+        activity.userId = HomeConstant.VISITOR_USER_ID;
+        mineLoginModeLayout.setVisibility(View.GONE);
+        mineVisitorModeLayout.setVisibility(View.VISIBLE);
+        mineLoginButton.setOnClickListener(this);
     }
 
 }

@@ -28,6 +28,7 @@ import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.CommentBean;
 import com.dalao.yiban.gson.ReplyGson;
 import com.dalao.yiban.my_interface.CommentInterface;
+import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
@@ -40,7 +41,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ViewReplyActivity extends BaseActivity implements CommentInterface {
+public class ViewReplyActivity extends BaseActivity implements CommentInterface, RequestDataInterface {
 
     private RecyclerView viewReplyRecyclerView;
 
@@ -133,7 +134,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
         commentReplyButton.setOnClickListener(this);
 
         // 请求服务器获取数据并刷新UI
-        requestDataFromServer();
+        requestDataFromServer(false, true);
 
     }
 
@@ -162,16 +163,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
             // 发布评论
             case R.id.comment_publish_button:
-                String content = commentEditText.getText().toString();
-                if (!"".equals(content)) {
-                    commentPopupWindow.dismiss();
-                    HttpUtil.comment(this, this, contentId, userId,
-                            commentToCommentId, content, category);
-                }
-                else {
-                    // 评论为空，不能发表
-                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
-                }
+                publishComment();
                 break;
             default:
                 break;
@@ -180,8 +172,11 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
 
     /**
      * 请求服务器获取评论数据, 并解析刷新UI
+     * @param updateContent : true则更新内容UI(无用)
+     * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer() {
+    @Override
+    public void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.REPLY_ID, String.valueOf(masterCommentBean.getId()))
                 .build();
@@ -209,7 +204,9 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateReplyUI(replyGson);
+                                if (updateComment) {
+                                    updateReplyUI(replyGson);
+                                }
                             }
                         });
                     }
@@ -261,8 +258,15 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface 
      * 发表评论
      */
     public void publishComment() {
-        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer();
+        String content = commentEditText.getText().toString();
+        if ("".equals(content)) {
+            // 评论为空，不能发表
+            Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        commentPopupWindow.dismiss();
+        HttpUtil.comment(this, this, contentId, userId,
+                commentToCommentId, content, category);
     }
 
 }

@@ -3,6 +3,8 @@ package com.dalao.yiban;
 import android.app.Application;
 import android.content.Context;
 
+import com.dalao.yiban.ui.custom.CustomProgressDialog;
+
 import org.litepal.LitePalApplication;
 
 public class MyApplication extends Application {

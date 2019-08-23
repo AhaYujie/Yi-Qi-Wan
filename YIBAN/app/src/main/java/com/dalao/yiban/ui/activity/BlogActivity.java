@@ -6,13 +6,9 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +27,10 @@ import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.BlogGson;
+import com.dalao.yiban.my_interface.CollectInterface;
 import com.dalao.yiban.my_interface.CommentInterface;
 import com.dalao.yiban.my_interface.FollowInterface;
+import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
@@ -47,15 +45,8 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class BlogActivity extends ActConBlogBaseActivity implements CommentInterface, FollowInterface {
-
-    private Menu menu;
-
-    private MenuItem moreCollect;
-
-    private Toolbar blogToolbar;
-
-    private RecyclerView blogCommentRecyclerView;
+public class BlogActivity extends BaseActivity implements CommentInterface, FollowInterface,
+        CollectInterface, RequestDataInterface {
 
     private CommentAdapter commentAdapter;
 
@@ -70,7 +61,6 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
     private Button blogFollowAuthorButton;
 
     private RichTextView blogContent;
-
 
     private Button blogBottomNavCommentButton;
 
@@ -128,8 +118,8 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         setContentView(R.layout.activity_blog);
 
         // 初始化控件
-        blogToolbar = (Toolbar) findViewById(R.id.blog_toolbar);
-        blogCommentRecyclerView = (RecyclerView) findViewById(R.id.blog_comment_recyclerview);
+        Toolbar blogToolbar = (Toolbar) findViewById(R.id.blog_toolbar);
+        RecyclerView blogCommentRecyclerView = (RecyclerView) findViewById(R.id.blog_comment_recyclerview);
         blogTitle = (TextView) findViewById(R.id.blog_title);
         blogContentTime = (TextView) findViewById(R.id.blog_content_time);
         blogAuthorFace = (ImageView) findViewById(R.id.blog_author_face);
@@ -164,6 +154,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+        // 设置RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         blogCommentRecyclerView.setLayoutManager(linearLayoutManager);
         commentAdapter = new CommentAdapter(this, this, userId,
@@ -171,7 +162,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         blogCommentRecyclerView.setAdapter(commentAdapter);
 
         // 请求服务器获取数据
-        requestDataFromServer();
+        requestDataFromServer(true, true);
 
     }
 
@@ -234,16 +225,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
 
             // 发布评论
             case R.id.comment_publish_button:
-                String content = commentEditText.getText().toString();
-                if (!"".equals(content)) {
-                    commentPopupWindow.dismiss();
-                    HttpUtil.comment(this, this, blogId, userId,
-                            commentToCommentId, content, HomeConstant.SELECT_BLOG);
-                }
-                else {
-                    // 评论为空，不能发表
-                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
-                }
+                publishComment();
                 break;
 
             // 收藏或取消收藏
@@ -255,7 +237,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
                     break;
                 }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
-                        blogId, blogGson.getCollection());
+                        blogId, blogGson.getCollection(), this);
                 break;
 
             // 转发
@@ -267,70 +249,73 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         }
     }
 
-    /**
-     * 创建菜单栏
-     * @param menu:
-     * @return :
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.more_menu, menu);
-        this.menu = menu;
-        this.moreCollect = menu.findItem(R.id.more_collect);
-        // 获取数据前隐藏menu
-        menu.setGroupVisible(R.id.more_group, false);
-        return super.onCreateOptionsMenu(menu);
-    }
+//    /**
+//     * 创建菜单栏
+//     * @param menu:
+//     * @return :
+//     */
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.more_menu, menu);
+//        this.menu = menu;
+//        this.moreCollect = menu.findItem(R.id.more_collect);
+//        // 获取数据前隐藏menu
+//        menu.setGroupVisible(R.id.more_group, false);
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
-    /**
-     * Toolbar菜单栏点击事件
-     * @param item:
-     * @return :
-     */
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            // 返回
-            case android.R.id.home:
-                finish();
-                break;
-
-            // 收藏或取消收藏
-            case R.id.more_collect:
-                // 游客禁止使用此功能
-                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
-                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
-                            Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
-                        blogId, blogGson.getCollection());
-                break;
-
-            case R.id.more_copy:
-                //TODO: 取消此功能
-                break;
-
-            // 转发button弹出PopWindow
-            case R.id.more_forward:
-                CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward),
-                                BlogActivity.this);
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    /**
+//     * Toolbar菜单栏点击事件
+//     * @param item:
+//     * @return :
+//     */
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()) {
+//            // 返回
+//            case android.R.id.home:
+//                finish();
+//                break;
+//
+//            // 收藏或取消收藏
+//            case R.id.more_collect:
+//                // 游客禁止使用此功能
+//                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+//                    Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
+//                            Toast.LENGTH_SHORT).show();
+//                    break;
+//                }
+//                HttpUtil.collectContent(this, HomeConstant.SELECT_BLOG, userId,
+//                        blogId, blogGson.getCollection());
+//                break;
+//
+//            case R.id.more_copy:
+//                break;
+//
+//            // 转发button弹出PopWindow
+//            case R.id.more_forward:
+//                CustomPopWindow.forwardPopWindow
+//                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward),
+//                                BlogActivity.this);
+//                break;
+//            default:
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * 请求服务器获取博客数据, 并解析刷新UI
+     * @param updateContent : true则更新内容UI
+     * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer() {
+    @Override
+    public void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.BLOG_ID, blogId)
                 .add(ServerPostDataConstant.USER_ID, userId)
                 .build();
+
         HttpUtil.sendHttpPost(ServerUrlConstant.BLOG_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -347,30 +332,24 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                BlogActivity.this.getCallList().add(call);
-                if (response.body() != null) {
+                try {
+                    BlogActivity.this.getCallList().add(call);
                     String responseText = response.body().string();
                     final BlogGson blogGson = JsonUtil.handleBlogResponse(responseText);
-                    if (blogGson != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                BlogActivity.this.blogGson = blogGson;
-                                updateActivityUI();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BlogActivity.this.blogGson = blogGson;
+                            if (updateContent) {
+                                updateBlogContentUI();
                             }
-                        });
-                    }
-                    else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(BlogActivity.this,
-                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            if (updateComment) {
+                                updateBlogCommentUI();
                             }
-                        });
-                    }
+                        }
+                    });
                 }
-                else {
+                catch (NullPointerException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -378,16 +357,16 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
                                     HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                         }
                     });
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     /**
-     * 刷新博客UI
+     * 刷新博客内容UI
      */
-    private void updateActivityUI() {
-        menu.setGroupVisible(R.id.more_group, false);
+    private void updateBlogContentUI() {
         // 设置点击事件
         blogAuthorFace.setOnClickListener(this);
         blogAuthorName.setOnClickListener(this);
@@ -396,7 +375,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         blogBottomNavCollect.setOnClickListener(this);
         blogBottomNavForward.setOnClickListener(this);
         moveToComment.setOnClickListener(this);
-        menu.setGroupVisible(R.id.more_group, true);
+        // 刷新UI
         blogTitle.setText(blogGson.getTitle());
         blogContentTime.setText(blogGson.getTime());
         blogAuthorName.setText(blogGson.getAuthor());
@@ -409,11 +388,9 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         }
         if (blogGson.getCollection() == HomeConstant.COLLECT) {
             blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-            moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         }
         else if (blogGson.getCollection() == HomeConstant.UN_COLLECT) {
             blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
-            moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         }
         blogContent.post(new Runnable() {
             @Override
@@ -421,6 +398,12 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
                 StringUtils.showContent(blogContent, blogGson.getContent());
             }
         });
+    }
+
+    /**
+     * 刷新博客评论区UI
+     */
+    private void updateBlogCommentUI() {
         commentAdapter.setCommentsBeanList(blogGson.getComments());
         commentAdapter.notifyDataSetChanged();
     }
@@ -438,32 +421,37 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
     }
 
     /**
-     * 发表评论成功
+     * 发表评论成功, 更新UI
      */
     public void publishComment() {
-        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer();
+        String content = commentEditText.getText().toString();
+        if ("".equals(content)) {
+            // 评论为空，不能发表
+            Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        commentPopupWindow.dismiss();
+        HttpUtil.comment(this, this, blogId, userId,
+                commentToCommentId, content, HomeConstant.SELECT_BLOG);
     }
 
     /**
-     * 收藏博客成功
+     * 收藏博客成功, 更新UI
      */
     @Override
     public void collectSuccess() {
-        blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
-        moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
         blogGson.setCollection(HomeConstant.COLLECT);
     }
 
     /**
-     * 取消收藏博客成功
+     * 取消收藏博客成功，更新UI
      */
     @Override
     public void unCollectSuccess() {
-        blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
-        moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
+        blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
         blogGson.setCollection(HomeConstant.UN_COLLECT);
     }
 

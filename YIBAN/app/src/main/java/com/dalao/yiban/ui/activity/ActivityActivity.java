@@ -11,8 +11,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +30,9 @@ import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.ActivityGson;
+import com.dalao.yiban.my_interface.CollectInterface;
 import com.dalao.yiban.my_interface.CommentInterface;
+import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.HttpUtil;
@@ -48,7 +48,8 @@ import okhttp3.FormBody;
 import okhttp3.Response;
 
 
-public class ActivityActivity extends ActConBlogBaseActivity implements CommentInterface {
+public class ActivityActivity extends BaseActivity implements CommentInterface, CollectInterface,
+        RequestDataInterface {
 
     private NestedScrollView activityScrollView;
 
@@ -63,10 +64,6 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
     private RichTextView activityContent;
 
     private TextView activitySource;
-
-    private Toolbar activityToolbar;
-
-    private RecyclerView activityCommentRecyclerView;
 
     private CommentAdapter commentAdapter;
 
@@ -118,8 +115,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         setContentView(R.layout.activity_activity);
 
         // 初始化控件
-        activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
-        activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
+        Toolbar activityToolbar = (Toolbar) findViewById(R.id.activity_toolbar);
+        RecyclerView activityCommentRecyclerView = (RecyclerView) findViewById(R.id.activity_comment_recyclerview);
         activityBottomNavCommentButton = (Button) findViewById(R.id.bottom_nav_comment);
         activityTitle = (TextView) findViewById(R.id.activity_title);
         activityContentTime = (TextView) findViewById(R.id.activity_content_time);
@@ -130,7 +127,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
         activityCommentTitle = (TextView) findViewById(R.id.activity_comment_title);
         activityScrollView = (NestedScrollView) findViewById(R.id.activity_scroll_view);
         activityBottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
-        activityWebView = (WebView) findViewById(R.id.activity_content_webview); // TODO: test html
+        activityWebView = (WebView) findViewById(R.id.activity_content_webview);
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -178,16 +175,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
             // 发布评论
             case R.id.comment_publish_button:
-                String content = commentEditText.getText().toString();
-                if (!"".equals(content)) {
-                    commentPopupWindow.dismiss();
-                    HttpUtil.comment(this, this, activityId, userId,
-                            commentToCommentId, content, HomeConstant.SELECT_ACTIVITY);
-                }
-                else {
-                    // 评论为空，不能发表
-                    Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
-                }
+                publishComment();
                 break;
 
             // 在活动内容滑动到评论区，在评论区滑动到活动内容
@@ -213,7 +201,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                     break;
                 }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
-                        activityId, activityGson.getCollection());
+                        activityId, activityGson.getCollection(), this);
                 break;
 
             // 转发
@@ -248,6 +236,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            // 返回
             case android.R.id.home:
                 finish();
                 break;
@@ -261,9 +250,10 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                     break;
                 }
                 HttpUtil.collectContent(this, HomeConstant.SELECT_ACTIVITY, userId,
-                        activityId, activityGson.getCollection());
+                        activityId, activityGson.getCollection(), this);
                 break;
 
+            // 复制链接
             case R.id.more_copy:
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clipData = ClipData.newPlainText("Label", activityGson.getAuthor());
@@ -287,7 +277,8 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
      * @param updateContent : true则更新内容UI
      * @param updateComment : true则更新评论区UI
      */
-    private void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
+    @Override
+    public void requestDataFromServer(final boolean updateContent, final boolean updateComment) {
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.ACTIVITY_ID, activityId)
                 .add(ServerPostDataConstant.USER_ID, userId)
@@ -308,35 +299,24 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                ActivityActivity.this.getCallList().add(call);
-                if (response.body() != null) {
+                try {
+                    ActivityActivity.this.getCallList().add(call);
                     String responseText = response.body().string();
                     final ActivityGson activityGson = JsonUtil.handleActivityResponse(responseText);
-                    if (activityGson != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ActivityActivity.this.activityGson = activityGson;
-                                if (updateContent) {
-                                    updateContentUI();
-                                }
-                                if (updateComment) {
-                                    updateCommentUI();
-                                }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ActivityActivity.this.activityGson = activityGson;
+                            if (updateContent) {
+                                updateContentUI();
                             }
-                        });
-                    }
-                    else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ActivityActivity.this,
-                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
+                            if (updateComment) {
+                                updateCommentUI();
                             }
-                        });
-                    }
+                        }
+                    });
                 }
-                else {
+                catch (NullPointerException e) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -344,6 +324,7 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
                                     HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                         }
                     });
+                    e.printStackTrace();
                 }
             }
         });
@@ -417,11 +398,15 @@ public class ActivityActivity extends ActConBlogBaseActivity implements CommentI
      * 发表评论成功
      */
     public void publishComment() {
-        Toast.makeText(this, HintConstant.COMMENT_SUCCESS, Toast.LENGTH_SHORT).show();
-        requestDataFromServer(false, true);
-        // 刷新评论区UI
-        commentAdapter.setCommentsBeanList(activityGson.getComments());
-        commentAdapter.notifyDataSetChanged();
+        String content = commentEditText.getText().toString();
+        if ("".equals(content)) {
+            // 评论为空，不能发表
+            Toast.makeText(this, HintConstant.COMMENT_NOT_EMPTY, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        commentPopupWindow.dismiss();
+        HttpUtil.comment(this, this, activityId, userId,
+                commentToCommentId, content, HomeConstant.SELECT_ACTIVITY);
     }
 
     /**

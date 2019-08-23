@@ -32,14 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.YibanLoginActivity" />
-        <activity android:name=".ui.activity.TestYiBanActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".ui.activity.ViewFollowingActivity" />
         <activity android:name=".ui.activity.EditNicknameActivity" />
         <activity android:name=".ui.activity.CreateTeamActivity" />
