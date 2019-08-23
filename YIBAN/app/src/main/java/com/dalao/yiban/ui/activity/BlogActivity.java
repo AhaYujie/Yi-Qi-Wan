@@ -166,7 +166,7 @@ public class BlogActivity extends ActConBlogBaseActivity implements CommentInter
         commentAdapter = new CommentAdapter(this, this, userId,
                 blogId, HomeConstant.SELECT_BLOG);
         blogCommentRecyclerView.setAdapter(commentAdapter);
-
+        
         // 请求服务器获取数据
         requestDataFromServer();
 

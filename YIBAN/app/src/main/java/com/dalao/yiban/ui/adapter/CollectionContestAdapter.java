@@ -1,10 +1,12 @@
 package com.dalao.yiban.ui.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,14 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dalao.yiban.R;
 import com.dalao.yiban.db.Contest;
 import com.dalao.yiban.db.SearchResult;
+import com.dalao.yiban.ui.activity.CollectionActivity;
+import com.dalao.yiban.ui.activity.ContestActivity;
 
 import java.util.List;
 
 public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionContestAdapter.ViewHolder> {
 
-    private List<Contest> mList;
+    private List<SearchResult> mList;
 
-    public CollectionContestAdapter(List<Contest> ContestList)
+    public CollectionContestAdapter(List<SearchResult> ContestList)
     {
         mList = ContestList;
     }
@@ -54,14 +58,21 @@ public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionCon
 
     @Override
     public void onBindViewHolder(@NonNull CollectionContestAdapter.ViewHolder holder, int position) {
-        Contest contest = mList.get(position);
-        holder.pageviews.setText(contest.getNumOfView());
-        holder.time.setText(contest.getCreateTIme().toString());
-        holder.title.setText(contest.getTitle());
+        SearchResult searchResult = mList.get(position);
+        holder.pageviews.setText(Integer.toString(searchResult.getPageviews()));
+        holder.time.setText(searchResult.getTime());
+        holder.title.setText(searchResult.getTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContestActivity.actionStart(v.getContext(),);
+            }
+        });
     }
 
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
-}
+@Override
+public int getItemCount() {
+        return mList.size();
+        }
+        }

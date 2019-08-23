@@ -29,13 +29,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAdapter.ViewHolder> {
+public class MyBlogAdapter extends RecyclerView.Adapter<MyBlogAdapter.ViewHolder> {
 
     private List<CollectBlog> mList;
-    private int id;
-    private int userid;
 
-    public CollectionBlogAdapter(List<CollectBlog> BlogList)
+    public MyBlogAdapter (List<CollectBlog> BlogList)
     {
         mList = BlogList;
     }
@@ -59,22 +57,27 @@ public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAd
         }
     }
 
-
-    @Override
-    public void onBindViewHolder(@NonNull CollectionBlogAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyBlogAdapter.ViewHolder holder, int position) {
         CollectBlog collectBlog = mList.get(position);
 
-        id = collectBlog.getId();
-        userid= collectBlog.getUserid();
+        int id = collectBlog.getId();
+        int userid = collectBlog.getUserid();
+        String title = collectBlog.getTitle();
 
         holder.pageviews.setText(Integer.toString(collectBlog.getPageviews()));
         holder.time.setText(collectBlog.getTime());
         holder.title.setText(collectBlog.getTitle());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BlogActivity.actionStart(v.getContext(),Integer.toString(userid),Integer.toString(id),null,null,title,null,null);
+            }
+        });
     }
 
     @NonNull
     @Override
-    public CollectionBlogAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyBlogAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_collection_blog_item,parent,false);
         ViewHolder holder = new ViewHolder(view);
@@ -83,6 +86,7 @@ public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAd
 
     @Override
     public int getItemCount() {
-        return mList.size();
-    }
+                return mList.size();
+            }
+
 }
