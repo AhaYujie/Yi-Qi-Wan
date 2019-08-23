@@ -25,7 +25,11 @@
     <dimen name="mine_value_size">15sp</dimen>
     <dimen name="mine_icon_size">20dp</dimen>
     <dimen name="mine_face_size">50dp</dimen>
+    <dimen name="mine_login_text_size">15sp</dimen>
     <dimen name="mine_login_icon_size">50dp</dimen>
+    <dimen name="mine_login_background_size">100dp</dimen>
+    <!-- sign out pop window -->
+    <dimen name="sign_out_text">15sp</dimen>
 
     <!-- commentInterface pop window -->
     <dimen name="comment_text_size">14sp</dimen>

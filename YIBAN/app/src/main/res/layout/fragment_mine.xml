@@ -13,24 +13,33 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:background="@color/myBackground"
-        android:visibility="gone">
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="@dimen/mine_login_background_size"
+            android:layout_height="@dimen/mine_login_background_size"
+            android:src="@drawable/ic_person_grey"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:layout_gravity="center"
             android:textColor="@color/mine_text"
-            android:textSize="@dimen/mine_title_size"
+            android:textSize="@dimen/mine_login_text_size"
             android:text="@string/mine_login_text"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <Button
             android:id="@+id/mine_login_button"
-            android:layout_width="@dimen/mine_login_icon_size"
-            android:layout_height="@dimen/mine_login_icon_size"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_yiban"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="30dp"
+            android:minWidth="70dp"
+            android:background="@drawable/mine_login_button"
+            android:textColor="@color/mine_login_button_text"
+            android:text="@string/mine_login_button_text"
+            style="?android:attr/borderlessButtonStyle"/>
 
     </LinearLayout>
 
@@ -39,7 +48,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"

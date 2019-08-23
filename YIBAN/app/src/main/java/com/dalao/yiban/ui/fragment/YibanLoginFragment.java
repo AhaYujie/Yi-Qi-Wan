@@ -15,6 +15,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
@@ -90,7 +91,8 @@ public class YibanLoginFragment extends BaseFragment {
                     }
                     // 回调接口获取用户id
                     else {
-                        // yibanLoginWebview.setVisibility(View.INVISIBLE);
+                        loginActivity.customProgressDialog.showProgressBar();
+                        yibanLoginWebview.setVisibility(View.INVISIBLE);
                         yibanLoginWebview.loadUrl(url);
                     }
                     return false;

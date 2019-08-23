@@ -127,6 +127,13 @@ public class MainActivity extends BaseActivity {
             case R.id.choose_secret_layout:
                 mineFragment.setSex(SECRET);
                 break;
+
+            // 退出登录
+            case R.id.sign_out_popwindow_confirm_button:
+                mineFragment.signOut();
+                break;
+            default:
+                break;
         }
     }
 

@@ -11,11 +11,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.LoginConstant;
 import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
+import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.ChooseLoginWayFragment;
 import com.dalao.yiban.ui.fragment.LoginFragment;
@@ -36,6 +38,8 @@ public class LoginActivity extends BaseActivity {
 
     private YibanLoginFragment yibanLoginFragment;
 
+    public CustomProgressDialog customProgressDialog;
+
     /**
      * 启动 LoginActivity
      * @param context:
@@ -52,6 +56,7 @@ public class LoginActivity extends BaseActivity {
 
         // 初始化控件
         customViewPager = (CustomViewPager) findViewById(R.id.login_view_pager);
+        customProgressDialog = new CustomProgressDialog(LoginActivity.this);
         initFragmentList();
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.setList(fragmentList);
@@ -115,6 +120,7 @@ public class LoginActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.putExtra(HomeConstant.USER_ID, userId);
         setResult(RESULT_OK, intent);
+        customProgressDialog.closeProgressBar();
         finish();
     }
 

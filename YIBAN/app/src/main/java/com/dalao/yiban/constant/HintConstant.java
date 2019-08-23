@@ -46,4 +46,6 @@ public class HintConstant {
 
     public static final String COPY_SUCCESS = "复制成功";
 
+    public static final String LOADING = "正在加载...";
+
 }

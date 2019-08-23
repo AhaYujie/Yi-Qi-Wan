@@ -1,7 +1,5 @@
 package com.dalao.yiban.util;
 
-import android.app.Activity;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,14 +12,14 @@ import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
-import com.dalao.yiban.db.Follow;
 import com.dalao.yiban.gson.CollectGson;
 import com.dalao.yiban.gson.CommentGson;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.FollowGson;
+import com.dalao.yiban.my_interface.CollectInterface;
 import com.dalao.yiban.my_interface.CommentInterface;
 import com.dalao.yiban.my_interface.FollowInterface;
-import com.dalao.yiban.ui.activity.ActConBlogBaseActivity;
+import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.activity.BaseActivity;
 import com.dalao.yiban.ui.activity.BlogActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
@@ -108,9 +106,11 @@ public class HttpUtil {
      * @param userId: 用户id
      * @param contentId: 文章id
      * @param isCollect : COLLECT or UN_COLLECT
+     * @param collectInterface : 收藏接口
      */
-    public static void collectContent(final ActConBlogBaseActivity activity, final int categorySelected,
-                                      String userId, String contentId, int isCollect) {
+    public static void collectContent(final BaseActivity activity, final int categorySelected,
+                                      String userId, String contentId, int isCollect,
+                                      CollectInterface collectInterface) {
         String category;
         String url;
         switch (categorySelected) {
@@ -184,10 +184,10 @@ public class HttpUtil {
                             public void run() {
                                 if (isCollect == HomeConstant.UN_COLLECT) {
                                     // 收藏
-                                    activity.collectSuccess();
+                                    collectInterface.collectSuccess();
                                 } else {
                                     // 取消收藏
-                                    activity.unCollectSuccess();
+                                    collectInterface.unCollectSuccess();
                                 }
                             }
                         });
@@ -323,14 +323,14 @@ public class HttpUtil {
     /**
      * 活动， 博客, 查看回复评论
      * @param activity：调用此函数的activity
-     * @param commentInterface：评论接口
+     * @param requestDataInterface：请求网络刷新UI接口
      * @param contentId：活动或者博客的id
      * @param userId：用户的id
      * @param toCommentId: 回复的评论的id(若无则为-1)
      * @param content：评论内容
      * @param category：SELECT_ACTIVITY or SELECT_BLOG or SELECT_CONTEST
      */
-    public static void comment(final BaseActivity activity, final CommentInterface commentInterface,
+    public static void comment(final BaseActivity activity, final RequestDataInterface requestDataInterface,
                                String contentId, String userId, String toCommentId, String content,
                                int category) {
         String categoryIdKey;
@@ -393,7 +393,9 @@ public class HttpUtil {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                commentInterface.publishComment();
+                                Toast.makeText(activity, HintConstant.COMMENT_SUCCESS,
+                                        Toast.LENGTH_SHORT).show();
+                                requestDataInterface.requestDataFromServer(false, true);
                             }
                         });
                     }

@@ -37,7 +37,12 @@
     <string name="mine_following">我关注的人</string>
     <string name="mine_school">学校</string>
     <string name="mine_login_text">登录体验更多功能</string>
+    <string name="mine_login_button_text">登录</string>
     <string name="mine_sign_out">退出登录</string>
+    <!-- sign out pop window -->
+    <string name="sign_out_hint">退出登录后, 部分功能将无法使用, (您可以随时再次登录), 确认退出登录吗?</string>
+    <string name="sign_out_cancel">取消</string>
+    <string name="sign_out_confirm">退出登录</string>
 
     <!-- 搜索框 -->
     <string name="SearchHint">搜索活动、竞赛</string>

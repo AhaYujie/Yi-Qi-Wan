@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sign_out_popwindow"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/sign_out_popwindow_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:gravity="center"
+        android:textColor="@color/sign_out_text"
+        android:textSize="@dimen/sign_out_text"
+        android:lineSpacingMultiplier="@string/line_spacing_multiplier"
+        android:text="@string/sign_out_hint"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sign_out_popwindow_text">
+
+        <Button
+            android:id="@+id/sign_out_popwindow_cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/sign_out_cancel_button"
+            android:textSize="@dimen/sign_out_text"
+            android:textColor="@color/sign_out_text"
+            android:text="@string/sign_out_cancel"/>
+
+        <Button
+            android:id="@+id/sign_out_popwindow_confirm_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/sign_out_confirm_button"
+            android:textSize="@dimen/sign_out_text"
+            android:textColor="@color/sign_out_text"
+            android:text="@string/sign_out_confirm"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
