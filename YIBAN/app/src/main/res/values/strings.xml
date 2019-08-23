@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
 
     <!-- 行间距倍数(中文) -->
     <string name="line_spacing_multiplier">1.2</string>

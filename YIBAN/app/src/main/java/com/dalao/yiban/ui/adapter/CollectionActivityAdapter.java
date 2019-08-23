@@ -1,24 +1,29 @@
 package com.dalao.yiban.ui.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dalao.yiban.R;
 import com.dalao.yiban.db.Activity;
+import com.dalao.yiban.db.SearchResult;
+import com.dalao.yiban.ui.activity.ActivityActivity;
+import com.dalao.yiban.ui.activity.CollectionActivity;
 
 import java.util.List;
 
 public class CollectionActivityAdapter extends RecyclerView.Adapter<CollectionActivityAdapter.ViewHolder> {
 
-    private List<Activity> mList;
+    private List<SearchResult> mList;
 
-    public CollectionActivityAdapter(List<Activity> ActivityList)
+    public CollectionActivityAdapter(List<SearchResult> ActivityList)
     {
         mList = ActivityList;
     }
@@ -53,14 +58,17 @@ public class CollectionActivityAdapter extends RecyclerView.Adapter<CollectionAc
 
     @Override
     public void onBindViewHolder(@NonNull CollectionActivityAdapter.ViewHolder holder, int position) {
-        Activity activity = mList.get(position);
-        holder.pageviews.setText(activity.getNumOfView());
-        holder.time.setText(activity.getCreateTime().toString());
-        holder.title.setText(activity.getTitle());
+        SearchResult searchResult = mList.get(position);
+        holder.pageviews.setText(Integer.toString(searchResult.getPageviews()));
+        holder.time.setText(searchResult.getTime());
+        holder.title.setText(searchResult.getTitle());
+
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mList.size();
     }
+
+
 }
