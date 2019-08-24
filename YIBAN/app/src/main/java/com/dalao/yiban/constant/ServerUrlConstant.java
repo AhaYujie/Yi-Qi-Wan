@@ -42,4 +42,8 @@ public class ServerUrlConstant {
 
     public static final String CREATE_BLOG_URI = SERVER_URI + "/blog/edit";
 
+    public static final String IMAGE_FILES_PATH = SERVER_URI + "/static/photo/";
+
+    public static final String POST_IMAGE_TO_SERVER_URI = SERVER_URI + "/uploadpic";
+
 }

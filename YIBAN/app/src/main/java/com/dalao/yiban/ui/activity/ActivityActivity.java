@@ -283,24 +283,15 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
                 .add(ServerPostDataConstant.ACTIVITY_ID, activityId)
                 .add(ServerPostDataConstant.USER_ID, userId)
                 .build();
-        HttpUtil.sendHttpPost(ServerUrlConstant.ACTIVITY_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.ACTIVITY_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                ActivityActivity.this.getCallList().add(call);
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ActivityActivity.this, HintConstant.GET_DATA_FAILED,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    ActivityActivity.this.getCallList().add(call);
                     String responseText = response.body().string();
                     final ActivityGson activityGson = JsonUtil.handleActivityResponse(responseText);
                     runOnUiThread(new Runnable() {
@@ -328,6 +319,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
                 }
             }
         });
+        ActivityActivity.this.getCallList().add(call);
     }
 
     /**

@@ -316,24 +316,15 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
                 .add(ServerPostDataConstant.USER_ID, userId)
                 .build();
 
-        HttpUtil.sendHttpPost(ServerUrlConstant.BLOG_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.BLOG_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                BlogActivity.this.getCallList().add(call);
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(BlogActivity.this, HintConstant.GET_DATA_FAILED,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    BlogActivity.this.getCallList().add(call);
                     String responseText = response.body().string();
                     final BlogGson blogGson = JsonUtil.handleBlogResponse(responseText);
                     runOnUiThread(new Runnable() {
@@ -361,6 +352,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
                 }
             }
         });
+        BlogActivity.this.getCallList().add(call);
     }
 
     /**

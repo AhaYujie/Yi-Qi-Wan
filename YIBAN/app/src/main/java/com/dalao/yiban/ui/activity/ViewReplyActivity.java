@@ -180,23 +180,14 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.REPLY_ID, String.valueOf(masterCommentBean.getId()))
                 .build();
-        HttpUtil.sendHttpPost(ServerUrlConstant.REPLY_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.REPLY_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                ViewReplyActivity.this.getCallList().add(call);
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ViewReplyActivity.this, HintConstant.GET_DATA_FAILED,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                ViewReplyActivity.this.getCallList().add(call);
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     final ReplyGson replyGson = JsonUtil.handleReplyResponse(responseText);
@@ -231,6 +222,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
                 }
             }
         });
+        ViewReplyActivity.this.getCallList().add(call);
     }
 
     /**

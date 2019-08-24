@@ -37,7 +37,6 @@
             android:id="@+id/create_blog_publish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_margin="10dp"
@@ -103,23 +102,29 @@
         android:background="@color/boundaryLine">
     </LinearLayout>
 
-    <RelativeLayout
+    <ScrollView
         android:id="@+id/create_blog_bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/create_blog_bottom_nav_height"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
         android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/create_blog_bottom_nav_pic_button"
-            android:layout_width="@dimen/create_blog_bottom_nav_pic_icon_size"
-            android:layout_height="@dimen/create_blog_bottom_nav_pic_icon_size"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_pic_black"
-            style="?android:attr/borderlessButtonStyle"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/create_blog_bottom_nav_pic_button"
+                android:layout_width="@dimen/create_blog_bottom_nav_pic_icon_size"
+                android:layout_height="@dimen/create_blog_bottom_nav_pic_icon_size"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_pic_black"
+                style="?android:attr/borderlessButtonStyle"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>

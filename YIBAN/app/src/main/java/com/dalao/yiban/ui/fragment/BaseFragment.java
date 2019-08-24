@@ -63,6 +63,7 @@ public abstract class BaseFragment extends Fragment {
             for (Call call : callList) {
                 if (!call.isCanceled()) {
                     call.cancel();
+                    Log.d("yujie", "frag : " + call.toString());
                 }
             }
         }

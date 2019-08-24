@@ -1,28 +1,22 @@
 package com.dalao.yiban.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
 import com.dalao.yiban.constant.HintConstant;
-import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.LoginConstant;
 import com.dalao.yiban.constant.YiBanConstant;
 import com.dalao.yiban.ui.activity.LoginActivity;
-import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -91,7 +85,7 @@ public class YibanLoginFragment extends BaseFragment {
                     }
                     // 回调接口获取用户id
                     else {
-                        loginActivity.customProgressDialog.showProgressBar();
+                        loginActivity.customProgressDialog.showProgressDialog();
                         yibanLoginWebview.setVisibility(View.INVISIBLE);
                         yibanLoginWebview.loadUrl(url);
                     }

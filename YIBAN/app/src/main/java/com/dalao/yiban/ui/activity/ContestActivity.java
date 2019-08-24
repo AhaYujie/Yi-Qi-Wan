@@ -312,24 +312,15 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
                 .add(ServerPostDataConstant.CONTEST_ID, contestId)
                 .add(ServerPostDataConstant.USER_ID, userId)
                 .build();
-        HttpUtil.sendHttpPost(ServerUrlConstant.CONTEST_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.CONTEST_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                ContestActivity.this.getCallList().add(call);
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ContestActivity.this, HintConstant.GET_DATA_FAILED,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    ContestActivity.this.getCallList().add(call);
                     String responseText = response.body().string();
                     final ContestGson contestGson = JsonUtil.handleContestResponse(responseText);
                     runOnUiThread(new Runnable() {
@@ -357,6 +348,7 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
                 }
             }
         });
+        ContestActivity.this.getCallList().add(call);
     }
 
     /**

@@ -20,10 +20,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import org.litepal.crud.DataSupport;
@@ -85,7 +83,7 @@ public class MainActivity extends BaseActivity {
         bottomNavigationView = findViewById(R.id.nav_view);
         viewPager = (CustomViewPager) findViewById(R.id.home_view_pager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        customProgressBar = new CustomProgressDialog(this);
+        customProgressBar = new CustomProgressDialog(this, HintConstant.LOADING);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentList = initFragmentList();
@@ -158,7 +156,7 @@ public class MainActivity extends BaseActivity {
             // 修改昵称
             case HomeConstant.EDIT_USER_NICKNAME_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    mineFragment.setNickName(data.getStringExtra(MineConstant.USER_NICKNAME));
+                    mineFragment.updateNicknameUI(data.getStringExtra(MineConstant.USER_NICKNAME));
                 }
                 break;
 
@@ -186,6 +184,13 @@ public class MainActivity extends BaseActivity {
                 else {
                     finish();
                 }
+
+            // 创建博客
+            case HomeConstant.CREATE_BLOG_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, HintConstant.CREATE_BLOG_SUCCESS, Toast.LENGTH_SHORT).show();
+                    communityFragment.requestDataFromServer();
+                }
             default:
                 break;
         }
@@ -196,8 +201,9 @@ public class MainActivity extends BaseActivity {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             // 更改头像请求权限
-            case HomeConstant.WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            case HomeConstant.WRITE_EXTERNAL_STORAGE_AND_CAMERA_REQUEST_CODE:
+                if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     mineFragment.selectImage();
                 }
                 else {

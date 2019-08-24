@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -49,7 +50,7 @@ public class SDCardUtil {
      * @return
      */
     public static String saveToSdCard(Bitmap bitmap) {
-        String imageUrl = getPictureDir() + System.currentTimeMillis() + "-";
+        String imageUrl = getPictureDir() + StringUtils.getRandomString(10);
         File file = new File(imageUrl);
         try {
             FileOutputStream out = new FileOutputStream(file);

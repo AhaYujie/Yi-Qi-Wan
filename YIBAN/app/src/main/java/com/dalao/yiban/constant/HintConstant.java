@@ -1,5 +1,7 @@
 package com.dalao.yiban.constant;
 
+import com.dalao.yiban.ui.activity.CreateBlogActivity;
+
 public class HintConstant {
 
     public static final String GET_DATA_FAILED = "oops! 网络出问题了";
@@ -28,11 +30,21 @@ public class HintConstant {
 
     public static final String CREATE_BLOG_ERROR = "发表博客失败, 网络出问题了";
 
+    public static final String CREATE_BLOG_SUCCESS = "发表博客成功";
+
     public static final String CREATE_BLOG_CONTENT_LESS = "内容字数小于10";
 
     public static final String CREATE_BLOG_CONTENT_MORE = "内容字数超过1000";
 
     public static final String CREATE_BLOG_TITLE_EMPTY = "标题不能为空";
+
+    public static final String DELETE_IMAGE_SUCCESS = "删除成功";
+
+    public static final String INSERT_IMAGE_SUCCESS = "插入图片成功";
+
+    public static final String INSERT_IMAGE_ERROR = "插入图片失败";
+
+    public static final String TOO_MANY_IMAGES = "图片超过" + CreateBlogActivity.MAX_NUMBER_Of_IMAGES + "张";
 
     public static final String PERMISSION_REFUSE = "拒绝权限将无法使用此功能";
 
@@ -47,5 +59,7 @@ public class HintConstant {
     public static final String COPY_SUCCESS = "复制成功";
 
     public static final String LOADING = "正在加载...";
+
+    public static final String UPLOADING = "正在上传...";
 
 }

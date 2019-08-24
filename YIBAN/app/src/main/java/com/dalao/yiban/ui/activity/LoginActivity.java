@@ -5,24 +5,16 @@ import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.LoginConstant;
-import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.ui.adapter.ViewPagerAdapter;
 import com.dalao.yiban.ui.custom.CustomProgressDialog;
 import com.dalao.yiban.ui.custom.CustomViewPager;
 import com.dalao.yiban.ui.fragment.ChooseLoginWayFragment;
-import com.dalao.yiban.ui.fragment.LoginFragment;
-import com.dalao.yiban.ui.fragment.MineFragment;
-import com.dalao.yiban.ui.fragment.RegisterFragment;
 import com.dalao.yiban.ui.fragment.YibanLoginFragment;
 
 import java.util.ArrayList;
@@ -56,7 +48,7 @@ public class LoginActivity extends BaseActivity {
 
         // 初始化控件
         customViewPager = (CustomViewPager) findViewById(R.id.login_view_pager);
-        customProgressDialog = new CustomProgressDialog(LoginActivity.this);
+        customProgressDialog = new CustomProgressDialog(LoginActivity.this, HintConstant.LOADING);
         initFragmentList();
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.setList(fragmentList);
@@ -120,7 +112,7 @@ public class LoginActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.putExtra(HomeConstant.USER_ID, userId);
         setResult(RESULT_OK, intent);
-        customProgressDialog.closeProgressBar();
+        customProgressDialog.closeProgressDialog();
         finish();
     }
 
