@@ -26,8 +26,13 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,11 +101,9 @@ public class SearchActivity extends BaseActivity {
     //这是搜索结果的列表
 
     //从上一个活动获取数据
-    /*Intent intent = getIntent();
+    Intent intent = getIntent();
     String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-    int userid=Integer.parseInt(HomeConstant.USER_ID);*/
-    String user_id = "2";
-    int userid =2;
+    int userid=Integer.parseInt(HomeConstant.USER_ID);
 
     private RecyclerView recyclerView_Result ;
     private RecyclerView recyclerView_UsedSearch ;
@@ -196,18 +199,28 @@ public class SearchActivity extends BaseActivity {
                 });
             }
         }).start();
-        }
+        }//文件读取数据
         else{
+            FileInputStream in = null;
+            BufferedReader reader = null;
             try{
-                FileInputStream fileInputStream = openFileInput(FILE_NAME);
-                byte[] buff = new byte[1024];
-                int hasRead = 0;
-                StringBuilder sb = new StringBuilder("");
-                while((hasRead = fileInputStream.read(buff))>0)
-                    sb.append(new String(buff,0,hasRead));
-                fileInputStream.close();
+                in = openFileInput("data");
+                reader = new BufferedReader(new InputStreamReader(in));
+                String line = "";
+                while ((line = reader.readLine())!=null){
+                    UsedSearch content = new UsedSearch(line);
+                    UsedSearchList.add(content);
+                }
             }catch (Exception e){
                 e.printStackTrace();
+            }finally {
+                if(reader != null){
+                    try {
+                        reader.close();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 
@@ -241,15 +254,26 @@ public class SearchActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
-                try {
-                    FileOutputStream fileInputStream = openFileOutput(FILE_NAME,MODE_APPEND);
-                    PrintStream ps = new PrintStream(fileInputStream);
-                    ps.println(UsedSearchList);
-                    ps.close();
-                }catch (Exception e){
-                    e.printStackTrace();
+                if(userid==-1) {
+                    String data = query;
+                    FileOutputStream out =null;
+                    BufferedWriter writer = null;
+                    try {
+                        out  = openFileOutput("data",Context.MODE_APPEND);
+                        writer = new BufferedWriter(new OutputStreamWriter(out));
+                        writer.write(query);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }finally {
+                        try {
+                            if(writer != null){
+                                writer.close();
+                            }
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
                 }
-
                 progressBar.setVisibility(View.VISIBLE);
                 text_notfound.setVisibility(View.GONE);
                 recyclerView_UsedSearch.setVisibility(View.GONE);
