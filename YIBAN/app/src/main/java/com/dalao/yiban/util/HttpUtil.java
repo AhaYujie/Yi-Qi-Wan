@@ -1,5 +1,7 @@
 package com.dalao.yiban.util;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ import com.dalao.yiban.ui.activity.BlogActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.activity.ViewFollowingActivity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -46,17 +49,21 @@ public class HttpUtil {
      * GET请求
      * @param url:请求地址
      * @param callback:
+     *
+     * return : call
      */
-    public static void sendHttpGet(String url, okhttp3.Callback callback) {
+    public static Call sendHttpGet(String url, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30,TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10,TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build();
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        client.newCall(request).enqueue(callback);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
     }
 
     /**
@@ -64,18 +71,22 @@ public class HttpUtil {
      * @param url:请求地址
      * @param formBody:提交的form格式数据
      * @param callback:
+     *
+     * return : call
      */
-    public static void sendHttpPost(String url, FormBody formBody, okhttp3.Callback callback) {
+    public static Call sendHttpPost(String url, FormBody formBody, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10,TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build();
         Request request = new Request.Builder()
                 .url(url)
                 .post(formBody)
                 .build();
-        client.newCall(request).enqueue(callback);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
     }
 
     /**
@@ -83,20 +94,24 @@ public class HttpUtil {
      * @param url:请求地址
      * @param builder:RequestBody的builder
      * @param callback:
+     *
+     * return : call
      */
-    public static void sendHttpPostFile(String url, MultipartBody.Builder builder,
+    public static Call sendHttpPostFile(String url, MultipartBody.Builder builder,
                                         okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10,TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build();
         RequestBody requestBody = builder.build();
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
-        client.newCall(request).enqueue(callback);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
     }
 
     /**
@@ -158,24 +173,15 @@ public class HttpUtil {
                 .add(ServerPostDataConstant.USER_ID, userId)
                 .build();
 
-        HttpUtil.sendHttpPost(url, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(url, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(), HintConstant.COLLECT_ERROR,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
                 e.printStackTrace();
-                activity.getCallList().add(call);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    activity.getCallList().add(call);
                     String responseText = response.body().string();
                     final CollectGson collectGson = JsonUtil.handleContestCollectResponse(responseText);
                     if (collectGson.getMsg().equals(HomeConstant.CONTEST_COLLECT_SUCCESS_RESPONSE)) {
@@ -213,6 +219,7 @@ public class HttpUtil {
                 }
             }
         });
+        activity.getCallList().add(call);
     }
 
     /**
@@ -259,24 +266,15 @@ public class HttpUtil {
                 .add(ServerPostDataConstant.FOLLOW_BLOG_AUTHOR_FOLLOWER, userId)
                 .add(ServerPostDataConstant.FOLLOW_BLOG_AUTHOR_FOLLOWED, authorId)
                 .build();
-        HttpUtil.sendHttpPost(url, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(url, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.getCallList().add(call);
                 e.printStackTrace();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    activity.getCallList().add(call);
                     String responseText = response.body().string();
                     FollowGson followGson = JsonUtil.handleFollowResponse(responseText);
                     if (followGson.getMsg().equals(CommunityConstant.BLOG_FOLLOW_SUCCESS_RESPONSE)) {
@@ -318,6 +316,7 @@ public class HttpUtil {
                 }
             }
         });
+        activity.getCallList().add(call);
     }
 
     /**
@@ -369,24 +368,15 @@ public class HttpUtil {
                     .build();
         }
 
-        HttpUtil.sendHttpPost(ServerUrlConstant.COMMENT_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.COMMENT_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.getCallList().add(call);
                 e.printStackTrace();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(), HintConstant.COMMENT_ERROR,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    activity.getCallList().add(call);
                     String responseText = response.body().string();
                     CommentGson commentGson = JsonUtil.handleCommentResponse(responseText);
                     if (commentGson.getMsg().equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
@@ -421,6 +411,7 @@ public class HttpUtil {
                 }
             }
         });
+        activity.getCallList().add(call);
     }
 
     /**
@@ -431,7 +422,7 @@ public class HttpUtil {
      * @param nickname：昵称
      * @param type：EDIT_NICKNAME or EDIT_SEX
      */
-    public static void editUserInfo(MainActivity activity, String userId, int sex, String nickname,
+    public static void editUserInfo(final BaseActivity activity, String userId, int sex, String nickname,
                                     int type) {
         FormBody formBody;
         if (type == MineConstant.EDIT_NICKNAME) {
@@ -452,35 +443,32 @@ public class HttpUtil {
             return ;
         }
 
-        HttpUtil.sendHttpPost(ServerUrlConstant.EDIT_USER_INFO_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.EDIT_USER_INFO_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.getCallList().add(call);
                 e.printStackTrace();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(),
-                                HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call,@NonNull  Response response) throws IOException {
                 try {
-                    activity.getCallList().add(call);
                     String responseText = response.body().string();
                     EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
                     if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                // 修改姓名
                                 if (type == MineConstant.EDIT_NICKNAME) {
-                                    activity.mineFragment.updateNicknameUI(nickname);
+                                    Intent intent = new Intent();
+                                    intent.putExtra(MineConstant.USER_NICKNAME, nickname);
+                                    activity.setResult(Activity.RESULT_OK, intent);
+                                    activity.finish();
                                 }
+                                // 修改性别
                                 else {
-                                    activity.mineFragment.updateSexUI();
+                                    MainActivity mainActivity = (MainActivity) activity;
+                                    mainActivity.mineFragment.updateSexUI();
                                 }
                             }
                         });
@@ -507,6 +495,8 @@ public class HttpUtil {
                 }
             }
         });
+
+        activity.getCallList().add(call);
     }
 
 }

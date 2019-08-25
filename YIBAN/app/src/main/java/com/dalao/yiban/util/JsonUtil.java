@@ -12,6 +12,7 @@ import com.dalao.yiban.gson.CreateBlogGson;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.FollowGson;
 import com.dalao.yiban.gson.HomeListGson;
+import com.dalao.yiban.gson.PostImageGson;
 import com.dalao.yiban.gson.ReplyGson;
 import com.dalao.yiban.gson.UserInfoGson;
 import com.google.gson.Gson;
@@ -196,6 +197,21 @@ public class JsonUtil {
     public static CreateBlogGson handleCreateBlogResponse(String responseText) {
         try {
             return new Gson().fromJson(responseText, CreateBlogGson.class);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *  解析传输图片的json
+     * @param responseText：返回的json数据body
+     * @return : PostImageGson
+     */
+    public static PostImageGson handlePostImageResponse(String responseText) {
+        try {
+            return new Gson().fromJson(responseText, PostImageGson.class);
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.LinearGradient;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +32,7 @@ import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.User;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.UserInfoGson;
+import com.dalao.yiban.ui.activity.CreateBlogActivity;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.LoginActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
@@ -45,14 +44,13 @@ import com.dalao.yiban.util.JsonUtil;
 import com.dalao.yiban.util.SDCardUtil;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -171,7 +169,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         switch (v.getId()) {
             // 修改昵称
             case R.id.mine_nickname_layout:
-                EditNicknameActivity.actionStart(activity, mineNicknameText.getText().toString());
+                EditNicknameActivity.actionStart(activity, mineNicknameText.getText().toString(),
+                        activity.userId);
                 break;
 
             // 修改性别
@@ -183,10 +182,13 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             case R.id.mine_info_face_layout:
                 // 未授权
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.
-                        WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(activity, Manifest.permission.
+                            CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(activity, new String[]{
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            HomeConstant.WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.CAMERA},
+                            HomeConstant.WRITE_EXTERNAL_STORAGE_AND_CAMERA_REQUEST_CODE);
                 }
                 // 授权则选择图片
                 else {
@@ -244,7 +246,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     /**
      * 传输头像给服务器
      */
-    private void postFileToServer(File file) {
+    private void postFileToServer(final File file) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM)
                 .addFormDataPart(ServerPostDataConstant.EDIT_USER_FACE_IMAGE, file.getName(),
@@ -256,6 +258,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 MineFragment.this.getCallList().add(call);
                 e.printStackTrace();
+                SDCardUtil.deleteFile(file.getPath());
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -277,8 +280,10 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                             @Override
                             public void run() {
                                 requestDataFromServer();
+                                SDCardUtil.deleteFile(file.getPath());
                                 Toast.makeText(MyApplication.getContext(),
                                         HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
+                                SDCardUtil.deleteFile(file.getPath());
                             }
                         });
                     }
@@ -288,6 +293,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                             public void run() {
                                 Toast.makeText(MyApplication.getContext(),
                                         HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                                SDCardUtil.deleteFile(file.getPath());
                             }
                         });
                     }
@@ -299,6 +305,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                         public void run() {
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                            SDCardUtil.deleteFile(file.getPath());
                         }
                     });
                 }
@@ -315,24 +322,14 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 .add(ServerPostDataConstant.USER_INFO_USER_ID, activity.userId)
                 .build();
 
-        HttpUtil.sendHttpPost(ServerUrlConstant.USER_INFO_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.USER_INFO_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MyApplication.getContext(),
-                                HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                e.printStackTrace();
-                MineFragment.this.getCallList().add(call);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                MineFragment.this.getCallList().add(call);
                 if (response.body() != null) {
                     final String responseText = response.body().string();
                     final UserInfoGson userInfoGson = JsonUtil.handleUserResponse(responseText);
@@ -363,6 +360,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 }
             }
         });
+        MineFragment.this.getCallList().add(call);
     }
 
     /**
@@ -396,14 +394,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         Glide.with(activity)
                 .load(ServerUrlConstant.SERVER_URI + userInfoGson.getUser().getAvatar())
                 .into(mineFace);
-    }
-
-    /**
-     * 请求服务器修改nickname
-     * @param nickName:
-     */
-    public void setNickName(String nickName) {
-        HttpUtil.editUserInfo(activity, activity.userId, sexSelected, nickName, MineConstant.EDIT_NICKNAME);
     }
 
     /**
@@ -452,12 +442,15 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 .choose(MimeType.ofImage())
                 .imageEngine(new PicassoEngine())
                 .theme(R.style.Matisse_Zhihu)
+                .capture(true) //是否提供拍照功能，兼容7.0系统需要下面的配置
+                //参数1 true表示拍照存储在共有目录，false表示存储在私有目录；参数2与 AndroidManifest中authorities值相同，用于适配7.0系统 必须设置
+                .captureStrategy(new CaptureStrategy(true,"com.dalao.yiban.matisse.fileprovider"))//存储到哪里
                 .forResult(HomeConstant.EDIT_USER_FACE_REQUEST_CODE);
 
     }
 
     /**
-     * 压缩保存选择的图片
+     * 压缩保存选择的图片并传输到服务器
      * @param data：选择的图片
      */
     public void handleSelectedImage(Intent data) {

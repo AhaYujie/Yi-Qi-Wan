@@ -202,7 +202,7 @@ public class HomeFragment extends BaseFragment {
                 .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
                 .build();
 
-        HttpUtil.sendHttpPost(url, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(url, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
@@ -210,16 +210,13 @@ public class HomeFragment extends BaseFragment {
                     @Override
                     public void run() {
                         homeSwipeRefresh.setRefreshing(false);
-                        Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                     }
                 });
                 e.printStackTrace();
-                HomeFragment.this.getCallList().add(call);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                HomeFragment.this.getCallList().add(call);
                 if (response.body() != null) {
                     final String responseText = response.body().string();
                     final HomeListGson homeListGson = JsonUtil.handleHomeListResponse(responseText);
@@ -255,6 +252,7 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
+        HomeFragment.this.getCallList().add(call);
     }
 
     /**

@@ -8,7 +8,9 @@ public class HomeConstant {
 
     public static final int LOGIN_REQUEST_CODE = 3;
 
-    public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 1;
+    public static final int CREATE_BLOG_REQUEST_CODE = 4;
+
+    public static final int WRITE_EXTERNAL_STORAGE_AND_CAMERA_REQUEST_CODE = 1;
 
     public static final int SELECT_HOME = 0;
 

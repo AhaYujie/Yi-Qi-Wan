@@ -26,6 +26,10 @@ public class CommunityConstant {
 
     public static final String CREATE_BLOG_ERROR = "error";
 
+    public static final String POST_IMAGE_SUCCESS = "success";
+
+    public static final String POST_IMAGE_ERROR = "error";
+
     public static final int FOLLOW = 1;
 
     public static final int UN_FOLLOW = -1;

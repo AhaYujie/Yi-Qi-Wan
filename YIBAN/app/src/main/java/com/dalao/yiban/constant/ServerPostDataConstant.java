@@ -40,4 +40,6 @@ public class ServerPostDataConstant {
 
     public static final String CREATE_BLOG_CONTENT = "content";
 
+    public static final String POST_FILE = "pic";
+
 }

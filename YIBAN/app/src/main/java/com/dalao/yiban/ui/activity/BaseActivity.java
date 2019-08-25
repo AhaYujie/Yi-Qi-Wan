@@ -60,6 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             for (Call call : callList) {
                 if (!call.isCanceled()) {
                     call.cancel();
+                    Log.d("yujie", "act : " + call.toString());
                 }
             }
         }

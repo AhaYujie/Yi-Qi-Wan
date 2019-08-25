@@ -185,7 +185,7 @@ public class CommunityFragment extends BaseFragment {
     /**
      * 从服务器获取博客列表数据并刷新UI
      */
-    private void requestDataFromServer() {
+    public void requestDataFromServer() {
         communityBlogRefresh.setRefreshing(true);
 
         FormBody formBody  = new FormBody.Builder()
@@ -193,47 +193,33 @@ public class CommunityFragment extends BaseFragment {
                 .add(ServerPostDataConstant.USER_ID, activity.userId)
                 .build();
 
-        HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {
+        Call call = HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         communityBlogRefresh.setRefreshing(false);
-                        Toast.makeText(MyApplication.getContext(), HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                     }
                 });
                 e.printStackTrace();
-                CommunityFragment.this.getCallList().add(call);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                CommunityFragment.this.getCallList().add(call);
-                if (response.body() != null) {
+                try {
                     final String responseText = response.body().string();
                     final CommunityBlogListGson communityBlogListGson =
                             JsonUtil.handleCommunityBlogListResponse(responseText);
-                    if (communityBlogListGson != null) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateHomeListUI(communityBlogListGson);
-                            }
-                        });
-                    }
-                    else {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                communityBlogRefresh.setRefreshing(false);
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            CommunityFragment.this.communityBlogListGson = communityBlogListGson;
+                            updateHomeListUI();
+                        }
+                    });
                 }
-                else {
+                catch (NullPointerException e) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -242,17 +228,17 @@ public class CommunityFragment extends BaseFragment {
                                     HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                         }
                     });
+                    e.printStackTrace();
                 }
             }
         });
+        CommunityFragment.this.getCallList().add(call);
     }
 
     /**
      * 刷新列表UI
-     * @param communityBlogListGson : 解析后的json数据
      */
-    private void updateHomeListUI(@NonNull CommunityBlogListGson communityBlogListGson) {
-        this.communityBlogListGson = communityBlogListGson;
+    private void updateHomeListUI() {
         communityBlogItemAdapter.setDataBeanList(this.communityBlogListGson.getData());
         communityBlogItemAdapter.notifyDataSetChanged();
         communityBlogRefresh.setRefreshing(false);

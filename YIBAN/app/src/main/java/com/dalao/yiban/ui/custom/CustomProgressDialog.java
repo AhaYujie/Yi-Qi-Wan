@@ -14,17 +14,25 @@ public class CustomProgressDialog {
 
     private ProgressDialog progressDialog;
 
-    public CustomProgressDialog(Context context) {
+    private String hint;
+
+    /**
+     * 创建进度对话框
+     * @param context：
+     * @param hint：提示
+     */
+    public CustomProgressDialog(Context context, String hint) {
         this.context = context;
+        this.hint = hint;
     }
 
     /**
      * 显示进度对话框
      */
-    public void showProgressBar() {
+    public void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(HintConstant.LOADING);
+            progressDialog.setMessage(hint);
             progressDialog.setCanceledOnTouchOutside(false);
         }
         progressDialog.show();
@@ -33,7 +41,7 @@ public class CustomProgressDialog {
     /**
      * 关闭进度对话框
      */
-    public void closeProgressBar() {
+    public void closeProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
