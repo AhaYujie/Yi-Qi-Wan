@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.dalao.yiban.R;
 import com.dalao.yiban.util.SystemUiUtil;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             for (Call call : callList) {
                 if (!call.isCanceled()) {
                     call.cancel();
-                    Log.d("yujie", "act : " + call.toString());
                 }
             }
         }

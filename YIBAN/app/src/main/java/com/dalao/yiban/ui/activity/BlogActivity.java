@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +88,12 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
 
     private PopupWindow commentPopupWindow;
 
+    private LinearLayout wrongPageLayout;
+
+    private TextView wrongPageReload;
+
+    private RelativeLayout blogContentLayout;
+
     private BlogGson blogGson;
 
     private String blogId;
@@ -143,6 +151,14 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         blogScrollView = (NestedScrollView) findViewById(R.id.blog_scroll_view);
         blogCommentTitle = (TextView) findViewById(R.id.blog_comment_title);
         imageWatcherHelper = ImageWatcherHelper.with(this, new GlideSimpleLoader());
+        wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
+        wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
+        blogContentLayout = (RelativeLayout) findViewById(R.id.blog_content_layout);
+        wrongPageLayout.setVisibility(View.GONE);
+        blogContentLayout.setVisibility(View.VISIBLE);
+
+        // 设置错误页面点击事件
+        wrongPageReload.setOnClickListener(this);
 
         // 从上个活动获取数据
         Intent intent = getIntent();
@@ -274,6 +290,12 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
             case R.id.bottom_nav_forward:
                 CustomPopWindow.forwardPopWindow(v, this);
                 break;
+
+            // 错误页面点击事件
+            case R.id.wrong_page_reload:
+                wrongPageLayout.setVisibility(View.GONE);
+                blogContentLayout.setVisibility(View.VISIBLE);
+                requestDataFromServer(true, true);
             default:
                 break;
         }
@@ -350,6 +372,13 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        wrongPageLayout.setVisibility(View.VISIBLE);
+                        blogContentLayout.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
@@ -389,6 +418,8 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
      * 刷新博客内容UI
      */
     private void updateBlogContentUI() {
+        wrongPageLayout.setVisibility(View.GONE);
+        blogContentLayout.setVisibility(View.VISIBLE);
         // 设置点击事件
         blogAuthorFace.setOnClickListener(this);
         blogAuthorName.setOnClickListener(this);

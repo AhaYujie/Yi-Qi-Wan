@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,6 +95,12 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
 
     private TextView contestContentTime;
 
+    private CoordinatorLayout contestContentLayout;
+
+    private LinearLayout wrongPageLayout;
+
+    private TextView wrongPageReload;
+
     /**
      *
      * @param context :
@@ -129,7 +137,16 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
         contestTitle = (TextView) findViewById(R.id.contest_title);
         contestContentWebview = (WebView) findViewById(R.id.contest_content_webview);
         contestContentTime = (TextView) findViewById(R.id.contest_content_time);
+        contestContentLayout = (CoordinatorLayout) findViewById(R.id.contest_content_layout);
+        wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
+        wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
         Toolbar contestToolbar = findViewById(R.id.contest_toolbar);
+        wrongPageLayout.setVisibility(View.GONE);
+        contestContentLayout.setVisibility(View.VISIBLE);
+        contestToolbar.setVisibility(View.VISIBLE);
+
+        // 设置错误页面点击事件
+        wrongPageReload.setOnClickListener(this);
 
         setSupportActionBar(contestToolbar);
         if (getSupportActionBar() != null) {
@@ -207,39 +224,41 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
                         userId, contestId, contestGson.getCollection(), this);
                 break;
 
-            case R.id.forward_wechat_friend:
-                // TODO:转发该竞赛到微信好友
-                Toast.makeText(ContestActivity.this, "forward_wechat_friend",
-                        Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.forward_friend_circle:
-                // TODO:转发该竞赛到朋友圈
-                Toast.makeText(ContestActivity.this, "forward_friend_circle",
-                        Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.forward_qq_friend:
-                // TODO:转发该竞赛到QQ好友
-                Toast.makeText(ContestActivity.this, "forward_qq_friend",
-                        Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.forward_qq_sapce:
-                // TODO:转发该竞赛到QQ空间
-                Toast.makeText(ContestActivity.this, "forward_qq_sapce",
-                        Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.forward_yiban:
-                // TODO:转发该竞赛到易班
-                Toast.makeText(ContestActivity.this, "forward_yiban",
-                        Toast.LENGTH_SHORT).show();
-                break;
+//            case R.id.forward_wechat_friend:
+//                Toast.makeText(ContestActivity.this, "forward_wechat_friend",
+//                        Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case R.id.forward_friend_circle:
+//                Toast.makeText(ContestActivity.this, "forward_friend_circle",
+//                        Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case R.id.forward_qq_friend:
+//                Toast.makeText(ContestActivity.this, "forward_qq_friend",
+//                        Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case R.id.forward_qq_sapce:
+//                Toast.makeText(ContestActivity.this, "forward_qq_sapce",
+//                        Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case R.id.forward_yiban:
+//                Toast.makeText(ContestActivity.this, "forward_yiban",
+//                        Toast.LENGTH_SHORT).show();
+//                break;
 
             // 转发button弹出PopWindow
             case R.id.bottom_nav_forward:
                 CustomPopWindow.forwardPopWindow(v, this);
+                break;
+
+            // 错误页面点击事件
+            case R.id.wrong_page_reload:
+                wrongPageLayout.setVisibility(View.GONE);
+                contestContentLayout.setVisibility(View.VISIBLE);
+                requestDataFromServer(true, true);
                 break;
             default:
                 break;
@@ -316,6 +335,13 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        wrongPageLayout.setVisibility(View.VISIBLE);
+                        contestContentLayout.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
@@ -355,6 +381,8 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
      * 刷新竞赛内容UI
      */
     private void updateContestContentUI() {
+        wrongPageLayout.setVisibility(View.GONE);
+        contestContentLayout.setVisibility(View.VISIBLE);
         // 设置button点击事件
         contestCommentButton.setOnClickListener(this);
         contestMoveToComment.setOnClickListener(this);

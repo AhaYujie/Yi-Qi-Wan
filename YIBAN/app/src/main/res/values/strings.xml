@@ -1,6 +1,10 @@
 ﻿<resources>
 
     <!-- 行间距倍数(中文) -->
+    <string name="wrong_page_text">似乎出问题了</string>
+    <string name="wrong_page_reload_text">重新加载</string>
+
+    <!-- 行间距倍数(中文) -->
     <string name="line_spacing_multiplier">1.2</string>
 
     <!-- 昵称最大长度 -->

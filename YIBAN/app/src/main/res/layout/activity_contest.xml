@@ -12,7 +12,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/contest_coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/contest_bottom_nav">
 
@@ -32,11 +32,17 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-
         <include layout="@layout/content_contest"
+            android:id="@+id/contest_content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <include layout="@layout/wrong_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginTop="?attr/actionBarSize"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

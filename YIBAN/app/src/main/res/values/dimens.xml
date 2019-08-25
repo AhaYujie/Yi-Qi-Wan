@@ -94,4 +94,7 @@
     <dimen name="login_confirm_button_arrow_size">32dp</dimen>
     <dimen name="login_back_icon_size">40dp</dimen>
 
+    <!-- wrong page -->
+    <dimen name="wrong_page_text_size">20sp</dimen>
+
 </resources>

@@ -2,7 +2,13 @@ package com.dalao.yiban.ui.fragment;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
@@ -14,7 +20,7 @@ public abstract class BaseFragment extends Fragment {
 
     private List<Call> callList;
 
-    protected boolean isVisible;
+    boolean isVisible;
 
     public List<Call> getCallList() {
         return callList;
@@ -58,12 +64,11 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 取消所有网络请求
      */
-    private void cancelCall() {
+    protected void cancelCall() {
         if (callList != null) {
             for (Call call : callList) {
                 if (!call.isCanceled()) {
                     call.cancel();
-                    Log.d("yujie", "frag : " + call.toString());
                 }
             }
         }
