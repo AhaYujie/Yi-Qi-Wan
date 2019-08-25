@@ -26,11 +26,6 @@
 
         <activity android:name=".ui.activity.CreateBlogActivity" />
         <activity android:name=".ui.activity.SearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.activity.ViewFollowingActivity" />
         <activity android:name=".ui.activity.EditNicknameActivity" />
@@ -48,11 +43,6 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
