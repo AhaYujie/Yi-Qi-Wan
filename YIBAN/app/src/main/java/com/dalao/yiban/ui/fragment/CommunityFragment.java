@@ -63,6 +63,8 @@ public class CommunityFragment extends BaseFragment {
 
     private Button communityCreateBlogButton;
 
+    private LinearLayoutManager linearLayoutManager;
+
     private int sortSelected;
 
     private CommunityBlogListGson communityBlogListGson;
@@ -135,7 +137,7 @@ public class CommunityFragment extends BaseFragment {
         });
 
         // 初始化RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
+        linearLayoutManager = new LinearLayoutManager(activity);
         communityBlogRecyclerView.setLayoutManager(linearLayoutManager);
         communityBlogItemAdapter = new CommunityBlogItemAdapter(activity);
         communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
@@ -242,8 +244,10 @@ public class CommunityFragment extends BaseFragment {
         communityBlogItemAdapter.setDataBeanList(this.communityBlogListGson.getData());
         communityBlogItemAdapter.notifyDataSetChanged();
         communityBlogRefresh.setRefreshing(false);
-        communityBlogRecyclerView.scrollToPosition(0);
-        //communityBlogRecyclerView.smoothScrollToPosition(0);
+        if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
+            communityBlogRecyclerView.scrollToPosition(5);
+        }
+        communityBlogRecyclerView.smoothScrollToPosition(0);
     }
 
 }

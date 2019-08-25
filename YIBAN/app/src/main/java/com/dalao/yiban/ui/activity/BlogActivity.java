@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,12 +34,17 @@ import com.dalao.yiban.my_interface.FollowInterface;
 import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
+import com.dalao.yiban.ui.custom.GlideSimpleLoader;
 import com.dalao.yiban.util.HttpUtil;
+import com.dalao.yiban.util.ImageUtils;
 import com.dalao.yiban.util.JsonUtil;
 import com.dalao.yiban.util.StringUtils;
+import com.github.ielse.imagewatcher.ImageWatcherHelper;
 import com.sendtion.xrichtext.RichTextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,7 +66,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
 
     private Button blogFollowAuthorButton;
 
-    private RichTextView blogContent;
+    private RichTextView blogContentRichText;
 
     private Button blogBottomNavCommentButton;
 
@@ -87,6 +93,10 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
     private String userId;
 
     private String authorId;
+
+    private ImageWatcherHelper imageWatcherHelper;
+
+    private String blogContentString;
 
     /**
      * 启动 BlogActivity
@@ -125,13 +135,14 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         blogAuthorFace = (ImageView) findViewById(R.id.blog_author_face);
         blogAuthorName = (TextView) findViewById(R.id.blog_author_name);
         blogFollowAuthorButton = (Button) findViewById(R.id.blog_follow_author_button);
-        blogContent = (RichTextView) findViewById(R.id.blog_content);
+        blogContentRichText = (RichTextView) findViewById(R.id.blog_content);
         blogBottomNavCommentButton = (Button) findViewById(R.id.bottom_nav_comment);
         moveToComment = (Button) findViewById(R.id.move_to_comment);
         blogBottomNavCollect = (Button) findViewById(R.id.bottom_nav_collect);
         blogBottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
         blogScrollView = (NestedScrollView) findViewById(R.id.blog_scroll_view);
         blogCommentTitle = (TextView) findViewById(R.id.blog_comment_title);
+        imageWatcherHelper = ImageWatcherHelper.with(this, new GlideSimpleLoader());
 
         // 从上个活动获取数据
         Intent intent = getIntent();
@@ -160,6 +171,25 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         commentAdapter = new CommentAdapter(this, this, userId,
                 blogId, HomeConstant.SELECT_BLOG);
         blogCommentRecyclerView.setAdapter(commentAdapter);
+
+        // 图片点击事件
+        blogContentRichText.setOnRtImageClickListener(new RichTextView.OnRtImageClickListener() {
+            @Override
+            public void onRtImageClick(View view, String imagePath) {
+                try {
+                    ArrayList<String> imageList = StringUtils.getTextFromHtml(blogContentString, true);
+                    int currentPosition = imageList.indexOf(imagePath);
+
+                    List<Uri> dataList = new ArrayList<>();
+                    for (int i = 0; i < imageList.size(); i++) {
+                        dataList.add(ImageUtils.getUriFromPath(imageList.get(i)));
+                    }
+                    imageWatcherHelper.show(dataList, currentPosition);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         
         // 请求服务器获取数据
         requestDataFromServer(true, true);
@@ -367,6 +397,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         blogBottomNavCollect.setOnClickListener(this);
         blogBottomNavForward.setOnClickListener(this);
         moveToComment.setOnClickListener(this);
+        blogContentString = blogGson.getContent();
         // 刷新UI
         blogTitle.setText(blogGson.getTitle());
         blogContentTime.setText(blogGson.getTime());
@@ -384,10 +415,10 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         else if (blogGson.getCollection() == HomeConstant.UN_COLLECT) {
             blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
         }
-        blogContent.post(new Runnable() {
+        blogContentRichText.post(new Runnable() {
             @Override
             public void run() {
-                StringUtils.showContent(blogContent, blogGson.getContent());
+                StringUtils.showContent(blogContentRichText, blogGson.getContent());
             }
         });
     }
@@ -465,6 +496,13 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         blogFollowAuthorButton.setText(CommunityConstant.FOLLOW_TEXT);
         Toast.makeText(this, HintConstant.BLOG_AUTHOR_UN_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
         blogGson.setFollow(CommunityConstant.UN_FOLLOW);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!imageWatcherHelper.handleBackPressed()) {
+            super.onBackPressed();
+        }
     }
 
 }

@@ -57,11 +57,15 @@ public class HomeFragment extends BaseFragment {
 
     private Button homeSearchButton;
 
+    private LinearLayoutManager linearLayoutManager;
+
     private HomeListGson homeListGson = null;
 
     private MainActivity activity;
 
     private View view;
+
+    private int lastVisibleItem;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -162,11 +166,30 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        // 初始化RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
+        // 设置RecyclerView
+        linearLayoutManager = new LinearLayoutManager(activity);
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
         homeItemAdapter = new HomeItemAdapter(homeListGson, categorySelected, activity);
         homeItemRecyclerView.setAdapter(homeItemAdapter);
+
+        // 设置RecyclerView滑动监听事件
+        homeItemRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                // 分页加载
+                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
+                        (lastVisibleItem + 2) > linearLayoutManager.getItemCount()) {
+                    Log.d("yujie", "load");
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+            }
+        });
 
         // 如果view可见则请求服务器获取数据
         onVisible();
@@ -217,30 +240,18 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.body() != null) {
+                try {
                     final String responseText = response.body().string();
                     final HomeListGson homeListGson = JsonUtil.handleHomeListResponse(responseText);
-                    if (homeListGson != null) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                HomeFragment.this.homeListGson = homeListGson;
-                                updateHomeListUI();
-                            }
-                        });
-                    }
-                    else {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                homeSwipeRefresh.setRefreshing(false);
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HomeFragment.this.homeListGson = homeListGson;
+                            updateHomeListUI();
+                        }
+                    });
                 }
-                else {
+                catch (NullPointerException e) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -263,8 +274,10 @@ public class HomeFragment extends BaseFragment {
         homeItemAdapter.setCategorySelected(categorySelected);
         homeItemAdapter.notifyDataSetChanged();
         homeSwipeRefresh.setRefreshing(false);
-        homeItemRecyclerView.scrollToPosition(0);
-        //homeItemRecyclerView.smoothScrollToPosition(0);
+        if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
+            homeItemRecyclerView.scrollToPosition(5);
+        }
+        homeItemRecyclerView.smoothScrollToPosition(0);
     }
 
 }

@@ -292,10 +292,10 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
                 break;
 
             // 转发button弹出PopWindow
-            case R.id.more_forward:
-                CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward), this);
-                break;
+//            case R.id.more_forward:
+//                CustomPopWindow.forwardPopWindow
+//                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward), this);
+//                break;
             default:
                 break;
         }
