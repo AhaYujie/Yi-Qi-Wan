@@ -4,22 +4,32 @@ import androidx.annotation.Nullable;
 
 public class MyStar {
 
-    private String avater;
+    private String avatar;
     private String author;
     private int authorid;
+    private int id;
 
-    public MyStar(String avater,String author,int authorid){
+    public MyStar(String avatar,String author,int authorid,int id){
         this.author=author;
         this.authorid=authorid;
-        this.avater=avater;
+        this.avatar=avatar;
+        this.id = id;
     }
 
-    public String getAvater(){
-        return avater;
+    public int getId(){
+        return id;
     }
 
-    public void setAvater(String avater){
-        this.avater=avater;
+    public void setId(int id){
+        this.id=id;
+    }
+
+    public String getAvatar(){
+        return avatar;
+    }
+
+    public void setAvatar(String avatar){
+        this.avatar=avatar;
     }
 
     public String getAuthor(){

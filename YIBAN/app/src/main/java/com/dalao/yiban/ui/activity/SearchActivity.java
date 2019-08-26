@@ -65,6 +65,8 @@ public class SearchActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
+    int userid;
+    String user_id;
     final String FILE_NAME = "used_search";
 
     private boolean deng(String a,String b){
@@ -96,11 +98,6 @@ public class SearchActivity extends BaseActivity {
     private List<SearchResult> SearchResultList = new ArrayList<>();
     //这是搜索结果的列表
 
-    //从上一个活动获取数据
-    Intent intent = getIntent();
-    String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-    int userid=Integer.parseInt(HomeConstant.USER_ID);
-
     private RecyclerView recyclerView_Result ;
     private RecyclerView recyclerView_UsedSearch ;
     private TextView textview_clear;
@@ -123,6 +120,11 @@ public class SearchActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_bar);
+
+        //从上一个活动获取数据
+        Intent intent = getIntent();
+        String user_id = intent.getStringExtra(HomeConstant.USER_ID);
+        int userid=Integer.parseInt(user_id);
 
         recyclerView_Result = (RecyclerView) findViewById(R.id.search_bar_result);
         recyclerView_UsedSearch = (RecyclerView) findViewById(R.id.search_bar_RecyclerView);
