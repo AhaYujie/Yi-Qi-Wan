@@ -59,13 +59,9 @@ import okhttp3.Response;
 
 public class SearchActivity extends BaseActivity {
 
-    public static void actionStart(Context context, String userId, String activityId,
-                                   String activityTitle, String activityContentTime) {
-        Intent intent = new Intent(context, ActivityActivity.class);
+    public static void actionStart(Context context, String userId) {
+        Intent intent = new Intent(context,SearchActivity.class);
         intent.putExtra(HomeConstant.USER_ID, userId);
-        intent.putExtra(HomeConstant.ACTIVITY_ID, activityId);
-        intent.putExtra(HomeConstant.ACTIVITY_TITLE, activityTitle);
-        intent.putExtra(HomeConstant.ACTIVITY_CONTENT_TIME, activityContentTime);
         context.startActivity(intent);
     }
 

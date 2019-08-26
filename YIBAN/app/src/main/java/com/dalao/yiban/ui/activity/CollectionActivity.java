@@ -51,17 +51,9 @@ import okhttp3.Response;
 
 public class CollectionActivity extends BaseActivity {
 
-    public static void actionStart(Context context, String userId, String blogId, String authorFace,
-                                   String authorName, String blogTitle, String blogContentTime,
-                                   String authorId) {
-        Intent intent = new Intent(context, BlogActivity.class);
+    public static void actionStart(Context context, String userId) {
+        Intent intent = new Intent(context, CollectionActivity.class);
         intent.putExtra(HomeConstant.USER_ID, userId);
-        intent.putExtra(CommunityConstant.BLOG_ID, blogId);
-        intent.putExtra(CommunityConstant.AUTHOR_FACE, authorFace);
-        intent.putExtra(CommunityConstant.AUTHOR_NAME, authorName);
-        intent.putExtra(CommunityConstant.BLOG_CONTENT_TIME, blogContentTime);
-        intent.putExtra(CommunityConstant.BLOG_TITLE, blogTitle);
-        intent.putExtra(CommunityConstant.AUTHOR_ID, authorId);
         context.startActivity(intent);
     }
 

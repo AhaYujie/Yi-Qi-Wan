@@ -2,25 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <View
-        android:visibility="invisible"
+    <LinearLayout
+        android:background="#A400A5FF"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="10dp"></View>
+        android:layout_height="wrap_content">
+        <View
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"></View>
+        <TextView
+            android:textSize="25dp"
+            android:textColor="#000"
+            android:gravity="center"
+            android:text="我关注的"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <View
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"></View>
+        <View
+            android:background="#000"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"></View>
+    </LinearLayout>
     <TextView
-        android:textSize="25dp"
         android:textColor="#000"
+        android:textSize="20dp"
         android:gravity="center"
-        android:text="我关注的"
+        android:visibility="gone"
+        android:id="@+id/my_star_notfound"
+        android:text="对不起，你还没有关注别人"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <View
-        android:visibility="invisible"
+        android:layout_height="wrap_content"></TextView>
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/my_star_progressbar"
         android:layout_width="match_parent"
-        android:layout_height="10dp"></View>
-    <View
-        android:background="#000"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"></View>
+        android:layout_height="wrap_content"></ProgressBar>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_star_RecyclerView"
         android:layout_width="match_parent"
