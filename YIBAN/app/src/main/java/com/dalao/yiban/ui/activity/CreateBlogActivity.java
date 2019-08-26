@@ -146,7 +146,7 @@ public class CreateBlogActivity extends BaseActivity {
             @Override
             public void onRtImageClick(View view, String imagePath) {
                 try {
-                    String myContent = getEditData();
+                    String myContent = StringUtils.getEditData(createBlogContentEditText);
                     if (!TextUtils.isEmpty(myContent)){
                         List<String> imageList = StringUtils.getTextFromHtml(myContent, true);
                         if (!TextUtils.isEmpty(imagePath)) {

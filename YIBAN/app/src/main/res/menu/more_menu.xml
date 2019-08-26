@@ -18,12 +18,6 @@
             android:icon="@drawable/ic_copy_black"
             app:showAsAction="never"/>
 
-        <item
-            android:id="@+id/more_forward"
-            android:title="@string/more_forward"
-            android:icon="@drawable/ic_forward_black"
-            app:showAsAction="never"/>
-
     </group>
 
 </menu>

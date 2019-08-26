@@ -184,6 +184,7 @@ public class MainActivity extends BaseActivity {
                 else {
                     finish();
                 }
+                break;
 
             // 创建博客
             case HomeConstant.CREATE_BLOG_REQUEST_CODE:
@@ -191,6 +192,7 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(this, HintConstant.CREATE_BLOG_SUCCESS, Toast.LENGTH_SHORT).show();
                     communityFragment.requestDataFromServer();
                 }
+                break;
             default:
                 break;
         }

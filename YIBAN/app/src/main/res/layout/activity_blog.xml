@@ -34,9 +34,16 @@
 
 
         <include layout="@layout/content_blog"
+            android:id="@+id/blog_content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <include layout="@layout/wrong_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginTop="?attr/actionBarSize"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

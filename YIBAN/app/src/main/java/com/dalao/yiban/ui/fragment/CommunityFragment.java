@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,12 @@ public class CommunityFragment extends BaseFragment {
 
     private Button communityCreateBlogButton;
 
+    private LinearLayoutManager linearLayoutManager;
+
+    private LinearLayout wrongPageLayout;
+
+    private TextView wrongPageReload;
+
     private int sortSelected;
 
     private CommunityBlogListGson communityBlogListGson;
@@ -97,7 +104,11 @@ public class CommunityFragment extends BaseFragment {
         communitySortSpinner = (Spinner) view.findViewById(R.id.community_sort_spinner);
         communityBlogRefresh = (SwipeRefreshLayout) view.findViewById(R.id.community_blog_refresh);
         communityCreateBlogButton = (Button) view.findViewById(R.id.community_create_blog_button);
+        wrongPageLayout = (LinearLayout) view.findViewById(R.id.wrong_page_layout);
+        wrongPageReload = (TextView) view.findViewById(R.id.wrong_page_reload);
         sortSelected = SELECT_HOT;
+        communityBlogRecyclerView.setVisibility(View.VISIBLE);
+        wrongPageLayout.setVisibility(View.GONE);
 
         // 设置spinner
         String[] sortItems = getResources().getStringArray(R.array.community_sort_spinner);
@@ -108,24 +119,27 @@ public class CommunityFragment extends BaseFragment {
         communitySortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i) {
-                    // 按热度排序
-                    case SELECT_HOT:
-                        sortSelected = SELECT_HOT;
-                        onVisible();
-                        break;
-                    // 按时间排序
-                    case SELECT_TIME:
-                        sortSelected = SELECT_TIME;
-                        onVisible();
-                        break;
-                    // 只看关注的人
-                    case SELECT_FOLLOWING:
-                        sortSelected = SELECT_FOLLOWING;
-                        onVisible();
-                        break;
-                    default:
-                        break;
+                cancelCall();   // 取消切换排序方式前的网络请求
+                if (isVisible && view != null) {
+                    switch (i) {
+                        // 按热度排序
+                        case SELECT_HOT:
+                            sortSelected = SELECT_HOT;
+                            requestDataFromServer();
+                            break;
+                        // 按时间排序
+                        case SELECT_TIME:
+                            sortSelected = SELECT_TIME;
+                            requestDataFromServer();
+                            break;
+                        // 只看关注的人
+                        case SELECT_FOLLOWING:
+                            sortSelected = SELECT_FOLLOWING;
+                            requestDataFromServer();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -135,7 +149,7 @@ public class CommunityFragment extends BaseFragment {
         });
 
         // 初始化RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
+        linearLayoutManager = new LinearLayoutManager(activity);
         communityBlogRecyclerView.setLayoutManager(linearLayoutManager);
         communityBlogItemAdapter = new CommunityBlogItemAdapter(activity);
         communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
@@ -149,7 +163,7 @@ public class CommunityFragment extends BaseFragment {
             }
         });
 
-        // 设置点击事件
+        // 设置创建点击事件
         communityCreateBlogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,6 +179,14 @@ public class CommunityFragment extends BaseFragment {
             }
         });
 
+        // 设置错误页面重载点击事件
+        wrongPageReload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                requestDataFromServer();
+            }
+        });
+
         // 如果view可见则请求服务器获取数据
         onVisible();
 
@@ -176,8 +198,11 @@ public class CommunityFragment extends BaseFragment {
      */
     @Override
     protected void onVisible() {
-        // 请求服务器获取数据
-        if (isVisible && view != null) {
+        communityBlogRecyclerView.setVisibility(View.VISIBLE);
+        wrongPageLayout.setVisibility(View.GONE);
+        // 若无数据则请求服务器获取数据
+        if (isVisible && view != null && (communityBlogListGson == null ||
+                communityBlogListGson.getData().size() == 0)) {
             requestDataFromServer();
         }
     }
@@ -200,6 +225,11 @@ public class CommunityFragment extends BaseFragment {
                     @Override
                     public void run() {
                         communityBlogRefresh.setRefreshing(false);
+                        // 若博客列表数据为空则显示错误页面
+                        if (communityBlogListGson == null || communityBlogListGson.getData().size() == 0) {
+                            communityBlogRecyclerView.setVisibility(View.GONE);
+                            wrongPageLayout.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
                 e.printStackTrace();
@@ -239,11 +269,15 @@ public class CommunityFragment extends BaseFragment {
      * 刷新列表UI
      */
     private void updateHomeListUI() {
+        communityBlogRecyclerView.setVisibility(View.VISIBLE);
+        wrongPageLayout.setVisibility(View.GONE);
         communityBlogItemAdapter.setDataBeanList(this.communityBlogListGson.getData());
         communityBlogItemAdapter.notifyDataSetChanged();
         communityBlogRefresh.setRefreshing(false);
-        communityBlogRecyclerView.scrollToPosition(0);
-        //communityBlogRecyclerView.smoothScrollToPosition(0);
+        if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
+            communityBlogRecyclerView.scrollToPosition(5);
+        }
+        communityBlogRecyclerView.smoothScrollToPosition(0);
     }
 
 }

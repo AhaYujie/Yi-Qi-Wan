@@ -18,7 +18,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,6 +93,12 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
 
     private WebView activityWebView;
 
+    private LinearLayout wrongPageLayout;
+
+    private TextView wrongPageReload;
+
+    private RelativeLayout activityContentLayout;
+
     /**
      *
      * @param context :d'd
@@ -128,6 +136,14 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
         activityScrollView = (NestedScrollView) findViewById(R.id.activity_scroll_view);
         activityBottomNavForward = (Button) findViewById(R.id.bottom_nav_forward);
         activityWebView = (WebView) findViewById(R.id.activity_content_webview);
+        wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
+        wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
+        activityContentLayout = (RelativeLayout) findViewById(R.id.activity_content_layout);
+        wrongPageLayout.setVisibility(View.GONE);
+        activityContentLayout.setVisibility(View.VISIBLE);
+
+        // 设置错误页面点击事件
+        wrongPageReload.setOnClickListener(this);
 
         setSupportActionBar(activityToolbar);
         if (getSupportActionBar() != null) {
@@ -208,6 +224,13 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
             case R.id.bottom_nav_forward:
                 CustomPopWindow.forwardPopWindow(v, this);
                 break;
+
+            // 错误页面点击事件
+            case R.id.wrong_page_reload:
+                wrongPageLayout.setVisibility(View.GONE);
+                activityContentLayout.setVisibility(View.VISIBLE);
+                requestDataFromServer(true, true);
+                break;
             default:
                 break;
         }
@@ -262,10 +285,10 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
                 break;
 
             // 转发button弹出PopWindow
-            case R.id.more_forward:
-                CustomPopWindow.forwardPopWindow
-                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward), this);
-                break;
+//            case R.id.more_forward:
+//                CustomPopWindow.forwardPopWindow
+//                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward), this);
+//                break;
             default:
                 break;
         }
@@ -287,6 +310,13 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        wrongPageLayout.setVisibility(View.VISIBLE);
+                        activityContentLayout.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
@@ -326,6 +356,8 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
      * 刷新活动内容UI
      */
     private void updateContentUI() {
+        wrongPageLayout.setVisibility(View.GONE);
+        activityContentLayout.setVisibility(View.VISIBLE);
         // 设置点击事件
         activityBottomNavCommentButton.setOnClickListener(this);
         activityMoveToComment.setOnClickListener(this);
