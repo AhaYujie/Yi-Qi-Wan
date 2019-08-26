@@ -32,10 +32,13 @@ import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.User;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.UserInfoGson;
+import com.dalao.yiban.ui.activity.CollectionActivity;
 import com.dalao.yiban.ui.activity.CreateBlogActivity;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.LoginActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
+import com.dalao.yiban.ui.activity.MyBlogActivity;
+import com.dalao.yiban.ui.activity.MyStarActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.CommonUtil;
 import com.dalao.yiban.util.HttpUtil;
@@ -198,17 +201,17 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 查看我的博客
             case R.id.mine_blog_layout:
-                //TODO:启动查看我的博客活动
+                MyBlogActivity.actionStart(activity, activity.userId);
                 break;
 
             // 查看收藏
             case R.id.mine_collect_layout:
-                //TODO:启动查看收藏活动
+                CollectionActivity.actionStart(activity, activity.userId);
                 break;
 
             // 查看我关注的人
             case R.id.mine_following_layout:
-                //TODO:启动查看我关注的人活动
+                // TODO
                 break;
 
             // 易班登录

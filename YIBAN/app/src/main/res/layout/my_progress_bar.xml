@@ -4,6 +4,9 @@
     android:id="@+id/progress_bar"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    style="?android:progressBarStyle">
+    android:maxWidth="40dp"
+    android:maxHeight="40dp"
+    android:minHeight="40dp"
+    android:minWidth="40dp">
 
 </ProgressBar>
