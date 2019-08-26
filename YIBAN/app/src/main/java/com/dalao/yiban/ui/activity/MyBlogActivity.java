@@ -53,7 +53,7 @@ public class MyBlogActivity extends BaseActivity {
         //从上一个活动获取数据
         Intent intent = getIntent();
         String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-        int userid=Integer.parseInt(HomeConstant.USER_ID);
+        int userid=Integer.parseInt(user_id);
 
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.my_blog_progressbar);
         TextView textView = (TextView) findViewById(R.id.my_blog_notfound);

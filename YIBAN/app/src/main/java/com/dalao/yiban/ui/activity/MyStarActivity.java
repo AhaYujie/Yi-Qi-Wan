@@ -1,6 +1,9 @@
 package com.dalao.yiban.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -10,7 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.HomeConstant;
+import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.CollectBlog;
 import com.dalao.yiban.db.MyStar;
 import com.dalao.yiban.ui.adapter.MyStarAdapter;
@@ -22,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,7 +37,11 @@ import okhttp3.Response;
 
 public class MyStarActivity extends BaseActivity {
 
-    int userid=2;
+    public static void actionStart(Context context, String userId) {
+        Intent intent = new Intent(context, MyStarActivity.class);
+        intent.putExtra(HomeConstant.USER_ID, userId);
+        context.startActivity(intent);
+    }
 
     @Override
     public void onClick(View v) {
@@ -44,6 +55,10 @@ public class MyStarActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_star);
 
+        Intent intent = getIntent();
+        String user_id = intent.getStringExtra(HomeConstant.USER_ID);
+        int userid=Integer.parseInt(user_id);
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_star_RecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -52,6 +67,7 @@ public class MyStarActivity extends BaseActivity {
 
         TextView textView = (TextView) findViewById(R.id.my_star_notfound);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.my_star_progressbar);
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.my_star_picture);
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -82,13 +98,13 @@ public class MyStarActivity extends BaseActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String author = jsonObject.getString("author");
-                            String avater = jsonObject.getString("avater");
+                            String avatar = jsonObject.getString("avatar");
                             int authorid = jsonObject.getInt("authorid");
                             String time = jsonObject.getString("time");
                             String title = jsonObject.getString("title");
                             int id = jsonObject.getInt("id");
                             int pageviews = jsonObject.getInt("pageviews");
-                            MyStar myStar = new MyStar(avater,author,authorid);
+                            MyStar myStar = new MyStar(avatar,author,authorid,userid);
                             myStarList.add(myStar);
                         }
                     } catch (Exception e) {

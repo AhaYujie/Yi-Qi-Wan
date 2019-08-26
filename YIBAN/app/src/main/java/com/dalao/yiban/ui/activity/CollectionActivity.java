@@ -66,9 +66,6 @@ public class CollectionActivity extends BaseActivity {
     private RecyclerView recyclerView_Activity;
 
     //从上一个活动获取数据
-    Intent intent = getIntent();
-    String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-    int userid=Integer.parseInt(user_id);
 
     @Override
     public void onClick(View v) {
@@ -79,6 +76,10 @@ public class CollectionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_collection);
+
+        Intent intent = getIntent();
+        String user_id = intent.getStringExtra(HomeConstant.USER_ID);
+        int userid=Integer.parseInt(user_id);
 
         //initData();//初始化数据
         TextView activity_notfound = (TextView) findViewById(R.id.collection_activity_notfound);
