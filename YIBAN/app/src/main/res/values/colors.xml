@@ -9,6 +9,9 @@
     <color name="wrong_page_text">#A7A7A9</color>
     <color name="wrong_page_reload_text">#4CB6FB</color>
 
+    <!-- no more -->
+    <color name="no_more_text">#A7A7A9</color>
+
     <!-- 首页 -->
     <color name="home_item_title">#000000</color>
     <color name="home_hint">#A7A7A9</color>

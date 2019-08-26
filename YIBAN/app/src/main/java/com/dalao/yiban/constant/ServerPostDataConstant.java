@@ -42,4 +42,6 @@ public class ServerPostDataConstant {
 
     public static final String POST_FILE = "pic";
 
+    public static final String PAGE = "page";
+
 }

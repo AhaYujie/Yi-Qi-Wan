@@ -83,21 +83,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/home_item_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="visible">
             </androidx.recyclerview.widget.RecyclerView>
 
             <include layout="@layout/wrong_page"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"/>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

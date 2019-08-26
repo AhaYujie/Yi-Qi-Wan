@@ -97,4 +97,7 @@
     <!-- wrong page -->
     <dimen name="wrong_page_text_size">20sp</dimen>
 
+    <!-- no more -->
+    <dimen name="no_more_text_size">14sp</dimen>
+
 </resources>
