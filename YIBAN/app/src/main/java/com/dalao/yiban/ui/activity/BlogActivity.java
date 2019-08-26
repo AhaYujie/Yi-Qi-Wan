@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -316,19 +318,19 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
 //        return super.onCreateOptionsMenu(menu);
 //    }
 
-//    /**
-//     * Toolbar菜单栏点击事件
-//     * @param item:
-//     * @return :
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            // 返回
-//            case android.R.id.home:
-//                finish();
-//                break;
-//
+    /**
+     * Toolbar菜单栏点击事件
+     * @param item:
+     * @return :
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            // 返回
+            case android.R.id.home:
+                finish();
+                break;
+
 //            // 收藏或取消收藏
 //            case R.id.more_collect:
 //                // 游客禁止使用此功能
@@ -350,11 +352,11 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
 //                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward),
 //                                BlogActivity.this);
 //                break;
-//            default:
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     /**
      * 请求服务器获取博客数据, 并解析刷新UI

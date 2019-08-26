@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,6 +90,8 @@ public class HomeFragment extends BaseFragment {
 
     private TextView wrongPageReload;
 
+    private ProgressBar progressBar;
+
     private int contestFirstVisibleItem;
 
     private int activityFirstVisibleItem;
@@ -129,7 +132,9 @@ public class HomeFragment extends BaseFragment {
         homeSearchButton = (Button) view.findViewById(R.id.home_search_button);
         wrongPageReload = (TextView) view.findViewById(R.id.wrong_page_reload);
         wrongPageLayout = (LinearLayout) view.findViewById(R.id.wrong_page_layout);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         wrongPageLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         activity = (MainActivity) getActivity();
 
         categorySelected = SELECT_CONTEST;
@@ -155,7 +160,7 @@ public class HomeFragment extends BaseFragment {
                 homeItemRecyclerView.setVisibility(View.VISIBLE);
                 wrongPageLayout.setVisibility(View.GONE);
                 categoryChanging = true;
-                cancelCall();   // 取消切换类别前的网络请求
+                // cancelCall();   // 取消切换类别前的网络请求
                 if (tab.getPosition() == SELECT_CONTEST) {
                     categorySelected = SELECT_CONTEST;
                     homeSortTablayout.getTabAt(contestSortSelected).select();
@@ -192,12 +197,12 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                cancelCall(); // 取消之前的网络请求
                 homeSwipeRefresh.setRefreshing(true);
                 if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
                     homeItemRecyclerView.scrollToPosition(5);
                 }
                 homeItemRecyclerView.smoothScrollToPosition(0);
-
                 requestDataFromServer(true);
             }
         });
@@ -224,11 +229,12 @@ public class HomeFragment extends BaseFragment {
                 }
                 // 若不是切换类别则刷新
                 if (!categoryChanging) {
-                    homeSwipeRefresh.setRefreshing(true);
+                    cancelCall(); // 取消之前的网络请求
                     if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
                         homeItemRecyclerView.scrollToPosition(5);
                     }
                     homeItemRecyclerView.smoothScrollToPosition(0);
+                    homeSwipeRefresh.setRefreshing(true);
                     requestDataFromServer(true);
                 }
         }
@@ -239,13 +245,14 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                cancelCall(); // 取消之前的网络请求
                 // 若不是切换类别则刷新
                 if (!categoryChanging) {
-                    homeSwipeRefresh.setRefreshing(true);
                     if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
                         homeItemRecyclerView.scrollToPosition(5);
                     }
                     homeItemRecyclerView.smoothScrollToPosition(0);
+                    homeSwipeRefresh.setRefreshing(true);
                     requestDataFromServer(true);
                 }
             }
@@ -274,6 +281,7 @@ public class HomeFragment extends BaseFragment {
         homeSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                cancelCall(); // 取消之前的网络请求
                 requestDataFromServer(true);
             }
         });
@@ -287,16 +295,18 @@ public class HomeFragment extends BaseFragment {
                 if (!updating && (newState == RecyclerView.SCROLL_STATE_IDLE ||
                     linearLayoutManager.getItemCount() - 1 == linearLayoutManager.findLastVisibleItemPosition())) {
                     if (categorySelected == SELECT_CONTEST && moreContest &&
-                            (contestLastVisibleItem + 2) > linearLayoutManager.getItemCount()) {
+                            (contestLastVisibleItem + 3) > linearLayoutManager.getItemCount()) {
                         contestPage = contestPage + 1;
+                        progressBar.setVisibility(View.VISIBLE);
                         requestDataFromServer(false);
-                        Log.d("yujie", "contest : " + contestPage);
+                        Log.d("yujie", "contest bottom : " + contestPage);
                     }
                     else if (categorySelected == SELECT_ACTIVITY && moreActivity &&
-                            (activityLastVisibleItem + 2) > linearLayoutManager.getItemCount()) {
+                            (activityLastVisibleItem + 3) > linearLayoutManager.getItemCount()) {
                         activityPage = activityPage + 1;
+                        progressBar.setVisibility(View.VISIBLE);
                         requestDataFromServer(false);
-                        Log.d("yujie", "act : " + activityPage);
+                        Log.d("yujie", "act bottom : " + activityPage);
                     }
                 }
             }
@@ -350,7 +360,6 @@ public class HomeFragment extends BaseFragment {
      * @param reset : true则重置列表数据
      */
     private void requestDataFromServer(final boolean reset) {
-        // homeSwipeRefresh.setRefreshing(true);
         updating = true;
 
         int page = -1;
@@ -390,6 +399,7 @@ public class HomeFragment extends BaseFragment {
                     @Override
                     public void run() {
                         homeSwipeRefresh.setRefreshing(false);
+                        progressBar.setVisibility(View.GONE);
                         updating = false;
                         // 若现在的类别数据为空则显示错误页面
                         if (categorySelected == SELECT_CONTEST && (contestListGson == null ||
@@ -424,6 +434,7 @@ public class HomeFragment extends BaseFragment {
                                 else if (categorySelected == SELECT_ACTIVITY) {
                                     moreActivity = false;
                                 }
+                                progressBar.setVisibility(View.GONE);
                             }
                             // 添加数据
                             else {
@@ -479,6 +490,7 @@ public class HomeFragment extends BaseFragment {
             Log.d("yujie", "act : " + activityListGson.getData().size());
         }
         homeSwipeRefresh.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
     }
 
 }
