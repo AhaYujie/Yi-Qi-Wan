@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class BlogActivity extends BaseActivity implements CommentInterface, FollowInterface,
+public class BlogActivity extends ContentActivity implements CommentInterface, FollowInterface,
         CollectInterface, RequestDataInterface {
 
     private CommentAdapter commentAdapter;
@@ -156,6 +157,8 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
         wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
         blogContentLayout = (RelativeLayout) findViewById(R.id.blog_content_layout);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        noMoreCommentLayout = (TextView) findViewById(R.id.no_more_comment_layout);
         wrongPageLayout.setVisibility(View.GONE);
         blogContentLayout.setVisibility(View.VISIBLE);
 
@@ -187,8 +190,20 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         blogCommentRecyclerView.setLayoutManager(linearLayoutManager);
         commentAdapter = new CommentAdapter(this, this, userId,
-                blogId, HomeConstant.SELECT_BLOG);
+                blogId, HomeConstant.SELECT_BLOG, commentsLoadingLayout);
         blogCommentRecyclerView.setAdapter(commentAdapter);
+
+        // 设置NestedScrollView滑动监听事件
+        blogScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                // 滑动到底部，加载更多评论
+                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                    commentAdapter.loadMoreComments(ServerUrlConstant.BLOG_URI,
+                            ServerPostDataConstant.BLOG_ID, blogId);
+                }
+            }
+        });
 
         // 图片点击事件
         blogContentRichText.setOnRtImageClickListener(new RichTextView.OnRtImageClickListener() {
@@ -487,7 +502,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
             return;
         }
         commentPopupWindow.dismiss();
-        HttpUtil.comment(this, this, blogId, userId,
+        HttpUtil.comment(this, commentAdapter, blogId, userId,
                 commentToCommentId, content, HomeConstant.SELECT_BLOG);
     }
 

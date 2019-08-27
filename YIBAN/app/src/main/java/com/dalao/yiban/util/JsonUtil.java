@@ -1,10 +1,9 @@
 package com.dalao.yiban.util;
 
-import android.util.Log;
-
 import com.dalao.yiban.gson.ActivityGson;
 import com.dalao.yiban.gson.BlogGson;
-import com.dalao.yiban.gson.CommentGson;
+import com.dalao.yiban.gson.CommentStatusGson;
+import com.dalao.yiban.gson.CommentsGson;
 import com.dalao.yiban.gson.CommunityBlogListGson;
 import com.dalao.yiban.gson.CollectGson;
 import com.dalao.yiban.gson.ContestGson;
@@ -17,11 +16,24 @@ import com.dalao.yiban.gson.ReplyGson;
 import com.dalao.yiban.gson.UserInfoGson;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 
 public class JsonUtil {
+
+    /**
+     * 解析评论区数据json
+     * @param responseText : 返回的json数据body
+     * @return : CommentsGson
+     */
+    public static CommentsGson handleCommentsResponse(String responseText) {
+        try {
+            return new Gson().fromJson(responseText, CommentsGson.class);
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * 解析home列表数据json
@@ -147,11 +159,11 @@ public class JsonUtil {
     /**
      *  解析评论返回的json
      * @param responseText：返回的json数据body
-     * @return : CommentGson
+     * @return : CommentStatusGson
      */
-    public static CommentGson handleCommentResponse(String responseText) {
+    public static CommentStatusGson handleCommentResponse(String responseText) {
         try {
-            return new Gson().fromJson(responseText, CommentGson.class);
+            return new Gson().fromJson(responseText, CommentStatusGson.class);
         }
         catch (Exception e) {
             e.printStackTrace();

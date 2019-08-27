@@ -134,7 +134,7 @@ public class HomeFragment extends BaseFragment {
         progressBar.setVisibility(View.GONE);
         activity = (MainActivity) getActivity();
 
-        categorySelected = SELECT_CONTEST;
+        categorySelected = homeCategoryTablayout.getSelectedTabPosition();
         contestSortSelected = SELECT_HOT;
         activitySortSelected = SELECT_HOT;
         contestPage = 1;
@@ -148,16 +148,21 @@ public class HomeFragment extends BaseFragment {
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
         contestItemAdapter = new HomeItemAdapter(contestListGson, SELECT_CONTEST, activity);
         activityItemAdapter = new HomeItemAdapter(activityListGson, SELECT_ACTIVITY, activity);
-        homeItemRecyclerView.setAdapter(contestItemAdapter);
+        if (categorySelected == SELECT_ACTIVITY) {
+            homeItemRecyclerView.setAdapter(activityItemAdapter);
+        }
+        else if (categorySelected == SELECT_CONTEST) {
+            homeItemRecyclerView.setAdapter(contestItemAdapter);
+        }
 
         // 设置category切换事件
         homeCategoryTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                categoryChanging = true;
                 cancelCall(); // 取消之前的网络请求
                 homeItemRecyclerView.setVisibility(View.VISIBLE);
                 wrongPageLayout.setVisibility(View.GONE);
-                categoryChanging = true;
                 // 竞赛
                 if (tab.getPosition() == SELECT_CONTEST) {
                     categorySelected = SELECT_CONTEST;

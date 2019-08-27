@@ -11,6 +11,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +52,7 @@ import okhttp3.FormBody;
 import okhttp3.Response;
 
 
-public class ActivityActivity extends BaseActivity implements CommentInterface, CollectInterface,
+public class ActivityActivity extends ContentActivity implements CommentInterface, CollectInterface,
         RequestDataInterface {
 
     private NestedScrollView activityScrollView;
@@ -99,6 +101,8 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
 
     private RelativeLayout activityContentLayout;
 
+    private LinearLayoutManager linearLayoutManager;
+
     /**
      *
      * @param context :d'd
@@ -139,6 +143,8 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
         wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
         wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
         activityContentLayout = (RelativeLayout) findViewById(R.id.activity_content_layout);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        noMoreCommentLayout = (TextView) findViewById(R.id.no_more_comment_layout);
         wrongPageLayout.setVisibility(View.GONE);
         activityContentLayout.setVisibility(View.VISIBLE);
 
@@ -161,14 +167,27 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
         activityContentTime.setText(intent.getStringExtra(HomeConstant.ACTIVITY_CONTENT_TIME));
 
         // 设置RecyclerView
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        activityCommentRecyclerView.setLayoutManager(layoutManager);
+        linearLayoutManager = new LinearLayoutManager(this);
+        activityCommentRecyclerView.setLayoutManager(linearLayoutManager);
         commentAdapter = new CommentAdapter(this, this, userId,
-                activityId, HomeConstant.SELECT_ACTIVITY);
+                activityId, HomeConstant.SELECT_ACTIVITY, commentsLoadingLayout);
         activityCommentRecyclerView.setAdapter(commentAdapter);
+
+        // 设置NestedScrollView滑动监听事件
+        activityScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                // 滑动到底部，加载更多评论
+                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                    commentAdapter.loadMoreComments(ServerUrlConstant.ACTIVITY_URI,
+                            ServerPostDataConstant.ACTIVITY_ID, activityId);
+                }
+            }
+        });
 
         // 请求服务器获取数据刷新UI
         requestDataFromServer(true, true);
+
     }
 
     /**
@@ -429,7 +448,7 @@ public class ActivityActivity extends BaseActivity implements CommentInterface, 
             return;
         }
         commentPopupWindow.dismiss();
-        HttpUtil.comment(this, this, activityId, userId,
+        HttpUtil.comment(this, commentAdapter, activityId, userId,
                 commentToCommentId, content, HomeConstant.SELECT_ACTIVITY);
     }
 

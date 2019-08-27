@@ -102,23 +102,16 @@
 
             </androidx.recyclerview.widget.RecyclerView>
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <include layout="@layout/no_more_comment"
+                android:visibility="gone"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="20dp"
-                    android:text="@string/my_no_more_comment"
-                    android:textSize="@dimen/my_hint_text_size"
-                    android:textColor="@color/myHint"/>
+            <include layout="@layout/my_progress_bar"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
             </LinearLayout>
-
-        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

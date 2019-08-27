@@ -211,7 +211,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 查看我关注的人
             case R.id.mine_following_layout:
-                // TODO
+                MyStarActivity.actionStart(activity, activity.userId);
                 break;
 
             // 易班登录
