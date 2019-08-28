@@ -3,7 +3,7 @@ package com.dalao.yiban.gson;
 /**
  * 评论服务器返回的json
  */
-public class CommentGson {
+public class CommentStatusGson {
 
     /**
      * msg : success

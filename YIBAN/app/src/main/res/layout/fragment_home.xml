@@ -27,16 +27,16 @@
             app:tabMaxWidth="55dp">
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/home_contest_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/contest"/>
-
-            <com.google.android.material.tabs.TabItem
                 android:id="@+id/home_activity_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/activity"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/home_contest_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contest"/>
 
         </com.google.android.material.tabs.TabLayout>
 
@@ -83,21 +83,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/home_item_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="visible">
             </androidx.recyclerview.widget.RecyclerView>
 
             <include layout="@layout/wrong_page"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"/>
 
-        </LinearLayout>
+            <include layout="@layout/my_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

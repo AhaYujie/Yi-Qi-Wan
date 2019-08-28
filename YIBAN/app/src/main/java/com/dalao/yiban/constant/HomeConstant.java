@@ -18,11 +18,13 @@ public class HomeConstant {
 
     public static final int SELECT_MINE = 2;
 
-    public static final int SELECT_CONTEST = 0;
+    public static final int SELECT_ACTIVITY = 0;
 
-    public static final int SELECT_ACTIVITY = 1;
+    public static final int SELECT_CONTEST = 1;
 
     public static final int SELECT_BLOG = 2;
+
+    public static final int SELECT_NONE = 3;
 
     public static final int SELECT_HOT = 0;
 

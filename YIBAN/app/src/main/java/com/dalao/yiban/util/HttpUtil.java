@@ -2,6 +2,7 @@ package com.dalao.yiban.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,19 +16,19 @@ import com.dalao.yiban.constant.MineConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.CollectGson;
-import com.dalao.yiban.gson.CommentGson;
+import com.dalao.yiban.gson.CommentStatusGson;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.FollowGson;
 import com.dalao.yiban.my_interface.CollectInterface;
-import com.dalao.yiban.my_interface.CommentInterface;
 import com.dalao.yiban.my_interface.FollowInterface;
 import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.activity.BaseActivity;
 import com.dalao.yiban.ui.activity.BlogActivity;
+import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.activity.ViewFollowingActivity;
+import com.dalao.yiban.ui.adapter.CommentAdapter;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -322,29 +323,43 @@ public class HttpUtil {
     /**
      * 活动， 博客, 查看回复评论
      * @param activity：调用此函数的activity
-     * @param requestDataInterface：请求网络刷新UI接口
-     * @param contentId：活动或者博客的id
+     * @param commentAdapter：评论适配器
+     * @param contentId：活动或者竞赛或者博客或者查看回复的id
      * @param userId：用户的id
      * @param toCommentId: 回复的评论的id(若无则为-1)
      * @param content：评论内容
      * @param category：SELECT_ACTIVITY or SELECT_BLOG or SELECT_CONTEST
      */
-    public static void comment(final BaseActivity activity, final RequestDataInterface requestDataInterface,
+    public static void comment(final BaseActivity activity, final CommentAdapter commentAdapter,
                                String contentId, String userId, String toCommentId, String content,
                                int category) {
         String categoryIdKey;
+        String loadMoreCommentsUrl;
+        String contentIdKey;
         switch (category) {
             // 活动
             case HomeConstant.SELECT_ACTIVITY:
                 categoryIdKey = ServerPostDataConstant.COMMENT_ACTIVITY_ID;
+                loadMoreCommentsUrl = ServerUrlConstant.ACTIVITY_URI;
+                contentIdKey = ServerPostDataConstant.ACTIVITY_ID;
                 break;
             // 博客
             case HomeConstant.SELECT_BLOG:
                 categoryIdKey = ServerPostDataConstant.COMMENT_BLOG_ID;
+                loadMoreCommentsUrl = ServerUrlConstant.BLOG_URI;
+                contentIdKey = ServerPostDataConstant.BLOG_ID;
                 break;
             // 竞赛
             case HomeConstant.SELECT_CONTEST:
                 categoryIdKey = ServerPostDataConstant.COMMENT_CONTEST_ID;
+                loadMoreCommentsUrl = ServerUrlConstant.CONTEST_URI;
+                contentIdKey = ServerPostDataConstant.CONTEST_ID;
+                break;
+            // 查看回复
+            case HomeConstant.SELECT_NONE:
+                categoryIdKey = toCommentId;
+                loadMoreCommentsUrl = ServerUrlConstant.REPLY_URI;
+                contentIdKey = ServerPostDataConstant.REPLY_ID;
                 break;
             default:
                 Toast.makeText(MyApplication.getContext(), HintConstant.COMMENT_ERROR,
@@ -378,25 +393,22 @@ public class HttpUtil {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
                     String responseText = response.body().string();
-                    CommentGson commentGson = JsonUtil.handleCommentResponse(responseText);
-                    if (commentGson.getMsg().equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
+                    CommentStatusGson commentStatusGson = JsonUtil.handleCommentResponse(responseText);
+                    if (commentStatusGson != null && commentStatusGson.getMsg() != null &&
+                            commentStatusGson.getMsg().equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(activity, HintConstant.COMMENT_SUCCESS,
                                         Toast.LENGTH_SHORT).show();
-                                requestDataInterface.requestDataFromServer(false, true);
+                                commentAdapter.loadAfterComment(loadMoreCommentsUrl, contentIdKey,
+                                        contentId, toCommentId);
                             }
                         });
                     }
-                    else if (commentGson.getMsg().equals(CommentConstant.COMMENT_ERROR_RESPONSE)) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.COMMENT_ERROR, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    else if (commentStatusGson == null || commentStatusGson.getMsg() == null ||
+                            commentStatusGson.getMsg().equals(CommentConstant.COMMENT_ERROR_RESPONSE)) {
+                        throw new NullPointerException();
                     }
                 }
                 catch (NullPointerException e) {
@@ -424,14 +436,17 @@ public class HttpUtil {
      */
     public static void editUserInfo(final BaseActivity activity, String userId, int sex, String nickname,
                                     int type) {
+        EditNicknameActivity editNicknameActivity;
         FormBody formBody;
         if (type == MineConstant.EDIT_NICKNAME) {
+            editNicknameActivity = (EditNicknameActivity) activity;
             formBody = new FormBody.Builder()
                     .add(ServerPostDataConstant.USER_INFO_USER_ID, userId)
                     .add(ServerPostDataConstant.EDIT_USER_NICKNAME, nickname)
                     .build();
         }
         else if (type == MineConstant.EDIT_SEX) {
+            editNicknameActivity = null;
             formBody = new FormBody.Builder()
                     .add(ServerPostDataConstant.USER_INFO_USER_ID, userId)
                     .add(ServerPostDataConstant.EDIT_USER_SEX, String.valueOf(sex))
@@ -447,6 +462,17 @@ public class HttpUtil {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(),
+                                HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                        // 修改姓名失败取消进度框
+                        if (editNicknameActivity != null) {
+                            editNicknameActivity.uploadingProgressDialog.closeProgressDialog();
+                        }
+                    }
+                });
             }
 
             @Override
@@ -454,6 +480,9 @@ public class HttpUtil {
                 try {
                     String responseText = response.body().string();
                     EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
+                    if (editUserInfoGson == null || editUserInfoGson.getMsg() == null) {
+                        throw new NullPointerException();
+                    }
                     if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
@@ -468,19 +497,13 @@ public class HttpUtil {
                                 // 修改性别
                                 else {
                                     MainActivity mainActivity = (MainActivity) activity;
-                                    mainActivity.mineFragment.updateSexUI();
+                                    mainActivity.mineFragment.updateSexUI(sex);
                                 }
                             }
                         });
                     }
                     else if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_ERROR)) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        throw new NullPointerException();
                     }
                 }
                 catch (NullPointerException e) {
@@ -490,6 +513,10 @@ public class HttpUtil {
                         public void run() {
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                            // 修改姓名失败取消进度框
+                            if (editNicknameActivity != null) {
+                                editNicknameActivity.uploadingProgressDialog.closeProgressDialog();
+                            }
                         }
                     });
                 }

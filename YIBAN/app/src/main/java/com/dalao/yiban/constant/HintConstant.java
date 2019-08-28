@@ -62,4 +62,6 @@ public class HintConstant {
 
     public static final String UPLOADING = "正在上传...";
 
+    public static final String NO_MORE = "没有更多了";
+
 }

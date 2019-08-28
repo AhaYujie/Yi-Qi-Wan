@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +53,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ContestActivity extends BaseActivity implements CommentInterface, CollectInterface,
+public class ContestActivity extends ContentActivity implements CommentInterface, CollectInterface,
         RequestDataInterface {
 
     private MenuItem moreCollect;
@@ -141,6 +142,8 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
         wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
         wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
         Toolbar contestToolbar = findViewById(R.id.contest_toolbar);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        noMoreCommentLayout = (TextView) findViewById(R.id.no_more_comment_layout);
         wrongPageLayout.setVisibility(View.GONE);
         contestContentLayout.setVisibility(View.VISIBLE);
         contestToolbar.setVisibility(View.VISIBLE);
@@ -167,8 +170,20 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         contestTeamRecyclerView.setLayoutManager(layoutManager);
         commentAdapter = new CommentAdapter(this, this, userId, contestId,
-                HomeConstant.SELECT_CONTEST);
+                HomeConstant.SELECT_CONTEST, commentsLoadingLayout);
         contestTeamRecyclerView.setAdapter(commentAdapter);
+
+        // 设置NestedScrollView滑动监听事件
+        contestScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                // 滑动到底部，加载更多评论
+                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                    commentAdapter.loadMoreComments(ServerUrlConstant.CONTEST_URI,
+                            ServerPostDataConstant.CONTEST_ID, contestId);
+                }
+            }
+        });
 
         // 请求服务器获得数据刷新UI
         requestDataFromServer(true, true);
@@ -476,7 +491,7 @@ public class ContestActivity extends BaseActivity implements CommentInterface, C
             return;
         }
         commentPopupWindow.dismiss();
-        HttpUtil.comment(this, this, contestId, userId,
+        HttpUtil.comment(this, commentAdapter, contestId, userId,
                 commentToCommentId, content, HomeConstant.SELECT_CONTEST);
     }
 

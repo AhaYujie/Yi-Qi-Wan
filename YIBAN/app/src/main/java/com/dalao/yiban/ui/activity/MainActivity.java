@@ -190,7 +190,7 @@ public class MainActivity extends BaseActivity {
             case HomeConstant.CREATE_BLOG_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     Toast.makeText(this, HintConstant.CREATE_BLOG_SUCCESS, Toast.LENGTH_SHORT).show();
-                    communityFragment.requestDataFromServer();
+                    communityFragment.requestDataFromServer(true);
                 }
                 break;
             default:
