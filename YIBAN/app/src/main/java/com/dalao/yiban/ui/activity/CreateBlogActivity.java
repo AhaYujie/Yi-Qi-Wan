@@ -283,7 +283,7 @@ public class CreateBlogActivity extends BaseActivity {
                 .addFormDataPart(ServerPostDataConstant.POST_FILE, file.getName(),
                         RequestBody.create(null, file));
 
-        Call call = HttpUtil.sendHttpPostFile(ServerUrlConstant.POST_IMAGE_TO_SERVER_URI, builder, new Callback() {
+        HttpUtil.sendHttpPostFile(ServerUrlConstant.POST_IMAGE_TO_SERVER_URI, builder, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
@@ -294,7 +294,6 @@ public class CreateBlogActivity extends BaseActivity {
             }
         });
 
-        getCallList().add(call);
     }
 
     /**

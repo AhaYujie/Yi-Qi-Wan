@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.CommentConstant;
 import com.dalao.yiban.constant.HintConstant;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.constant.ServerPostDataConstant;
@@ -132,6 +133,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.commentTime.setText(commentBean.getTime());
         Glide.with(MyApplication.getContext())
                 .load(ServerUrlConstant.SERVER_URI + commentBean.getAvatar())
+                .placeholder(R.drawable.ic_avatar_grey)
+                .error(R.drawable.ic_avatar_grey)
+                .fallback(R.drawable.ic_avatar_grey)
                 .into(holder.commentFace);
         if (commentBean.getNumber() == 0) {
             holder.commentReply.setVisibility(View.GONE);
@@ -176,8 +180,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         switch (v.getId()) {
             case R.id.comment_person_name:
             case R.id.comment_author_face:
-                //TODO
-                Toast.makeText(MyApplication.getContext(), "click person", Toast.LENGTH_SHORT).show();
+                // 取消此功能
                 break;
             default:
                 break;
@@ -191,7 +194,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
      * @param contentId :
      */
     public void loadMoreComments(String url, String contentIdKey, String contentId) {
-        Log.d("yujie", "page : " + page);
         // 正在网络请求或者无更多评论则不进行加载
         if (isUpdating || !isMoreComments) {
             return;
@@ -200,10 +202,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         commentsLoadingLayout.showProgressBar();
 
         int newPage = getLoadPage();
-        Log.d("yujie", "newPage : " + newPage);
-        Log.d("yujie", "url : " + url);
-        Log.d("yujie", "key : " + contentIdKey);
-        Log.d("yujie", "id : " + contentId);
 
         FormBody formBody  = new FormBody.Builder()
                 .add(contentIdKey, contentId)
@@ -226,16 +224,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
+                    if (response.body() == null) {
+                        throw new NullPointerException();
+                    }
                     String responseText = response.body().string();
-                    Log.d("yujie", "response" + responseText);
                     final CommentsGson commentsGson = JsonUtil.handleCommentsResponse(responseText);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (commentsGson == null) {
+                                throw new NullPointerException();
+                            }
                             // 无更多评论
                             if (!isNewComments(commentsGson.getComments(), newPage)) {
                                 isMoreComments = false;
-                                Log.d("yujie", "no more");
                                 commentsLoadingLayout.showNoMoreComments();
                             }
                             // 添加新的评论
@@ -268,11 +270,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
      * @param url：
      * @param contentIdKey：ACTIVITY_ID or CONTEST_ID or BLOG_ID
      * @param contentId :
+     * @param toCommentId : 回复的评论的id
      */
-    public void loadAfterComment(String url, String contentIdKey, String contentId) {
+    public void loadAfterComment(String url, String contentIdKey, String contentId, String toCommentId) {
         isMoreComments = true;
         commentsLoadingLayout.closeNoMoreComments();
         loadMoreComments(url, contentIdKey, contentId);
+        // 如果回复别人的评论则更新UI
+        if (!toCommentId.equals(CommentConstant.COMMENT_TO_NO_ONE)) {
+            for (CommentBean commentBean : commentsBeanList) {
+                if (commentBean.getId() == Integer.valueOf(toCommentId)) {
+                    commentBean.setNumber(commentBean.getNumber() + 1);
+                    notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
     }
 
     private void startUpdating() {
@@ -338,8 +351,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
      * @return ：true则为新数据，否则false
      */
     private boolean isNewComments(List<CommentBean> commentsBeanList, int loadPage) {
-        Log.d("yujie", "old : " + (this.commentsBeanList.size() % COMMENTS_NUMBER_PER_PAGE));
-        Log.d("yujie", "new : " + commentsBeanList.size());
         // 加载新的页面的评论
         if (loadPage != page) {
             return !commentsBeanList.isEmpty();

@@ -26,7 +26,7 @@ public class EditNicknameActivity extends BaseActivity {
 
     private EditText editNicknameEditText;
 
-    private CustomProgressDialog uploadingProgressDialog;
+    public CustomProgressDialog uploadingProgressDialog;
 
     private String nickname;
 

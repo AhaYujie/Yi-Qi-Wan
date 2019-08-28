@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,6 +158,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineLoginButton = (Button) view.findViewById(R.id.mine_login_button);
         mineSignOutButton = (Button) view.findViewById(R.id.mine_sign_out_button);
 
+        mineSignOutButton.setOnClickListener(this);
+
         // 如果fragment可见，请求服务器获取数据
         onVisible();
 
@@ -278,27 +281,21 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                     activity.getCallList().add(call);
                     String responseText = response.body().string();
                     EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
+                    if (editUserInfoGson == null || editUserInfoGson.getMsg() == null) {
+                        throw new NullPointerException();
+                    }
                     if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 requestDataFromServer();
-                                SDCardUtil.deleteFile(file.getPath());
                                 Toast.makeText(MyApplication.getContext(),
                                         HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
-                                SDCardUtil.deleteFile(file.getPath());
                             }
                         });
                     }
                     else if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_ERROR)) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
-                                SDCardUtil.deleteFile(file.getPath());
-                            }
-                        });
+                        throw new NullPointerException();
                     }
                 }
                 catch (NullPointerException e) {
@@ -308,9 +305,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                         public void run() {
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
-                            SDCardUtil.deleteFile(file.getPath());
                         }
                     });
+                }
+                finally {
+                    SDCardUtil.deleteFile(file.getPath());
                 }
             }
         });
@@ -333,26 +332,23 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.body() != null) {
+                try {
                     final String responseText = response.body().string();
                     final UserInfoGson userInfoGson = JsonUtil.handleUserResponse(responseText);
-                    if (userInfoGson != null) {
+                    if (userInfoGson != null && userInfoGson.getUser() != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 updateUserInfoUI(userInfoGson);
                             }
                         });
-                    } else {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     }
-                } else {
+                    else {
+                        throw new NullPointerException();
+                    }
+                }
+                catch (NullPointerException e) {
+                    e.printStackTrace();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -378,7 +374,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         mineBlogLayout.setOnClickListener(this);
         mineCollectLayout.setOnClickListener(this);
         mineFollowingLayout.setOnClickListener(this);
-        mineSignOutButton.setOnClickListener(this);
         mineUsernameText.setText(userInfoGson.getUser().getUsername());
         mineNicknameText.setText(userInfoGson.getUser().getNickname());
         mineSchoolText.setText(userInfoGson.getUser().getSchool());
@@ -396,6 +391,9 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         }
         Glide.with(activity)
                 .load(ServerUrlConstant.SERVER_URI + userInfoGson.getUser().getAvatar())
+                .placeholder(R.drawable.ic_avatar_grey)
+                .error(R.drawable.ic_avatar_grey)
+                .fallback(R.drawable.ic_avatar_grey)
                 .into(mineFace);
     }
 
@@ -405,7 +403,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      */
     public void setSex(int sexSelected) {
         chooseSexPopWindow.dismiss();
-        this.sexSelected = sexSelected;
         HttpUtil.editUserInfo(activity, activity.userId, sexSelected, null, MineConstant.EDIT_SEX);
     }
 
@@ -420,8 +417,9 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     /**
      * 若服务器修改性别成功，更新性别UI
      */
-    public void updateSexUI() {
+    public void updateSexUI(int sexSelected) {
         Toast.makeText(activity, HintConstant.EDIT_USER_INFO_SUCCESS, Toast.LENGTH_SHORT).show();
+        this.sexSelected = sexSelected;
         switch (sexSelected) {
             case SECRET:
                 mineSexText.setText(SECRET_TEXT);

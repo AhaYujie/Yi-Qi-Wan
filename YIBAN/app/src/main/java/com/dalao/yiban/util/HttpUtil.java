@@ -24,6 +24,7 @@ import com.dalao.yiban.my_interface.FollowInterface;
 import com.dalao.yiban.my_interface.RequestDataInterface;
 import com.dalao.yiban.ui.activity.BaseActivity;
 import com.dalao.yiban.ui.activity.BlogActivity;
+import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.activity.ViewFollowingActivity;
 import com.dalao.yiban.ui.adapter.CommentAdapter;
@@ -368,7 +369,6 @@ public class HttpUtil {
 
         FormBody formBody;
         if (toCommentId.equals(CommentConstant.COMMENT_TO_NO_ONE)) {
-            Log.d("yujie", "no comment id : " + toCommentId);
             formBody = new FormBody.Builder()
                     .add(categoryIdKey, contentId)
                     .add(ServerPostDataConstant.USER_ID, userId)
@@ -376,7 +376,6 @@ public class HttpUtil {
                     .build();
         }
         else {
-            Log.d("yujie", "comment to id : " + toCommentId);
             formBody = new FormBody.Builder()
                     .add(ServerPostDataConstant.USER_ID, userId)
                     .add(ServerPostDataConstant.COMMENT_CONTENT, content)
@@ -395,25 +394,21 @@ public class HttpUtil {
                 try {
                     String responseText = response.body().string();
                     CommentStatusGson commentStatusGson = JsonUtil.handleCommentResponse(responseText);
-                    if (commentStatusGson.getMsg().equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
+                    if (commentStatusGson != null && commentStatusGson.getMsg() != null &&
+                            commentStatusGson.getMsg().equals(CommentConstant.COMMENT_SUCCESS_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(activity, HintConstant.COMMENT_SUCCESS,
                                         Toast.LENGTH_SHORT).show();
                                 commentAdapter.loadAfterComment(loadMoreCommentsUrl, contentIdKey,
-                                        contentId);
+                                        contentId, toCommentId);
                             }
                         });
                     }
-                    else if (commentStatusGson.getMsg().equals(CommentConstant.COMMENT_ERROR_RESPONSE)) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.COMMENT_ERROR, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    else if (commentStatusGson == null || commentStatusGson.getMsg() == null ||
+                            commentStatusGson.getMsg().equals(CommentConstant.COMMENT_ERROR_RESPONSE)) {
+                        throw new NullPointerException();
                     }
                 }
                 catch (NullPointerException e) {
@@ -441,14 +436,17 @@ public class HttpUtil {
      */
     public static void editUserInfo(final BaseActivity activity, String userId, int sex, String nickname,
                                     int type) {
+        EditNicknameActivity editNicknameActivity;
         FormBody formBody;
         if (type == MineConstant.EDIT_NICKNAME) {
+            editNicknameActivity = (EditNicknameActivity) activity;
             formBody = new FormBody.Builder()
                     .add(ServerPostDataConstant.USER_INFO_USER_ID, userId)
                     .add(ServerPostDataConstant.EDIT_USER_NICKNAME, nickname)
                     .build();
         }
         else if (type == MineConstant.EDIT_SEX) {
+            editNicknameActivity = null;
             formBody = new FormBody.Builder()
                     .add(ServerPostDataConstant.USER_INFO_USER_ID, userId)
                     .add(ServerPostDataConstant.EDIT_USER_SEX, String.valueOf(sex))
@@ -464,6 +462,17 @@ public class HttpUtil {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyApplication.getContext(),
+                                HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                        // 修改姓名失败取消进度框
+                        if (editNicknameActivity != null) {
+                            editNicknameActivity.uploadingProgressDialog.closeProgressDialog();
+                        }
+                    }
+                });
             }
 
             @Override
@@ -471,6 +480,9 @@ public class HttpUtil {
                 try {
                     String responseText = response.body().string();
                     EditUserInfoGson editUserInfoGson = JsonUtil.handleEditUserInfoResponse(responseText);
+                    if (editUserInfoGson == null || editUserInfoGson.getMsg() == null) {
+                        throw new NullPointerException();
+                    }
                     if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_SUCCESS)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
@@ -485,19 +497,13 @@ public class HttpUtil {
                                 // 修改性别
                                 else {
                                     MainActivity mainActivity = (MainActivity) activity;
-                                    mainActivity.mineFragment.updateSexUI();
+                                    mainActivity.mineFragment.updateSexUI(sex);
                                 }
                             }
                         });
                     }
                     else if (editUserInfoGson.getMsg().equals(MineConstant.EDIT_USER_INFO_ERROR)) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        throw new NullPointerException();
                     }
                 }
                 catch (NullPointerException e) {
@@ -507,6 +513,10 @@ public class HttpUtil {
                         public void run() {
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.EDIT_USER_INFO_ERROR, Toast.LENGTH_SHORT).show();
+                            // 修改姓名失败取消进度框
+                            if (editNicknameActivity != null) {
+                                editNicknameActivity.uploadingProgressDialog.closeProgressDialog();
+                            }
                         }
                     });
                 }

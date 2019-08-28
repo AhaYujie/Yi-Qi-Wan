@@ -398,7 +398,7 @@ public class HomeFragment extends BaseFragment {
                         @Override
                         public void run() {
                             // 无数据
-                            if (homeListGson.getData().size() == 0) {
+                            if (homeListGson == null || homeListGson.getData().size() == 0) {
                                 if (categorySelected == SELECT_CONTEST) {
                                     moreContest = false;
                                 }
@@ -406,6 +406,7 @@ public class HomeFragment extends BaseFragment {
                                     moreActivity = false;
                                 }
                                 progressBar.setVisibility(View.GONE);
+                                homeSwipeRefresh.setRefreshing(false);
                                 Toast.makeText(activity, HintConstant.NO_MORE, Toast.LENGTH_SHORT).show();
                             }
                             // 有数据

@@ -239,8 +239,7 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
             // 点击作者
             case R.id.blog_author_face:
             case R.id.blog_author_name:
-                //TODO
-                Toast.makeText(this, "click author", Toast.LENGTH_SHORT).show();
+                // 取消功能
                 break;
 
             // 关注或者取消关注作者
@@ -251,10 +250,12 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
                             Toast.LENGTH_SHORT).show();
                     break;
                 }
+                // 关注
                 if (blogGson.getFollow() == CommunityConstant.UN_FOLLOW) {
                     HttpUtil.followBlogAuthor(this, null, this,
                             userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.FOLLOW);
                 }
+                // 取消关注
                 else if (blogGson.getFollow() == CommunityConstant.FOLLOW) {
                     HttpUtil.followBlogAuthor(this, null, this,
                             userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.UN_FOLLOW);
@@ -401,6 +402,9 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
+                    if (response.body() == null) {
+                        throw new NullPointerException();
+                    }
                     String responseText = response.body().string();
                     final BlogGson blogGson = JsonUtil.handleBlogResponse(responseText);
                     runOnUiThread(new Runnable() {

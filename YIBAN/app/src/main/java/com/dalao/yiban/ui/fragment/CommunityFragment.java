@@ -294,9 +294,10 @@ public class CommunityFragment extends BaseFragment {
                         @Override
                         public void run() {
                             // 无数据
-                            if (communityBlogListGson.getData().size() == 0) {
+                            if (communityBlogListGson == null || communityBlogListGson.getData().size() == 0) {
                                 moreBlog = false;
                                 progressBar.setVisibility(View.GONE);
+                                communityBlogRefresh.setRefreshing(false);
                                 Toast.makeText(activity, HintConstant.NO_MORE, Toast.LENGTH_SHORT).show();
                             }
                             // 有数据

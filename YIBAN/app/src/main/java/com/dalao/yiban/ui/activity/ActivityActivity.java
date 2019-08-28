@@ -104,8 +104,8 @@ public class ActivityActivity extends ContentActivity implements CommentInterfac
     private LinearLayoutManager linearLayoutManager;
 
     /**
-     *
-     * @param context :d'd
+     * 启动函数
+     * @param context :
      * @param userId : 用户id
      * @param activityId : 活动id
      * @param activityTitle : 活动标题
