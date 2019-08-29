@@ -6,6 +6,7 @@
 
    <com.google.android.material.tabs.TabLayout
        android:id="@+id/my_collection_TabLayout"
+       app:tabIndicatorFullWidth="false"
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
 
@@ -35,10 +36,14 @@
         android:layout_height="wrap_content" />
 
     <ProgressBar
-        android:visibility="gone"
-        android:id="@+id/my_collection_ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="80dp" />
+        android:id="@+id/collection_progressbar"
+        android:layout_gravity="center"
+        android:maxHeight="40dp"
+        android:minHeight="40dp"
+        android:maxWidth="40dp"
+        android:minWidth="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/collection_activity_notfound"

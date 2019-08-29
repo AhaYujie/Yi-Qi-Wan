@@ -1,88 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:onClick="ClickBlog"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<RelativeLayout
+    android:id="@+id/my_collection_blog"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/community_blog_item_height"
+    android:background="@drawable/layout_selector"
+    android:clickable="true"
+    android:focusable="true">
 
-    <View
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"></View>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <View
-            android:visibility="invisible"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="21dp"></View>
-
-        <TextView
-            android:id="@+id/my_collection_blog_title"
-            android:textColor="#000000"
-            android:textSize="16dp"
-            android:text="Bilibili干杯！！！"
-            android:layout_width="0dp"
-            android:layout_weight="15"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-
-    <View
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"></View>
-
-    <LinearLayout
-        android:orientation="horizontal"
+    <TextView
+        android:id="@+id/my_collection_blog_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/my_collection_blog_pic"
+        android:layout_toStartOf="@+id/my_collection_blog_pic"
+        android:layout_above="@+id/my_collection_blog_time"
+        android:textSize="@dimen/community_blog_title_size"
+        android:textColor="@color/community_blog_title"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:lineSpacingMultiplier="@string/line_spacing_multiplier"/>
 
-        <View
-            android:visibility="invisible"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="19dp"></View>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/my_collection_blog_author_face"
+        android:layout_width="@dimen/community_blog_author_face_size"
+        android:layout_height="@dimen/community_blog_author_face_size"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"/>
 
-        <TextView
-            android:id="@+id/my_collection_blog_time"
-            android:gravity="left"
-            android:layout_width="0dp"
-            android:layout_weight="8"
-            android:layout_height="wrap_content"
-            android:text="2019-19-17 15:50" />
+    <TextView
+        android:id="@+id/my_collection_blog_author_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/my_collection_blog_author_face"
+        android:layout_toEndOf="@+id/my_collection_blog_author_face"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:textSize="@dimen/community_blog_hint_size"
+        android:textColor="@color/community_blog_author_name"/>
 
-        <View
-            android:visibility="invisible"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="19dp">
-        </View>
+    <TextView
+        android:id="@+id/my_collection_blog_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/my_collection_blog_author_name"
+        android:layout_toEndOf="@+id/my_collection_blog_author_name"
+        android:textSize="@dimen/community_blog_hint_size"
+        android:textColor="@color/community_hint"/>
 
-        <ImageView
-            android:id="@+id/my_collection_blog_eye"
-            android:src="@drawable/ic_eye_grey"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="19dp" />
+    <ImageView
+        android:id="@+id/my_collection_blog_eye"
+        android:layout_width="@dimen/community_blog_eye_size"
+        android:layout_height="@dimen/community_blog_eye_size"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/my_collection_blog_time"
+        android:layout_toEndOf="@+id/my_collection_blog_time"
+        android:src="@drawable/ic_eye_grey"/>
 
-        <TextView
-            android:id="@+id/my_collection_blog_pageviews"
-            android:gravity="left"
-            android:text="500"
-            android:layout_width="0dp"
-            android:layout_weight="4"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/my_collection_blog_pageviews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/my_collection_blog_eye"
+        android:layout_toEndOf="@+id/my_collection_blog_eye"
+        android:textSize="@dimen/community_blog_hint_size"
+        android:textColor="@color/community_hint"/>
+
+    <ImageView
+        android:id="@+id/my_collection_blog_pic"
+        android:layout_width="@dimen/community_blog_item_height"
+        android:layout_height="@dimen/community_blog_item_height"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:padding="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/boundaryLine">
     </LinearLayout>
-    <View
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"></View>
-    <View
-        android:background="#000000"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"></View>
-</LinearLayout>
+
+</RelativeLayout>

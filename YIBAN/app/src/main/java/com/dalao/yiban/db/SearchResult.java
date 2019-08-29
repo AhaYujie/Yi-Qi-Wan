@@ -18,8 +18,9 @@ public class SearchResult {
     private int id;
     private String userid;
     private int type;
+    private String avater;
 
-    public SearchResult(int pageviews,String time,String title,String author,int id,String userid,int type)
+    public SearchResult(int pageviews,String time,String title,String author,int id,String userid,int type,String avater)
     {
         this.pageviews=pageviews;
         this.time=time;
@@ -28,6 +29,7 @@ public class SearchResult {
         this.id=id;
         this.userid = userid;
         this.type=type;
+        this.avater=avater;
     }
 
     public int getPageviews() {
@@ -84,5 +86,13 @@ public class SearchResult {
 
     public void setType(){
         this.type=type;
+    }
+
+    public String getAvater(){
+        return avater;
+    }
+
+    public void setAvater(String avater){
+        this.avater=avater;
     }
 }

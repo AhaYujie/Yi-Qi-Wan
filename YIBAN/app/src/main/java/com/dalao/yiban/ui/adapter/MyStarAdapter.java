@@ -69,16 +69,6 @@ public class MyStarAdapter extends RecyclerView.Adapter<MyStarAdapter.ViewHolder
         holder.follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.follow.getText().equals("已关注")==true) {
-                    holder.follow.setText("+ 关注");
-                    holder.follow.setBackgroundResource(R.drawable.background_blue);
-                    holder.follow.setTextColor(Color.parseColor("#003E80"));
-                }else{
-                    holder.follow.setText("已关注");
-                    holder.follow.setBackgroundResource(R.drawable.background_grey);
-                    holder.follow.setTextColor(Color.parseColor("#312323"));
-                }
-                notifyDataSetChanged();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -95,9 +85,15 @@ public class MyStarAdapter extends RecyclerView.Adapter<MyStarAdapter.ViewHolder
                             OkHttpClient okHttpClient = new OkHttpClient();
                             RequestBody formBody = builder.build();
                             if(holder.follow.getText().equals("已关注")==true) {
+                                holder.follow.setText("+ 关注");
+                                holder.follow.setBackgroundResource(R.drawable.background_blue);
+                                holder.follow.setTextColor(Color.parseColor("#003E80"));
                                 Request request = new Request.Builder().url("http://188888888.xyz:5000/unfollow").post(formBody).build();
                                 okHttpClient.newCall(request).execute();
                             }else{
+                                holder.follow.setText("已关注");
+                                holder.follow.setBackgroundResource(R.drawable.background_grey);
+                                holder.follow.setTextColor(Color.parseColor("#312323"));
                                 Request request = new Request.Builder().url("http://188888888.xyz:5000/follow").post(formBody).build();
                                 okHttpClient.newCall(request).execute();
                             }

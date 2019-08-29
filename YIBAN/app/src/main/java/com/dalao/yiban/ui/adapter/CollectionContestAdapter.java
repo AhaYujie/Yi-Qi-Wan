@@ -11,7 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.Contest;
 import com.dalao.yiban.db.SearchResult;
 import com.dalao.yiban.ui.activity.CollectionActivity;
@@ -23,27 +26,24 @@ public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionCon
 
     private List<SearchResult> mList;
 
-    public CollectionContestAdapter(List<SearchResult> ContestList)
-    {
+    public CollectionContestAdapter(List<SearchResult> ContestList) {
         mList = ContestList;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder
-    {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView pageviews;
         TextView time;
         ImageView eye;
         ImageView picture;
 
-        public ViewHolder(View view)
-        {
+        public ViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.my_collection_contest_title);
-            pageviews = (TextView) view.findViewById(R.id.my_collection_contest_pageviews);
-            time = (TextView) view.findViewById(R.id.my_collection_contest_time);
-            eye = (ImageView) view.findViewById(R.id.my_collection_contest_eye);
-            picture = (ImageView) view.findViewById(R.id.my_collection_contest_pic);
+            title = (TextView) view.findViewById(R.id.my_collection_competition_title);
+            pageviews = (TextView) view.findViewById(R.id.my_collection_competition_pageviews);
+            time = (TextView) view.findViewById(R.id.my_collection_competition_time);
+            eye = (ImageView) view.findViewById(R.id.my_collection_competition_eye);
+            picture = (ImageView) view.findViewById(R.id.my_collection_competition_pic);
         }
     }
 
@@ -51,7 +51,7 @@ public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionCon
     @Override
     public CollectionContestAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_collection_competition_item,parent,false);
+                .inflate(R.layout.my_collection_competition_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
@@ -62,19 +62,18 @@ public class CollectionContestAdapter extends RecyclerView.Adapter<CollectionCon
         holder.pageviews.setText(Integer.toString(searchResult.getPageviews()));
         holder.time.setText(searchResult.getTime());
         holder.title.setText(searchResult.getTitle());
-
+        Glide.with(MyApplication.getContext()).load(ServerUrlConstant.SERVER_URI + searchResult.getAvater()).into(holder.picture);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContestActivity.actionStart(v.getContext(),searchResult.getUserid(),
-                        Integer.toString(searchResult.getId()),searchResult.getTitle(),searchResult.getTime());
+                ContestActivity.actionStart(v.getContext(), searchResult.getUserid(),
+                        Integer.toString(searchResult.getId()), searchResult.getTitle(), searchResult.getTime());
             }
         });
     }
 
-@Override
-public int getItemCount() {
+    @Override
+    public int getItemCount() {
         return mList.size();
-        }
-
+    }
 }

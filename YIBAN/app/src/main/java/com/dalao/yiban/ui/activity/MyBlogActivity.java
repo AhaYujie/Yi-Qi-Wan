@@ -95,7 +95,10 @@ public class MyBlogActivity extends BaseActivity {
                             String title = jsonObject.getString("title");
                             int id = jsonObject.getInt("id");
                             int pageviews = jsonObject.getInt("pageviews");
-                            CollectBlog content = new CollectBlog(title,time,pageviews,id,userid);
+                            String avater = jsonObject.getString("avatar");
+                            String name = jsonObject.getString("name");
+                            String authorid  = jsonObject.getString("authorid");
+                            CollectBlog content = new CollectBlog(title,time,pageviews,id,userid,avater,name,authorid);
                             BlogList.add(content);
                         }
                     } catch (Exception e) {

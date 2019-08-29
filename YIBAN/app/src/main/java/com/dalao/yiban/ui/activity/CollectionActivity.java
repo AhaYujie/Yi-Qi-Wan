@@ -88,7 +88,7 @@ public class CollectionActivity extends BaseActivity {
 
         TextView isVisiter = (TextView) findViewById(R.id.collection_isVisit);
 
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.my_collection_ProgressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.collection_progressbar);
 
 
         //博客
@@ -148,7 +148,10 @@ public class CollectionActivity extends BaseActivity {
                             String title = jsonObject.getString("title");
                             int id = jsonObject.getInt("id");
                             int pageviews = jsonObject.getInt("pageviews");
-                            CollectBlog content = new CollectBlog(title,time,pageviews,id,userid);
+                            String avater = jsonObject.getString("avatar");
+                            String name = jsonObject.getString("name");
+                            String authorid  = jsonObject.getString("authorid");
+                            CollectBlog content = new CollectBlog(title,time,pageviews,id,userid,avater,name,authorid);
                             BlogList.add(content);
                         }
                     } catch (Exception e) {
@@ -185,10 +188,9 @@ public class CollectionActivity extends BaseActivity {
                 contest_notfound.setVisibility(View.GONE);
                 blog_notfound.setVisibility(View.GONE);
                 activity_notfound.setVisibility(View.GONE);
-
-                Log.e("QAQb",tab.getText().toString());
                 if(tab.getText().toString().equals("活动")) {
 
+                    onDestroy();
                     ActivityList.clear();
                     progressBar.setVisibility(View.VISIBLE);
                     recyclerView_Activity.setVisibility(View.GONE);
@@ -224,7 +226,10 @@ public class CollectionActivity extends BaseActivity {
                                         String title = jsonObject.getString("title");
                                         int pageviews = jsonObject.getInt("pageviews");
                                         int id = jsonObject.getInt("id");
-                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1);
+                                        String avater = jsonObject.getString("avatar");
+                                        String name = jsonObject.getString("name");
+                                        String authorid  = jsonObject.getString("authorid");
+                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1,avater);
                                         ActivityList.add(content);
                                     }
                                 } catch (Exception e) {
@@ -256,6 +261,7 @@ public class CollectionActivity extends BaseActivity {
 
                 else if(tab.getText().toString().equals("博客")){
                     //增加博客
+                    onDestroy();
                     BlogList.clear();
                     progressBar.setVisibility(View.VISIBLE);
                     recyclerView_Activity.setVisibility(View.GONE);
@@ -291,7 +297,10 @@ public class CollectionActivity extends BaseActivity {
                                         String title = jsonObject.getString("title");
                                         int id = jsonObject.getInt("id");
                                         int pageviews = jsonObject.getInt("pageviews");
-                                        CollectBlog content = new CollectBlog(title,time,pageviews,id,userid);
+                                        String avater = jsonObject.getString("avatar");
+                                        String name = jsonObject.getString("name");
+                                        String authorid  = jsonObject.getString("authorid");
+                                        CollectBlog content = new CollectBlog(title,time,pageviews,id,userid,avater,name,authorid);
                                         BlogList.add(content);
                                     }
                                 } catch (Exception e) {
@@ -322,6 +331,7 @@ public class CollectionActivity extends BaseActivity {
                 }
                 else if(tab.getText().toString().equals("竞赛")){
                     //增加竞赛
+                    onDestroy();
                     ContestList.clear();
                     progressBar.setVisibility(View.VISIBLE);
                     recyclerView_Activity.setVisibility(View.GONE);
@@ -357,7 +367,10 @@ public class CollectionActivity extends BaseActivity {
                                         String title = jsonObject.getString("title");
                                         int pageviews = jsonObject.getInt("pageviews");
                                         int id = jsonObject.getInt("id");
-                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,0);
+                                        String avater = jsonObject.getString("avatar");
+                                        String name = jsonObject.getString("name");
+                                        String authorid  = jsonObject.getString("authorid");
+                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,0,avater);
                                         ContestList.add(content);
                                     }
                                 } catch (Exception e) {

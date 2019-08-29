@@ -11,7 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.db.SearchResult;
 import com.dalao.yiban.ui.activity.ActivityActivity;
@@ -23,8 +26,7 @@ public class CollectionActivityAdapter extends RecyclerView.Adapter<CollectionAc
 
     private List<SearchResult> mList;
 
-    public CollectionActivityAdapter(List<SearchResult> ActivityList)
-    {
+    public CollectionActivityAdapter(List<SearchResult> ActivityList){
         mList = ActivityList;
     }
 
@@ -41,7 +43,7 @@ public class CollectionActivityAdapter extends RecyclerView.Adapter<CollectionAc
             super(view);
             title = (TextView) view.findViewById(R.id.my_collection_activity_title);
             pageviews = (TextView) view.findViewById(R.id.my_collection_activity_pageviews);
-            time = (TextView) view.findViewById(R.id.smy_collection_activity_time);
+            time = (TextView) view.findViewById(R.id.my_collection_activity_time);
             eye = (ImageView) view.findViewById(R.id.my_collection_activity_eye);
             picture = (ImageView) view.findViewById(R.id.my_collection_activity_pic);
         }
@@ -62,6 +64,7 @@ public class CollectionActivityAdapter extends RecyclerView.Adapter<CollectionAc
         holder.pageviews.setText(Integer.toString(searchResult.getPageviews()));
         holder.time.setText(searchResult.getTime());
         holder.title.setText(searchResult.getTitle());
+        Glide.with(MyApplication.getContext()).load(ServerUrlConstant.SERVER_URI+searchResult.getAvater()).into(holder.picture);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

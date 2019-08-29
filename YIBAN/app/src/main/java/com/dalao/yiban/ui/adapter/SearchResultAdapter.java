@@ -20,7 +20,7 @@ import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
 
-    private List<SearchResult> mSearchResultList;//
+    private List<SearchResult> mSearchResultList;
 
     static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -33,16 +33,15 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         public ViewHolder(View view)
         {
             super(view);
-            title = (TextView) view.findViewById(R.id.search_result_item_title);
-            pageviews = (TextView) view.findViewById(R.id.search_result_item_pageviews);
-            time = (TextView) view.findViewById(R.id.search_result_item_time);
-            eye = (ImageView) view.findViewById(R.id.search_result_item_eye);
-            picture = (ImageView) view.findViewById(R.id.search_result_item_pic);
+            title = (TextView) view.findViewById(R.id.search_result_title);
+            pageviews = (TextView) view.findViewById(R.id.search_result_pageviews);
+            time = (TextView) view.findViewById(R.id.search_result_time);
+            eye = (ImageView) view.findViewById(R.id.search_result_eye);
+            picture = (ImageView) view.findViewById(R.id.search_result_pic);
         }
     }
 
-    public SearchResultAdapter(List<SearchResult> SearchResultList)
-    {
+    public SearchResultAdapter(List<SearchResult> SearchResultList){
         mSearchResultList = SearchResultList;
     }
 

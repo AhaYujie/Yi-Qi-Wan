@@ -57,7 +57,7 @@ public class MyStarActivity extends BaseActivity {
 
         Intent intent = getIntent();
         String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-        int userid=Integer.parseInt(user_id);
+        int userid = Integer.parseInt(user_id);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_star_RecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -77,7 +77,7 @@ public class MyStarActivity extends BaseActivity {
                 try {
                     //以下是POST方法
                     HashMap<String, String> paramsMap_myStar = new HashMap<>();//用哈希表来存参数
-                    paramsMap_myStar.put("sort","2");
+                    paramsMap_myStar.put("sort", "2");
                     paramsMap_myStar.put("userid", Integer.toString(userid));
                     FormBody.Builder builder_myStar = new FormBody.Builder();
                     for (String key : paramsMap_myStar.keySet()) {
@@ -104,7 +104,7 @@ public class MyStarActivity extends BaseActivity {
                             String title = jsonObject.getString("title");
                             int id = jsonObject.getInt("id");
                             int pageviews = jsonObject.getInt("pageviews");
-                            MyStar myStar = new MyStar(avatar,author,authorid,userid);
+                            MyStar myStar = new MyStar(avatar, author, authorid, userid);
                             myStarList.add(myStar);
                         }
                     } catch (Exception e) {
@@ -117,11 +117,12 @@ public class MyStarActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(myStarList.size()!=0){
+                        if (myStarList.size() != 0) {
+                            myStarList = rip_the_same(myStarList);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setVisibility(View.VISIBLE);
                             myStarAdapter.notifyDataSetChanged();
-                        }else {
+                        } else {
                             progressBar.setVisibility(View.GONE);
                             textView.setVisibility(View.VISIBLE);
                         }
@@ -130,6 +131,17 @@ public class MyStarActivity extends BaseActivity {
 
             }
         }).start();
+    }
+
+    private List<MyStar> rip_the_same(List<MyStar> myStarList) {
+        for (int i = 0; i < myStarList.size(); i++) {
+            for (int j = i; j < myStarList.size(); j++) {
+                if (myStarList.get(j).getAuthor().equals(myStarList.get(i).getAuthor()) == true) {
+                    myStarList.remove(j);
+                }
+            }
+        }
+        return myStarList;
     }
 }
 

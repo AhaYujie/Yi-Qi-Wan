@@ -50,6 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onStop();
     }
 
+
     @Override
     protected void onDestroy() {
         cancelCall();

@@ -1,6 +1,7 @@
 package com.dalao.yiban.ui.adapter;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.dalao.yiban.MyApplication;
 import com.dalao.yiban.R;
+import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.Blog;
 import com.dalao.yiban.db.CollectBlog;
 import com.dalao.yiban.ui.activity.BlogActivity;
@@ -32,8 +36,6 @@ import okhttp3.Response;
 public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAdapter.ViewHolder> {
 
     private List<CollectBlog> mList;
-    private int id;
-    private int userid;
 
     public CollectionBlogAdapter(List<CollectBlog> BlogList)
     {
@@ -42,20 +44,22 @@ public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAd
 
     static class ViewHolder extends RecyclerView.ViewHolder
     {
-        private ProgressBar progressBar;
         TextView title;
         TextView pageviews;
         TextView time;
         ImageView eye;
+        ImageView face;
+        TextView name;
 
         public ViewHolder(View view)
         {
             super(view);
-            progressBar = (ProgressBar) view.findViewById(R.id.my_collection_ProgressBar);
             title = (TextView) view.findViewById(R.id.my_collection_blog_title);
             pageviews = (TextView) view.findViewById(R.id.my_collection_blog_pageviews);
             time = (TextView) view.findViewById(R.id.my_collection_blog_time);
             eye = (ImageView) view.findViewById(R.id.my_collection_blog_eye);
+            face = (ImageView) view.findViewById(R.id.my_collection_blog_author_face);
+            name = (TextView) view.findViewById(R.id.my_collection_blog_author_name);
         }
     }
 
@@ -63,18 +67,16 @@ public class CollectionBlogAdapter extends RecyclerView.Adapter<CollectionBlogAd
     @Override
     public void onBindViewHolder(@NonNull CollectionBlogAdapter.ViewHolder holder, int position) {
         CollectBlog collectBlog = mList.get(position);
-
-        id = collectBlog.getId();
-        userid= collectBlog.getUserid();
-
         holder.pageviews.setText(Integer.toString(collectBlog.getPageviews()));
         holder.time.setText(collectBlog.getTime());
         holder.title.setText(collectBlog.getTitle());
+        holder.name.setText(collectBlog.getName());
+        Glide.with(MyApplication.getContext()).load(ServerUrlConstant.SERVER_URI + collectBlog.getAvatar()).into(holder.face);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BlogActivity.actionStart(v.getContext(),Integer.toString(collectBlog.getUserid()),Integer.toString(collectBlog.getId()),
-                        null,null,collectBlog.getTitle(),collectBlog.getTime(),null);Integer.toString(collectBlog.getId());
+                        collectBlog.getAvatar(),collectBlog.getName(),collectBlog.getTitle(),collectBlog.getTime(),collectBlog.getAuthorid());Integer.toString(collectBlog.getId());
             }
         });
     }

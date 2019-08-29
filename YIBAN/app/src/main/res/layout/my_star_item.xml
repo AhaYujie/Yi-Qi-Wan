@@ -83,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="10dp"></View>
     <View
-        android:background="#000000"
+        android:background="#D3D3D3"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 </LinearLayout>

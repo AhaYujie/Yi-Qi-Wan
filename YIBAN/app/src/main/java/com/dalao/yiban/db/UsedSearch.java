@@ -7,11 +7,12 @@ import java.util.Set;
 
 public class UsedSearch {
 
+    private int id;
     private String content;
 
-    public UsedSearch(String content)
-    {
+    public UsedSearch(String content,int id) {
         this.content=content;
+        this.id=id;
     }
 
     public String getContent()
@@ -21,6 +22,14 @@ public class UsedSearch {
 
     public void setContent(String content){
         this.content=content;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id=id;
     }
 
 }

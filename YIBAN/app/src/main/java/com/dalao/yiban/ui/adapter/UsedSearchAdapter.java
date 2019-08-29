@@ -18,7 +18,7 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
 
     private List<UsedSearch> mUsedSearchList;
 
-    SearchActivity context;
+    private SearchActivity mcontext;
 
     static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -36,7 +36,7 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
     public UsedSearchAdapter(List<UsedSearch> UsedSearchList,SearchActivity context)
     {
         mUsedSearchList = UsedSearchList;
-        this.context=context;
+        this.mcontext=context;
     }
 
     @NonNull
@@ -55,13 +55,17 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeData(position);
+                if(usedSearch.getId()==-1){
+                    mcontext.delete_keyword_fromfile(usedSearch.getContent());
+                    notifyItemRemoved(position);
+                    notifyDataSetChanged();
+                }
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.TouchContent(usedSearch.getContent());
+                mcontext.TouchContent(usedSearch.getContent());
             }
         });
     }
@@ -74,22 +78,16 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
             return 10;
     }
 
-    //  添加数据
-    public void addData(int position) {
-//      在list中添加数据，并通知条目加入一条
-        UsedSearch content1 = new UsedSearch("acm");
-        mUsedSearchList.add(position, content1);
-        //position是增加的位置
-        //后面那个是list里面具体的一个实例
-        //添加动画
-        notifyItemInserted(position);
-    }
-
     //  删除数据
     public void removeData(int position) {
         mUsedSearchList.remove(position);
         //删除动画
         notifyItemRemoved(position);
+        notifyDataSetChanged();
+    }
+
+    public void setFilter(List<UsedSearch>filterWords){
+        mUsedSearchList=filterWords;
         notifyDataSetChanged();
     }
 

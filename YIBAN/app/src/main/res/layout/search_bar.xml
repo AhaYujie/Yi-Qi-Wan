@@ -39,10 +39,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <ProgressBar
-        android:visibility="gone"
-        android:id="@+id/Search_bar_ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="80dp" />
+        android:id="@+id/search_bar_progressbar"
+        android:layout_gravity="center"
+        android:maxHeight="40dp"
+        android:minHeight="40dp"
+        android:maxWidth="40dp"
+        android:minWidth="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <View
         android:id="@+id/search_bar_blank1"
         android:visibility="invisible"

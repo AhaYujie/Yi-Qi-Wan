@@ -14,6 +14,7 @@ import com.dalao.yiban.ui.adapter.SearchResultAdapter;
 import com.dalao.yiban.ui.adapter.UsedSearchAdapter;
 import com.google.gson.JsonObject;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,33 +61,33 @@ import okhttp3.Response;
 public class SearchActivity extends BaseActivity {
 
     public static void actionStart(Context context, String userId) {
-        Intent intent = new Intent(context,SearchActivity.class);
+        Intent intent = new Intent(context, SearchActivity.class);
         intent.putExtra(HomeConstant.USER_ID, userId);
         context.startActivity(intent);
     }
 
-    int userid;
+    int userid ;
     String user_id;
     final String FILE_NAME = "used_search";
 
-    private boolean deng(String a,String b){
-        if(a.equals(b))
+    private boolean deng(String a, String b) {
+        if (a.equals(b))
             return true;
         else
             return false;
     }
 
-    private List<UsedSearch> Rip(List<UsedSearch> UsedSearchList){
+    private List<UsedSearch> Rip(List<UsedSearch> UsedSearchList) {
 
-        for(int i=0;i<UsedSearchList.size();i++){
+        for (int i = 0; i < UsedSearchList.size(); i++) {
             UsedSearch a = UsedSearchList.get(i);
             int j;
-            for(j=0;j<i;j++){
+            for (j = 0; j < i; j++) {
                 UsedSearch b = UsedSearchList.get(j);
-                if(deng(a.getContent(),b.getContent())==true)
+                if (deng(a.getContent(), b.getContent()) == true)
                     break;
             }
-            if(j!=i)
+            if (j != i)
                 UsedSearchList.remove(i);
         }
 
@@ -98,14 +99,14 @@ public class SearchActivity extends BaseActivity {
     private List<SearchResult> SearchResultList = new ArrayList<>();
     //这是搜索结果的列表
 
-    private RecyclerView recyclerView_Result ;
-    private RecyclerView recyclerView_UsedSearch ;
+    private RecyclerView recyclerView_Result;
+    private RecyclerView recyclerView_UsedSearch;
     private TextView textview_clear;
-    private ImageView imageView_clear ;
-    private Button button_back ;
-    private View view_blank1 ;
-    private View view_blank2 ;
-    private LinearLayout function_bar ;
+    private ImageView imageView_clear;
+    private Button button_back;
+    private View view_blank1;
+    private View view_blank2;
+    private LinearLayout function_bar;
     private ProgressBar progressBar;
     private TextView text_notfound;
     //搜索历史那一栏
@@ -136,86 +137,87 @@ public class SearchActivity extends BaseActivity {
         function_bar = (LinearLayout) findViewById(R.id.search_bar_function_bar);
         //搜索历史那一栏
         searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
-        progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
+        progressBar = (ProgressBar) findViewById(R.id.search_bar_progressbar);
         text_notfound = (TextView) findViewById(R.id.search_result_notfound);
 
         LinearLayoutManager layoutManager_UsedSearch = new LinearLayoutManager(this);
         recyclerView_UsedSearch.setLayoutManager(layoutManager_UsedSearch);
-        final UsedSearchAdapter adapter_UsedSearch = new UsedSearchAdapter(UsedSearchList,SearchActivity.this);
+        final UsedSearchAdapter adapter_UsedSearch = new UsedSearchAdapter(UsedSearchList, SearchActivity.this);
         recyclerView_UsedSearch.setAdapter(adapter_UsedSearch);
 
         LinearLayoutManager layoutManager_Result = new LinearLayoutManager(this);
         recyclerView_Result.setLayoutManager(layoutManager_Result);
         SearchResultAdapter adapter_Result = new SearchResultAdapter(SearchResultList);
         recyclerView_Result.setAdapter(adapter_Result);
-
+        progressBar.setVisibility(View.GONE);
         //搜索记录初始化
-        if(userid!=-1){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    HashMap<String, String> paramsMap_UsedSearch = new HashMap<>();//用哈希表来存参数
-                    paramsMap_UsedSearch.put("userid", Integer.toString(userid));
-                    FormBody.Builder builder_UsedSearch = new FormBody.Builder();
-                    for (String key : paramsMap_UsedSearch.keySet()) {
-                        //追加表单信息
-                        builder_UsedSearch.add(key, paramsMap_UsedSearch.get(key));
-                    }
-                    OkHttpClient okHttpClient_UsedSearch = new OkHttpClient();
-                    RequestBody formBody_UsedSearch = builder_UsedSearch.build();
-                    Request request_UsedSearch = new Request.Builder().url("http://188888888.xyz:5000/search/history").post(formBody_UsedSearch).build();
-                    Response response_UsedSearch = okHttpClient_UsedSearch.newCall(request_UsedSearch).execute();
-                    String responseData_UsedSearch = response_UsedSearch.body().string();
-                    //以下是解析json
+        if (userid != -1) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        JSONObject jsnobject = new JSONObject(responseData_UsedSearch);
-                        JSONArray jsonArray = jsnobject.getJSONArray("data");
-                        for (int i = 0; i < jsonArray.length(); i += 2) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String keyword = jsonObject.getString("keyword");
-                            UsedSearch content = new UsedSearch(keyword);
-                            UsedSearchList.add(content);
+                        HashMap<String, String> paramsMap_UsedSearch = new HashMap<>();//用哈希表来存参数
+                        paramsMap_UsedSearch.put("userid", Integer.toString(userid));
+                        FormBody.Builder builder_UsedSearch = new FormBody.Builder();
+                        for (String key : paramsMap_UsedSearch.keySet()) {
+                            //追加表单信息
+                            builder_UsedSearch.add(key, paramsMap_UsedSearch.get(key));
+                        }
+                        OkHttpClient okHttpClient_UsedSearch = new OkHttpClient();
+                        RequestBody formBody_UsedSearch = builder_UsedSearch.build();
+                        Request request_UsedSearch = new Request.Builder().url("http://188888888.xyz:5000/search/history").post(formBody_UsedSearch).build();
+                        Response response_UsedSearch = okHttpClient_UsedSearch.newCall(request_UsedSearch).execute();
+                        String responseData_UsedSearch = response_UsedSearch.body().string();
+                        //以下是解析json
+                        try {
+                            JSONObject jsnobject = new JSONObject(responseData_UsedSearch);
+                            JSONArray jsonArray = jsnobject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i += 2) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String keyword = jsonObject.getString("keyword");
+                                UsedSearch content = new UsedSearch(keyword, userid);
+                                UsedSearchList.add(content);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                UsedSearchList=Rip(UsedSearchList);
+                    UsedSearchList = Rip(UsedSearchList);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (UsedSearchList.size() != 0) {
-                            recyclerView_UsedSearch.setVisibility(View.VISIBLE);
-                            adapter_UsedSearch.notifyDataSetChanged();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (UsedSearchList.size() != 0) {
+                                recyclerView_UsedSearch.setVisibility(View.VISIBLE);
+                                adapter_UsedSearch.notifyDataSetChanged();
+                            }
                         }
-                    }
-                });
-            }
-        }).start();
+                    });
+                }
+            }).start();
         }//文件读取数据
-        else{
+        else {
             FileInputStream in = null;
             BufferedReader reader = null;
-            try{
+            try {
                 in = openFileInput("data");
                 reader = new BufferedReader(new InputStreamReader(in));
                 String line = "";
-                while ((line = reader.readLine())!=null){
-                    UsedSearch content = new UsedSearch(line);
+                while ((line = reader.readLine()) != null) {
+                    UsedSearch content = new UsedSearch(line, userid);
                     UsedSearchList.add(content);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
-                if(reader != null){
+            } finally {
+                if (reader != null) {
                     try {
                         reader.close();
-                    }catch (IOException e){
+                        adapter_UsedSearch.notifyDataSetChanged();
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -252,22 +254,23 @@ public class SearchActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
-                if(userid==-1) {
+                if (userid == -1) {
                     String data = query;
-                    FileOutputStream out =null;
+                    FileOutputStream out = null;
                     BufferedWriter writer = null;
                     try {
-                        out  = openFileOutput("data",Context.MODE_APPEND);
+                        out = openFileOutput("data", Context.MODE_APPEND);
                         writer = new BufferedWriter(new OutputStreamWriter(out));
                         writer.write(query);
+                        writer.write('\n');
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }finally {
+                    } finally {
                         try {
-                            if(writer != null){
+                            if (writer != null) {
                                 writer.close();
                             }
-                        }catch (IOException e){
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -312,7 +315,8 @@ public class SearchActivity extends BaseActivity {
                                     String title = jsonObject.getString("title");
                                     int pageviews = jsonObject.getInt("pageviews");
                                     int id = jsonObject.getInt("id");
-                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,Integer.toString(userid),0);
+                                    String avatar = jsonObject.getString("avatar");
+                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, Integer.toString(userid), 0, avatar);
                                     SearchResultList.add(content);
                                     //Log.e("qaq",Integer.toString(SearchResultList.size()));
                                 }
@@ -344,7 +348,8 @@ public class SearchActivity extends BaseActivity {
                                     String title = jsonObject.getString("title");
                                     int pageviews = jsonObject.getInt("pageviews");
                                     int id = jsonObject.getInt("id");
-                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1);
+                                    String avatar = jsonObject.getString("avatar");
+                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, user_id, 1, avatar);
                                     SearchResultList.add(content);
                                 }
                             } catch (Exception e) {
@@ -353,7 +358,6 @@ public class SearchActivity extends BaseActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
 
 
                         runOnUiThread(new Runnable() {
@@ -377,16 +381,17 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
-            }//改变字符时的监听事件
+                List<UsedSearch> list = new ArrayList<>();
+                list = filter(UsedSearchList, newText);
+                adapter_UsedSearch.setFilter(list);
+                return true;
+            }
         });
     }
 
-    public void TouchContent(String query){
+    public void TouchContent(String query) {
         //搜索历史那一栏
-        searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
-        progressBar = (ProgressBar) findViewById(R.id.Search_bar_ProgressBar);
-        text_notfound = (TextView) findViewById(R.id.search_result_notfound);
+        Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
 
         progressBar.setVisibility(View.VISIBLE);
         text_notfound.setVisibility(View.GONE);
@@ -429,7 +434,8 @@ public class SearchActivity extends BaseActivity {
                             String title = jsonObject.getString("title");
                             int pageviews = jsonObject.getInt("pageviews");
                             int id = jsonObject.getInt("id");
-                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,Integer.toString(userid),0);
+                            String avatar = jsonObject.getString("avatar");
+                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, Integer.toString(userid), 0, avatar);
                             SearchResultList.add(content);
                             //Log.e("qaq",Integer.toString(SearchResultList.size()));
                         }
@@ -439,7 +445,8 @@ public class SearchActivity extends BaseActivity {
 
 
                     HashMap<String, String> paramsMap_activity = new HashMap<>();//用哈希表来存参数
-                    paramsMap_activity.put("activity", query);
+                    paramsMap_activity.put("activity",
+                            query);
                     paramsMap_activity.put("userid", Integer.toString(userid));
                     FormBody.Builder builder_activity = new FormBody.Builder();
                     for (String key : paramsMap_activity.keySet()) {
@@ -461,7 +468,8 @@ public class SearchActivity extends BaseActivity {
                             String title = jsonObject.getString("title");
                             int pageviews = jsonObject.getInt("pageviews");
                             int id = jsonObject.getInt("id");
-                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1);
+                            String avatar = jsonObject.getString("avatar");
+                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, user_id, 1, avatar);
                             SearchResultList.add(content);
                         }
                     } catch (Exception e) {
@@ -471,7 +479,7 @@ public class SearchActivity extends BaseActivity {
                     e.printStackTrace();
                 }
 
-                UsedSearchList=Rip(UsedSearchList);
+                UsedSearchList = Rip(UsedSearchList);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -488,5 +496,70 @@ public class SearchActivity extends BaseActivity {
             }
 
         }).start();
+    }
+
+    private List<UsedSearch> filter(List<UsedSearch> list, String text) {
+        List<UsedSearch> filterString = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            UsedSearch usedSearch = list.get(i);
+            if (usedSearch.getContent().contains(text) == true) {
+                filterString.add(usedSearch);
+            }
+        }
+        return filterString;
+    }
+
+    public void delete_keyword_fromfile(String keyword) {
+        //读
+        List<UsedSearch> mList = new ArrayList<>();
+        FileInputStream in = null;
+        BufferedReader reader = null;
+        try {
+            in = openFileInput("data");
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                UsedSearch content = new UsedSearch(line, userid);
+                mList.add(content);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for(int i=0;i<mList.size();i++){
+            if(mList.get(i).getContent().equals(keyword)==true){
+                mList.remove(i);
+            }
+        }
+        //写
+        String data = keyword;
+        FileOutputStream out = null;
+        BufferedWriter writer = null;
+        try {
+            out = openFileOutput("data", Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            for(int i=0;i<mList.size();i++){
+                writer.write(mList.get(i).getContent());
+                writer.write('\n');
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

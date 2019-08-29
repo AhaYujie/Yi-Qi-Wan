@@ -9,13 +9,19 @@ public class CollectBlog {
     private int pageviews;
     private int id;
     private int userid;
+    private String avatar;
+    private String name;
+    private String authorid;
 
-    public CollectBlog(String title,String time,int pageviews,int id,int userid){
+    public CollectBlog(String title,String time,int pageviews,int id,int userid,String avatar,String name,String authorid){
         this.pageviews=pageviews;
         this.time=time;
         this.title=title;
         this.id= id;
         this.userid= userid;
+        this.avatar=avatar;
+        this.name = name;
+        this.authorid = authorid;
     }
 
     public int getPageviews() {
@@ -56,5 +62,29 @@ public class CollectBlog {
 
     public void setUserid(){
         this.userid = userid;
+    }
+
+    public void setAvatar(String avatar){
+        this.avatar= avatar;
+    }
+
+    public String getAvatar(){
+        return avatar;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public void setAuthorid(String authorid){
+        this.authorid = authorid;
+    }
+
+    public String getAuthorid() {
+        return authorid;
     }
 }
