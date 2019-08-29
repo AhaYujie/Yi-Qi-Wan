@@ -20,6 +20,7 @@ import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.ui.activity.ActivityActivity;
+import com.dalao.yiban.ui.activity.BaseActivity;
 import com.dalao.yiban.ui.activity.ContestActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.fragment.HomeFragment;
@@ -29,11 +30,13 @@ import static com.dalao.yiban.constant.HomeConstant.SELECT_CONTEST;
 
 public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHolder> {
 
-    private MainActivity activity;
+    private BaseActivity activity;
 
     private HomeListGson homeListGson;
 
     private int categorySelected;
+
+    private String userId;
 
     public int getCategorySelected() {
         return categorySelected;
@@ -69,10 +72,12 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
         }
     }
 
-    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected, MainActivity activity) {
+    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected, BaseActivity activity,
+                           String userId) {
         this.homeListGson = homeListGson;
         this.categorySelected = categorySelected;
         this.activity = activity;
+        this.userId = userId;
     }
 
     @NonNull
@@ -112,12 +117,12 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             public void onClick(View view) {
                 // 启动ContestActivity
                 if (categorySelected == SELECT_CONTEST) {
-                    ContestActivity.actionStart(view.getContext(), activity.userId,
+                    ContestActivity.actionStart(view.getContext(), userId,
                             String.valueOf(dataBean.getId()), dataBean.getTitle(), dataBean.getTime());
                 }
                 // 启动ActivityActivity
                 else if (categorySelected == SELECT_ACTIVITY) {
-                    ActivityActivity.actionStart(view.getContext(), activity.userId,
+                    ActivityActivity.actionStart(view.getContext(), userId,
                             String.valueOf(dataBean.getId()), dataBean.getTitle(), dataBean.getTime());
                 }
             }

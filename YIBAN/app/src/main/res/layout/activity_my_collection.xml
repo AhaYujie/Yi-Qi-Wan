@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/myBackground"
+    tools:context=".ui.activity.MyCollectionActivity">
+
+    <RelativeLayout
+        android:id="@+id/my_collection_title"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/my_collection_back_button"
+            android:layout_width="@dimen/my_collection_icon_size"
+            android:layout_height="@dimen/my_collection_icon_size"
+            android:layout_margin="10dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_left_arrow_black"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/myCollectionText"
+            android:textSize="@dimen/my_collection_title_size"
+            android:text="@string/myCollectionTitle"/>
+
+    </RelativeLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/my_collection_tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/my_collection_title"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabRippleColor="@null"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabTextColor="@color/myHint">
+
+        <com.google.android.material.tabs.TabItem
+            android:text="@string/myCollectionActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.tabs.TabItem
+            android:text="@string/myCollectionContest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.google.android.material.tabs.TabItem
+            android:text="@string/myCollectionBlog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/my_collection_refresh"
+        android:layout_below="@+id/my_collection_tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/my_collection_activity_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/my_collection_contest_recyclerview"
+            android:layout_below="@+id/my_collection_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/my_collection_blog_recyclerview"
+            android:layout_below="@+id/my_collection_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/my_collection_not_found_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/my_collection_text_size"
+        android:textColor="@color/myCollectionText"
+        android:text="@string/myCollectionNotFound"
+        android:visibility="gone"/>
+
+    <include layout="@layout/wrong_page"
+        android:layout_below="@+id/my_collection_tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</RelativeLayout>

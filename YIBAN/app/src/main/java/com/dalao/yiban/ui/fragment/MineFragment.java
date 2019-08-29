@@ -33,12 +33,14 @@ import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.User;
 import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.UserInfoGson;
+import com.dalao.yiban.ui.activity.CheckMyBlogActivity;
 import com.dalao.yiban.ui.activity.CollectionActivity;
 import com.dalao.yiban.ui.activity.CreateBlogActivity;
 import com.dalao.yiban.ui.activity.EditNicknameActivity;
 import com.dalao.yiban.ui.activity.LoginActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.activity.MyBlogActivity;
+import com.dalao.yiban.ui.activity.MyCollectionActivity;
 import com.dalao.yiban.ui.activity.MyStarActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.CommonUtil;
@@ -204,12 +206,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 查看我的博客
             case R.id.mine_blog_layout:
-                MyBlogActivity.actionStart(activity, activity.userId);
+                CheckMyBlogActivity.actionStart(activity, activity.userId, mineNicknameText.getText().toString());
                 break;
 
             // 查看收藏
             case R.id.mine_collect_layout:
-                CollectionActivity.actionStart(activity, activity.userId);
+                MyCollectionActivity.actionStart(activity, activity.userId);
                 break;
 
             // 查看我关注的人

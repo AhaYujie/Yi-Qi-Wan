@@ -107,4 +107,10 @@
     <color name="inputFrame">#F5F5F5</color>
     <color name="loginHint">#A7A7A9</color>
 
+    <!-- 我的博客 -->
+    <color name="myBlogText">#000000</color>
+
+    <!-- 我的收藏 -->
+    <color name="myCollectionText">#000000</color>
+
 </resources>

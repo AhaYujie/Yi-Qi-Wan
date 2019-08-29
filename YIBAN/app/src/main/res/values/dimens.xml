@@ -100,4 +100,14 @@
     <!-- no more -->
     <dimen name="no_more_text_size">14sp</dimen>
 
+    <!-- 我的博客 -->
+    <dimen name="my_blog_title_size">25sp</dimen>
+    <dimen name="my_blog_text_size">20sp</dimen>
+    <dimen name="my_blog_back_icon_size">30dp</dimen>
+
+    <!-- 我的博客 -->
+    <dimen name="my_collection_title_size">25sp</dimen>
+    <dimen name="my_collection_text_size">20sp</dimen>
+    <dimen name="my_collection_icon_size">30dp</dimen>
+
 </resources>

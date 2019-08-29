@@ -146,8 +146,8 @@ public class HomeFragment extends BaseFragment {
         // 设置RecyclerView
         linearLayoutManager = new LinearLayoutManager(activity);
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
-        contestItemAdapter = new HomeItemAdapter(contestListGson, SELECT_CONTEST, activity);
-        activityItemAdapter = new HomeItemAdapter(activityListGson, SELECT_ACTIVITY, activity);
+        contestItemAdapter = new HomeItemAdapter(contestListGson, SELECT_CONTEST, activity, activity.userId);
+        activityItemAdapter = new HomeItemAdapter(activityListGson, SELECT_ACTIVITY, activity, activity.userId);
         if (categorySelected == SELECT_ACTIVITY) {
             homeItemRecyclerView.setAdapter(activityItemAdapter);
         }

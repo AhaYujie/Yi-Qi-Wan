@@ -46,4 +46,12 @@ public class ServerUrlConstant {
 
     public static final String POST_IMAGE_TO_SERVER_URI = SERVER_URI + "/uploadpic";
 
+    public static final String MY_BLOG_LIST_URI = SERVER_URI + "/user/myblog";
+
+    public static final String MY_COLLECTION_ACTIVITY = SERVER_URI + "/user/colactivity";
+
+    public static final String MY_COLLECTION_CONTEST = SERVER_URI + "/user/colcompete";
+
+    public static final String MY_COLLECTION_BLOG = SERVER_URI + "/user/colblog";
+
 }

@@ -138,4 +138,15 @@
     <string name="loginUsernameMaxLength">12</string>
     <string name="loginPasswordMaxLength">15</string>
 
+    <!-- 我的博客 -->
+    <string name="myBlogTitle">我的博客</string>
+    <string name="myBlogNoBlog">您暂时还没有博客</string>
+
+    <!-- 我的收藏 -->
+    <string name="myCollectionTitle">我的收藏</string>
+    <string name="myCollectionActivity">活动</string>
+    <string name="myCollectionContest">竞赛</string>
+    <string name="myCollectionBlog">博客</string>
+    <string name="myCollectionNotFound">暂无收藏</string>
+
 </resources>

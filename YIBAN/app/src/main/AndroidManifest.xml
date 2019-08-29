@@ -2,11 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dalao.yiban">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -16,16 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.MyBlogActivity">
-        </activity>
-        <activity android:name=".ui.activity.CollectionActivity"/>
-        <activity android:name=".ui.activity.MyStarActivity">
-        </activity>
-        <activity android:name=".ui.activity.LoginActivity">
-        </activity>
+        <activity android:name=".ui.activity.MyCollectionActivity"></activity>
+        <activity android:name=".ui.activity.CheckMyBlogActivity" />
+        <activity android:name=".ui.activity.MyBlogActivity" />
+        <activity android:name=".ui.activity.CollectionActivity" />
+        <activity android:name=".ui.activity.MyStarActivity" />
+        <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.CreateBlogActivity" />
-        <activity android:name=".ui.activity.SearchActivity">
-        </activity>
+        <activity android:name=".ui.activity.SearchActivity" />
         <activity android:name=".ui.activity.ViewFollowingActivity" />
         <activity android:name=".ui.activity.EditNicknameActivity" />
         <activity android:name=".ui.activity.CreateTeamActivity" />
@@ -47,9 +40,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!--知乎图片选择器，适配7.0系统-->
+        </activity> <!-- 知乎图片选择器，适配7.0系统 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.dalao.yiban.matisse.fileprovider"
@@ -60,5 +51,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

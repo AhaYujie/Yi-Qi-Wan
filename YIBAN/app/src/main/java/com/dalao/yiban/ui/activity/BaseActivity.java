@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     /**
      * 取消所有网络请求
      */
-    private void cancelCall() {
+    protected void cancelCall() {
         if (callList != null) {
             for (Call call : callList) {
                 if (!call.isCanceled()) {
