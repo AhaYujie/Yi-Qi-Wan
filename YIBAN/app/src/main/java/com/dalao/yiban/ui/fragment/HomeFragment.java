@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import com.dalao.yiban.constant.ServerPostDataConstant;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.ui.activity.MainActivity;
+import com.dalao.yiban.ui.activity.SearchActivity;
 import com.dalao.yiban.ui.adapter.HomeItemAdapter;
 import com.dalao.yiban.util.HttpUtil;
 import com.dalao.yiban.util.JsonUtil;
@@ -50,6 +52,16 @@ public class HomeFragment extends BaseFragment {
     private int activitySortSelected;
 
     private boolean categoryChanging;
+
+    private int contestPage;        // 竞赛当前页数
+
+    private int activityPage;       // 活动当前页数
+
+    private boolean moreContest;    // true则继续分页加载，false则无更多
+
+    private boolean moreActivity;   // true则继续分页加载，false则无更多
+
+    private boolean updating;       // 是否正在网络请求
 
     private SwipeRefreshLayout homeSwipeRefresh;
 
@@ -79,13 +91,11 @@ public class HomeFragment extends BaseFragment {
 
     private TextView wrongPageReload;
 
+    private ProgressBar progressBar;
+
     private int contestFirstVisibleItem;
 
     private int activityFirstVisibleItem;
-
-    private int contestLastVisibleItem;
-
-    private int activityLastVisibleItem;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -119,39 +129,55 @@ public class HomeFragment extends BaseFragment {
         homeSearchButton = (Button) view.findViewById(R.id.home_search_button);
         wrongPageReload = (TextView) view.findViewById(R.id.wrong_page_reload);
         wrongPageLayout = (LinearLayout) view.findViewById(R.id.wrong_page_layout);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         wrongPageLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         activity = (MainActivity) getActivity();
 
-        categorySelected = SELECT_CONTEST;
+        categorySelected = homeCategoryTablayout.getSelectedTabPosition();
         contestSortSelected = SELECT_HOT;
         activitySortSelected = SELECT_HOT;
+        contestPage = 1;
+        activityPage = 1;
+        moreContest = true;
+        moreActivity = true;
+        updating = false;
 
         // 设置RecyclerView
         linearLayoutManager = new LinearLayoutManager(activity);
         homeItemRecyclerView.setLayoutManager(linearLayoutManager);
         contestItemAdapter = new HomeItemAdapter(contestListGson, SELECT_CONTEST, activity);
         activityItemAdapter = new HomeItemAdapter(activityListGson, SELECT_ACTIVITY, activity);
-        homeItemRecyclerView.setAdapter(contestItemAdapter);
+        if (categorySelected == SELECT_ACTIVITY) {
+            homeItemRecyclerView.setAdapter(activityItemAdapter);
+        }
+        else if (categorySelected == SELECT_CONTEST) {
+            homeItemRecyclerView.setAdapter(contestItemAdapter);
+        }
 
         // 设置category切换事件
         homeCategoryTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                categoryChanging = true;
+                cancelCall(); // 取消之前的网络请求
                 homeItemRecyclerView.setVisibility(View.VISIBLE);
                 wrongPageLayout.setVisibility(View.GONE);
-                categoryChanging = true;
-                cancelCall();   // 取消切换类别前的网络请求
+                // 竞赛
                 if (tab.getPosition() == SELECT_CONTEST) {
                     categorySelected = SELECT_CONTEST;
                     homeSortTablayout.getTabAt(contestSortSelected).select();
                     homeItemRecyclerView.setAdapter(contestItemAdapter);
                     homeItemRecyclerView.scrollToPosition(contestFirstVisibleItem);
+
                     // 若这个类别没有数据则请求服务器获取数据
                     if (contestItemAdapter.getHomeListGson() == null ||
                             contestItemAdapter.getHomeListGson().getData().size() == 0) {
-                        requestDataFromServer();
+                        homeSwipeRefresh.setRefreshing(true);
+                        requestDataFromServer(true);
                     }
                 }
+                // 活动
                 else if (tab.getPosition() == SELECT_ACTIVITY) {
                     categorySelected = SELECT_ACTIVITY;
                     homeSortTablayout.getTabAt(activitySortSelected).select();
@@ -160,7 +186,8 @@ public class HomeFragment extends BaseFragment {
                     // 若这个类别没有数据则请求服务器获取数据
                     if (activityItemAdapter.getHomeListGson() == null ||
                             activityItemAdapter.getHomeListGson().getData().size() == 0) {
-                        requestDataFromServer();
+                        homeSwipeRefresh.setRefreshing(true);
+                        requestDataFromServer(true);
                     }
                 }
                 categoryChanging = false;
@@ -172,7 +199,10 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                requestDataFromServer();
+                cancelCall(); // 取消之前的网络请求
+                homeSwipeRefresh.setRefreshing(true);
+                moveToTop();
+                requestDataFromServer(true);
             }
         });
 
@@ -180,25 +210,18 @@ public class HomeFragment extends BaseFragment {
         homeSortTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == SELECT_HOT) {
-                    if (categorySelected == SELECT_CONTEST) {
-                        contestSortSelected = SELECT_HOT;
-                    }
-                    else if (categorySelected == SELECT_ACTIVITY) {
-                        activitySortSelected = SELECT_HOT;
-                    }
+                if (categorySelected == SELECT_CONTEST) {
+                    contestSortSelected = tab.getPosition();
                 }
-                else if (tab.getPosition() == SELECT_TIME) {
-                    if (categorySelected == SELECT_CONTEST) {
-                        contestSortSelected = SELECT_TIME;
-                    }
-                    else if (categorySelected == SELECT_ACTIVITY) {
-                        activitySortSelected = SELECT_TIME;
-                    }
+                else if (categorySelected == SELECT_ACTIVITY) {
+                    activitySortSelected = tab.getPosition();
                 }
                 // 若不是切换类别则刷新
                 if (!categoryChanging) {
-                    requestDataFromServer();
+                    cancelCall(); // 取消之前的网络请求
+                    moveToTop();
+                    homeSwipeRefresh.setRefreshing(true);
+                    requestDataFromServer(true);
                 }
         }
 
@@ -208,9 +231,12 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                cancelCall(); // 取消之前的网络请求
                 // 若不是切换类别则刷新
                 if (!categoryChanging) {
-                    requestDataFromServer();
+                    moveToTop();
+                    homeSwipeRefresh.setRefreshing(true);
+                    requestDataFromServer(true);
                 }
             }
         });
@@ -219,8 +245,7 @@ public class HomeFragment extends BaseFragment {
         homeSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
-                Log.d("yujie", "click search button");
+                SearchActivity.actionStart(activity, activity.userId);
             }
         });
 
@@ -228,7 +253,8 @@ public class HomeFragment extends BaseFragment {
         wrongPageReload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestDataFromServer();
+                homeSwipeRefresh.setRefreshing(true);
+                requestDataFromServer(true);
             }
         });
 
@@ -237,7 +263,8 @@ public class HomeFragment extends BaseFragment {
         homeSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestDataFromServer();
+                cancelCall(); // 取消之前的网络请求
+                requestDataFromServer(true);
             }
         });
 
@@ -246,9 +273,19 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                // 分页加载
-                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
-                        (contestLastVisibleItem + 2) > linearLayoutManager.getItemCount()) {
+                // 若不在进行网络请求且有更多数据则分页加载
+                if (!updating && newState == RecyclerView.SCROLL_STATE_IDLE &&
+                    linearLayoutManager.getItemCount() < linearLayoutManager.findLastVisibleItemPosition() + 3) {
+                    if (categorySelected == SELECT_CONTEST && moreContest) {
+                        contestPage = contestPage + 1;
+                        progressBar.setVisibility(View.VISIBLE);
+                        requestDataFromServer(false);
+                    }
+                    else if (categorySelected == SELECT_ACTIVITY && moreActivity) {
+                        activityPage = activityPage + 1;
+                        progressBar.setVisibility(View.VISIBLE);
+                        requestDataFromServer(false);
+                    }
                 }
             }
 
@@ -257,11 +294,9 @@ public class HomeFragment extends BaseFragment {
                 super.onScrolled(recyclerView, dx, dy);
                 if (categorySelected == SELECT_CONTEST) {
                     contestFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-                    contestLastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 }
                 else if (categorySelected == SELECT_ACTIVITY) {
                     activityFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-                    activityLastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 }
             }
         });
@@ -283,44 +318,60 @@ public class HomeFragment extends BaseFragment {
             wrongPageLayout.setVisibility(View.GONE);
             if (categorySelected == SELECT_CONTEST && (contestListGson == null ||
                     contestListGson.getData().size() == 0)) {
-                requestDataFromServer();
+                homeSwipeRefresh.setRefreshing(true);
+                requestDataFromServer(true);
             }
             if (categorySelected == SELECT_ACTIVITY && (activityListGson == null ||
                     activityListGson.getData().size() == 0)) {
-                requestDataFromServer();
+                homeSwipeRefresh.setRefreshing(true);
+                requestDataFromServer(true);
             }
         }
     }
 
     /**
      * 从服务器获取列表数据并刷新UI
+     * @param reset : true则重置列表数据
      */
-    private void requestDataFromServer() {
-        homeSwipeRefresh.setRefreshing(true);
+    private void requestDataFromServer(final boolean reset) {
+        updating = true;
 
+        int page = -1;
         String url = null;
-        int sortSelected = SELECT_HOT;
+        int sortSelected = -1;
         if (categorySelected == SELECT_CONTEST) {
+            if (reset) {
+                contestPage = 1;
+                moreContest = true;
+            }
+            page = contestPage;
             url = ServerUrlConstant.CONTEST_LIST_URI;
             sortSelected = contestSortSelected;
         }
         else if (categorySelected == SELECT_ACTIVITY) {
+            if (reset) {
+                activityPage = 1;
+                moreActivity = true;
+            }
+            page = activityPage;
             url = ServerUrlConstant.ACTIVITY_LIST_URI;
             sortSelected = activitySortSelected;
         }
 
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
+                .add(ServerPostDataConstant.PAGE, String.valueOf(page))
                 .build();
 
         Call call = HttpUtil.sendHttpPost(url, formBody, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         homeSwipeRefresh.setRefreshing(false);
+                        progressBar.setVisibility(View.GONE);
+                        updating = false;
                         // 若现在的类别数据为空则显示错误页面
                         if (categorySelected == SELECT_CONTEST && (contestListGson == null ||
                                 contestListGson.getData().size() == 0)) {
@@ -340,18 +391,47 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
+                    updating = false;
                     final String responseText = response.body().string();
                     final HomeListGson homeListGson = JsonUtil.handleHomeListResponse(responseText);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (categorySelected == SELECT_CONTEST) {
-                                HomeFragment.this.contestListGson = homeListGson;
+                            // 无数据
+                            if (homeListGson == null || homeListGson.getData().size() == 0) {
+                                if (categorySelected == SELECT_CONTEST) {
+                                    moreContest = false;
+                                }
+                                else if (categorySelected == SELECT_ACTIVITY) {
+                                    moreActivity = false;
+                                }
+                                progressBar.setVisibility(View.GONE);
+                                homeSwipeRefresh.setRefreshing(false);
+                                Toast.makeText(activity, HintConstant.NO_MORE, Toast.LENGTH_SHORT).show();
                             }
-                            else if (categorySelected == SELECT_ACTIVITY) {
-                                HomeFragment.this.activityListGson = homeListGson;
+                            // 有数据
+                            else {
+                                if (categorySelected == SELECT_CONTEST) {
+                                    // 重置
+                                    if (contestListGson == null || reset) {
+                                        contestListGson = homeListGson;
+                                    }
+                                    // 添加
+                                    else {
+                                        contestListGson.getData().addAll(homeListGson.getData());
+                                    }
+                                } else if (categorySelected == SELECT_ACTIVITY || reset) {
+                                    // 重置
+                                    if (activityListGson == null || reset) {
+                                        activityListGson = homeListGson;
+                                    }
+                                    // 添加
+                                    else {
+                                        activityListGson.getData().addAll(homeListGson.getData());
+                                    }
+                                }
+                                updateHomeListUI();
                             }
-                            updateHomeListUI();
                         }
                     });
                 }
@@ -360,6 +440,7 @@ public class HomeFragment extends BaseFragment {
                         @Override
                         public void run() {
                             homeSwipeRefresh.setRefreshing(false);
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                         }
@@ -385,6 +466,13 @@ public class HomeFragment extends BaseFragment {
             activityItemAdapter.notifyDataSetChanged();
         }
         homeSwipeRefresh.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * 移动到顶部
+     */
+    private void moveToTop() {
         if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
             homeItemRecyclerView.scrollToPosition(5);
         }

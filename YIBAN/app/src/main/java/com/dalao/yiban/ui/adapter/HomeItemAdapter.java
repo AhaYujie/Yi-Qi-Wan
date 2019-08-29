@@ -93,13 +93,18 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             holder.homeItemPic.setVisibility(View.GONE);
         }
         else {
-
             //设置图片圆角角度
             RoundedCorners roundedCorners= new RoundedCorners(20);
             //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
             RequestOptions options = RequestOptions.bitmapTransform(roundedCorners).override(300, 300);
             holder.homeItemPic.setVisibility(View.VISIBLE);
-            Glide.with(activity).load(dataBean.getUrl()).apply(options).into(holder.homeItemPic);
+            Glide.with(activity)
+                    .load(dataBean.getUrl())
+                    .placeholder(R.drawable.pic_loading)
+                    .error(R.drawable.pic_load_fail)
+                    .fallback(R.drawable.pic_load_fail)
+                    .apply(options)
+                    .into(holder.homeItemPic);
         }
         // layout点击事件
         holder.homeItem.setOnClickListener(new View.OnClickListener() {

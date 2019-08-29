@@ -210,8 +210,10 @@ public class CreateBlogActivity extends BaseActivity {
      */
     private void postBlogDataToServer() {
         // 传输图片
-        for (File file : imageList) {
-            postFileToServer(file);
+        if (imageList != null ) {
+            for (File file : imageList) {
+                postFileToServer(file);
+            }
         }
 
         FormBody formBody = new FormBody.Builder()
@@ -281,7 +283,7 @@ public class CreateBlogActivity extends BaseActivity {
                 .addFormDataPart(ServerPostDataConstant.POST_FILE, file.getName(),
                         RequestBody.create(null, file));
 
-        Call call = HttpUtil.sendHttpPostFile(ServerUrlConstant.POST_IMAGE_TO_SERVER_URI, builder, new Callback() {
+        HttpUtil.sendHttpPostFile(ServerUrlConstant.POST_IMAGE_TO_SERVER_URI, builder, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
@@ -292,7 +294,6 @@ public class CreateBlogActivity extends BaseActivity {
             }
         });
 
-        getCallList().add(call);
     }
 
     /**
@@ -306,7 +307,8 @@ public class CreateBlogActivity extends BaseActivity {
             for (RichTextEditor.EditData itemData : editList) {
                 if (itemData.inputStr != null) {
                     content.append(itemData.inputStr);
-                } else if (itemData.imagePath != null) {
+                }
+                else if (itemData.imagePath != null) {
                     if (imageList == null)
                         imageList = new ArrayList<>();
                     imageList.add(new File(itemData.imagePath));
@@ -496,7 +498,7 @@ public class CreateBlogActivity extends BaseActivity {
             return false;
         }
         // 图片过多
-        else if (imageList.size() > MAX_NUMBER_Of_IMAGES) {
+        else if (imageList != null && imageList.size() > MAX_NUMBER_Of_IMAGES) {
             Toast.makeText(this, HintConstant.TOO_MANY_IMAGES,
                     Toast.LENGTH_SHORT).show();
             return false;

@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:background="@color/myBackground"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/mine_login_background_size"
@@ -48,7 +48,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,7 +98,8 @@
                 android:layout_height="@dimen/mine_face_size"
                 android:layout_toStartOf="@+id/mine_face_icon"
                 android:layout_centerVertical="true"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_avatar_grey"/>
 
         </RelativeLayout>
 

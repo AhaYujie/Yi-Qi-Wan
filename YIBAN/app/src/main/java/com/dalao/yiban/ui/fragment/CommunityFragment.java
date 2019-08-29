@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,6 +75,14 @@ public class CommunityFragment extends BaseFragment {
 
     private CommunityBlogListGson communityBlogListGson;
 
+    private ProgressBar progressBar;
+
+    private int page;           // 当前页数
+
+    private boolean moreBlog;   // true则有更多数据
+
+    private boolean updating;   // true则表示在进行网络请求
+
     public CommunityFragment() {
         // Required empty public constructor
     }
@@ -106,9 +115,15 @@ public class CommunityFragment extends BaseFragment {
         communityCreateBlogButton = (Button) view.findViewById(R.id.community_create_blog_button);
         wrongPageLayout = (LinearLayout) view.findViewById(R.id.wrong_page_layout);
         wrongPageReload = (TextView) view.findViewById(R.id.wrong_page_reload);
-        sortSelected = SELECT_HOT;
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+
         communityBlogRecyclerView.setVisibility(View.VISIBLE);
         wrongPageLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        sortSelected = SELECT_HOT;
+        page = 1;
+        moreBlog = true;
+        updating = false;
 
         // 设置spinner
         String[] sortItems = getResources().getStringArray(R.array.community_sort_spinner);
@@ -119,23 +134,25 @@ public class CommunityFragment extends BaseFragment {
         communitySortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                cancelCall();   // 取消切换排序方式前的网络请求
                 if (isVisible && view != null) {
+                    moveToTop();
+                    cancelCall();   // 取消切换排序方式前的网络请求
+                    communityBlogRefresh.setRefreshing(true);
                     switch (i) {
                         // 按热度排序
                         case SELECT_HOT:
                             sortSelected = SELECT_HOT;
-                            requestDataFromServer();
+                            requestDataFromServer(true);
                             break;
                         // 按时间排序
                         case SELECT_TIME:
                             sortSelected = SELECT_TIME;
-                            requestDataFromServer();
+                            requestDataFromServer(true);
                             break;
                         // 只看关注的人
                         case SELECT_FOLLOWING:
                             sortSelected = SELECT_FOLLOWING;
-                            requestDataFromServer();
+                            requestDataFromServer(true);
                             break;
                         default:
                             break;
@@ -154,12 +171,33 @@ public class CommunityFragment extends BaseFragment {
         communityBlogItemAdapter = new CommunityBlogItemAdapter(activity);
         communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
 
+        // 设置RecyclerView监听事件
+        communityBlogRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                // 若不在进行网络请求且有更多数据则分页加载
+                if (!updating && moreBlog && newState == RecyclerView.SCROLL_STATE_IDLE &&
+                        linearLayoutManager.getItemCount() < linearLayoutManager.findLastVisibleItemPosition() + 3) {
+                    page = page + 1;
+                    progressBar.setVisibility(View.VISIBLE);
+                    requestDataFromServer(false);
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
         // 设置swipe refresh事件
         communityBlogRefresh.setColorSchemeResources(R.color.colorPrimary);
         communityBlogRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestDataFromServer();
+                cancelCall();
+                requestDataFromServer(true);
             }
         });
 
@@ -183,7 +221,7 @@ public class CommunityFragment extends BaseFragment {
         wrongPageReload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestDataFromServer();
+                requestDataFromServer(true);
             }
         });
 
@@ -198,24 +236,32 @@ public class CommunityFragment extends BaseFragment {
      */
     @Override
     protected void onVisible() {
-        communityBlogRecyclerView.setVisibility(View.VISIBLE);
-        wrongPageLayout.setVisibility(View.GONE);
         // 若无数据则请求服务器获取数据
         if (isVisible && view != null && (communityBlogListGson == null ||
                 communityBlogListGson.getData().size() == 0)) {
-            requestDataFromServer();
+            communityBlogRecyclerView.setVisibility(View.VISIBLE);
+            wrongPageLayout.setVisibility(View.GONE);
+            communityBlogRefresh.setRefreshing(true);
+            requestDataFromServer(true);
         }
     }
 
     /**
      * 从服务器获取博客列表数据并刷新UI
+     * @param reset : true则重载列表数据
      */
-    public void requestDataFromServer() {
-        communityBlogRefresh.setRefreshing(true);
+    public void requestDataFromServer(boolean reset) {
+        updating = true;
+
+        if (reset) {
+            page = 1;
+            moreBlog = true;
+        }
 
         FormBody formBody  = new FormBody.Builder()
                 .add(ServerPostDataConstant.SORT, String.valueOf(sortSelected))
                 .add(ServerPostDataConstant.USER_ID, activity.userId)
+                .add(ServerPostDataConstant.PAGE, String.valueOf(page))
                 .build();
 
         Call call = HttpUtil.sendHttpPost(ServerUrlConstant.COMMUNITY_BLOG_LIST_URI, formBody, new Callback() {
@@ -225,6 +271,8 @@ public class CommunityFragment extends BaseFragment {
                     @Override
                     public void run() {
                         communityBlogRefresh.setRefreshing(false);
+                        progressBar.setVisibility(View.GONE);
+                        updating = false;
                         // 若博客列表数据为空则显示错误页面
                         if (communityBlogListGson == null || communityBlogListGson.getData().size() == 0) {
                             communityBlogRecyclerView.setVisibility(View.GONE);
@@ -238,14 +286,33 @@ public class CommunityFragment extends BaseFragment {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
+                    updating = false;
                     final String responseText = response.body().string();
                     final CommunityBlogListGson communityBlogListGson =
                             JsonUtil.handleCommunityBlogListResponse(responseText);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            CommunityFragment.this.communityBlogListGson = communityBlogListGson;
-                            updateHomeListUI();
+                            // 无数据
+                            if (communityBlogListGson == null || communityBlogListGson.getData().size() == 0) {
+                                moreBlog = false;
+                                progressBar.setVisibility(View.GONE);
+                                communityBlogRefresh.setRefreshing(false);
+                                Toast.makeText(activity, HintConstant.NO_MORE, Toast.LENGTH_SHORT).show();
+                            }
+                            // 有数据
+                            else {
+                                // 重置
+                                if (CommunityFragment.this.communityBlogListGson == null || reset) {
+                                    CommunityFragment.this.communityBlogListGson = communityBlogListGson;
+                                }
+                                // 添加
+                                else {
+                                    CommunityFragment.this.communityBlogListGson.getData()
+                                            .addAll(communityBlogListGson.getData());
+                                }
+                                updateHomeListUI();
+                            }
                         }
                     });
                 }
@@ -254,6 +321,7 @@ public class CommunityFragment extends BaseFragment {
                         @Override
                         public void run() {
                             communityBlogRefresh.setRefreshing(false);
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(MyApplication.getContext(),
                                     HintConstant.GET_DATA_FAILED, Toast.LENGTH_SHORT).show();
                         }
@@ -269,11 +337,18 @@ public class CommunityFragment extends BaseFragment {
      * 刷新列表UI
      */
     private void updateHomeListUI() {
-        communityBlogRecyclerView.setVisibility(View.VISIBLE);
-        wrongPageLayout.setVisibility(View.GONE);
         communityBlogItemAdapter.setDataBeanList(this.communityBlogListGson.getData());
         communityBlogItemAdapter.notifyDataSetChanged();
+        communityBlogRecyclerView.setVisibility(View.VISIBLE);
+        wrongPageLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         communityBlogRefresh.setRefreshing(false);
+    }
+
+    /**
+     * 滑动到顶部
+     */
+    private void moveToTop() {
         if (linearLayoutManager.findFirstVisibleItemPosition() >= 5) {
             communityBlogRecyclerView.scrollToPosition(5);
         }

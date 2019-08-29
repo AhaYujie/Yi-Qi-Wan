@@ -1,6 +1,7 @@
 package com.dalao.yiban.ui.activity;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +43,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class ViewReplyActivity extends BaseActivity implements CommentInterface, RequestDataInterface {
+public class ViewReplyActivity extends ContentActivity implements CommentInterface, RequestDataInterface {
 
     private RecyclerView viewReplyRecyclerView;
 
@@ -54,6 +56,8 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
     private EditText commentEditText;
 
     private PopupWindow commentPopupWindow;
+
+    private NestedScrollView viewReplyScrollView;
 
     private String commentToCommentId;
 
@@ -105,6 +109,9 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
         commentReplyButton = (Button) findViewById(R.id.comment_reply_button);
         commentReplyNum = (TextView) findViewById(R.id.comment_reply_num);
         commentReply = (LinearLayout) findViewById(R.id.comment_reply);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        noMoreCommentLayout = (TextView) findViewById(R.id.no_more_comment_layout);
+        viewReplyScrollView = (NestedScrollView) findViewById(R.id.view_reply_scroll_view);
 
         // 获取传递给这个活动的数据
         Intent intent = getIntent();
@@ -126,8 +133,37 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         viewReplyRecyclerView.setLayoutManager(layoutManager);
         commentAdapter = new CommentAdapter(this, this, userId,
-                contentId, category);
+                contentId, category, commentsLoadingLayout);
         viewReplyRecyclerView.setAdapter(commentAdapter);
+
+        // 设置NestedScrollView滑动监听事件
+        viewReplyScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                // 滑动到底部，加载更多评论
+                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+//                    String uri, contentIdKey;
+//                    switch (category) {
+//                        case HomeConstant.SELECT_ACTIVITY:
+//                            uri = ServerUrlConstant.ACTIVITY_URI;
+//                            contentIdKey = ServerPostDataConstant.ACTIVITY_ID;
+//                            break;
+//                        case HomeConstant.SELECT_CONTEST:
+//                            uri = ServerUrlConstant.CONTEST_URI;
+//                            contentIdKey = ServerPostDataConstant.CONTEST_ID;
+//                            break;
+//                        case HomeConstant.SELECT_BLOG:
+//                            uri = ServerUrlConstant.BLOG_URI;
+//                            contentIdKey = ServerPostDataConstant.BLOG_ID;
+//                            break;
+//                        default:
+//                            return;
+//                    }
+                    commentAdapter.loadMoreComments(ServerUrlConstant.REPLY_URI,
+                            ServerPostDataConstant.REPLY_ID, String.valueOf(masterCommentBean.getId()));
+                }
+            }
+        });
 
         // 设置点击事件
         viewReplyCancelButton.setOnClickListener(this);
@@ -239,7 +275,7 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
      *  @param toCommentId:回复的评论的id(若无则为-1)
      */
     public void editCommentText(String toCommentId) {
-        this.commentToCommentId =toCommentId;
+        this.commentToCommentId = toCommentId;
         CustomPopWindow.PopWindowViewHelper popWindowViewHelper =
                 CustomPopWindow.commentPopWindow(viewReplyRecyclerView, this);
         commentEditText = popWindowViewHelper.editText;
@@ -257,8 +293,8 @@ public class ViewReplyActivity extends BaseActivity implements CommentInterface,
             return;
         }
         commentPopupWindow.dismiss();
-        HttpUtil.comment(this, this, contentId, userId,
-                commentToCommentId, content, category);
+        HttpUtil.comment(this, commentAdapter, String.valueOf(masterCommentBean.getId()),
+                userId, commentToCommentId, content, HomeConstant.SELECT_NONE);
     }
 
 }

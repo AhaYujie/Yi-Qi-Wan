@@ -10,12 +10,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +56,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
 
-public class BlogActivity extends BaseActivity implements CommentInterface, FollowInterface,
+public class BlogActivity extends ContentActivity implements CommentInterface, FollowInterface,
         CollectInterface, RequestDataInterface {
 
     private CommentAdapter commentAdapter;
@@ -154,6 +157,8 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         wrongPageLayout = (LinearLayout) findViewById(R.id.wrong_page_layout);
         wrongPageReload = (TextView) findViewById(R.id.wrong_page_reload);
         blogContentLayout = (RelativeLayout) findViewById(R.id.blog_content_layout);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        noMoreCommentLayout = (TextView) findViewById(R.id.no_more_comment_layout);
         wrongPageLayout.setVisibility(View.GONE);
         blogContentLayout.setVisibility(View.VISIBLE);
 
@@ -185,8 +190,20 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         blogCommentRecyclerView.setLayoutManager(linearLayoutManager);
         commentAdapter = new CommentAdapter(this, this, userId,
-                blogId, HomeConstant.SELECT_BLOG);
+                blogId, HomeConstant.SELECT_BLOG, commentsLoadingLayout);
         blogCommentRecyclerView.setAdapter(commentAdapter);
+
+        // 设置NestedScrollView滑动监听事件
+        blogScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                // 滑动到底部，加载更多评论
+                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                    commentAdapter.loadMoreComments(ServerUrlConstant.BLOG_URI,
+                            ServerPostDataConstant.BLOG_ID, blogId);
+                }
+            }
+        });
 
         // 图片点击事件
         blogContentRichText.setOnRtImageClickListener(new RichTextView.OnRtImageClickListener() {
@@ -222,8 +239,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
             // 点击作者
             case R.id.blog_author_face:
             case R.id.blog_author_name:
-                //TODO
-                Toast.makeText(this, "click author", Toast.LENGTH_SHORT).show();
+                // 取消功能
                 break;
 
             // 关注或者取消关注作者
@@ -234,10 +250,12 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
                             Toast.LENGTH_SHORT).show();
                     break;
                 }
+                // 关注
                 if (blogGson.getFollow() == CommunityConstant.UN_FOLLOW) {
                     HttpUtil.followBlogAuthor(this, null, this,
                             userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.FOLLOW);
                 }
+                // 取消关注
                 else if (blogGson.getFollow() == CommunityConstant.FOLLOW) {
                     HttpUtil.followBlogAuthor(this, null, this,
                             userId, authorId, HomeConstant.BLOG_ACTIVITY, CommunityConstant.UN_FOLLOW);
@@ -316,19 +334,19 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
 //        return super.onCreateOptionsMenu(menu);
 //    }
 
-//    /**
-//     * Toolbar菜单栏点击事件
-//     * @param item:
-//     * @return :
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            // 返回
-//            case android.R.id.home:
-//                finish();
-//                break;
-//
+    /**
+     * Toolbar菜单栏点击事件
+     * @param item:
+     * @return :
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            // 返回
+            case android.R.id.home:
+                finish();
+                break;
+
 //            // 收藏或取消收藏
 //            case R.id.more_collect:
 //                // 游客禁止使用此功能
@@ -350,11 +368,11 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
 //                        (getWindow().getDecorView().findViewById(R.id.bottom_nav_forward),
 //                                BlogActivity.this);
 //                break;
-//            default:
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     /**
      * 请求服务器获取博客数据, 并解析刷新UI
@@ -384,6 +402,9 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
+                    if (response.body() == null) {
+                        throw new NullPointerException();
+                    }
                     String responseText = response.body().string();
                     final BlogGson blogGson = JsonUtil.handleBlogResponse(responseText);
                     runOnUiThread(new Runnable() {
@@ -485,7 +506,7 @@ public class BlogActivity extends BaseActivity implements CommentInterface, Foll
             return;
         }
         commentPopupWindow.dismiss();
-        HttpUtil.comment(this, this, blogId, userId,
+        HttpUtil.comment(this, commentAdapter, blogId, userId,
                 commentToCommentId, content, HomeConstant.SELECT_BLOG);
     }
 
