@@ -16,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ui.activity.SearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"></action>
+                <category android:name="android.intent.category.LAUNCHER"></category>
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.activity.MyBlogActivity">
         </activity>
         <activity android:name=".ui.activity.CollectionActivity"/>
@@ -24,8 +30,6 @@
         <activity android:name=".ui.activity.LoginActivity">
         </activity>
         <activity android:name=".ui.activity.CreateBlogActivity" />
-        <activity android:name=".ui.activity.SearchActivity">
-        </activity>
         <activity android:name=".ui.activity.ViewFollowingActivity" />
         <activity android:name=".ui.activity.EditNicknameActivity" />
         <activity android:name=".ui.activity.CreateTeamActivity" />

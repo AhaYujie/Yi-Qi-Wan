@@ -20,12 +20,11 @@ public class SearchResult {
     private int type;
     private String avater;
 
-    public SearchResult(int pageviews,String time,String title,String author,int id,String userid,int type,String avater)
+    public SearchResult(int pageviews,String time,String title,int id,String userid,int type,String avater)
     {
         this.pageviews=pageviews;
         this.time=time;
         this.title=title;
-        this.author=author;
         this.id=id;
         this.userid = userid;
         this.type=type;
@@ -54,14 +53,6 @@ public class SearchResult {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public int getId() {

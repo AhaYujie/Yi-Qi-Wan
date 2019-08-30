@@ -110,4 +110,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
     <!-- 这是搜索的结果 -->
+    <!--<TextView
+        android:id="@+id/search_wait_pull"
+        android:text="上拉加载更多..."
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/search_pulling"
+        android:text="正在加载中..."
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/search_to_end"
+        android:text="已经到尽头了"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>-->
+
 </LinearLayout>
