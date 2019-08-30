@@ -11,14 +11,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ui.activity.SearchActivity">
+        </activity>
+        <activity android:name=".ui.activity.MyBlogActivity">
+        </activity>
+        <activity android:name=".ui.activity.CollectionActivity"/>
+        <activity android:name=".ui.activity.MyStarActivity">
+        </activity>
+        <activity android:name=".ui.activity.LoginActivity">
+        </activity>
         <activity android:name=".ui.activity.MyCollectionActivity"></activity>
         <activity android:name=".ui.activity.CheckMyBlogActivity" />
-        <activity android:name=".ui.activity.MyBlogActivity" />
-        <activity android:name=".ui.activity.CollectionActivity" />
-        <activity android:name=".ui.activity.MyStarActivity" />
-        <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.CreateBlogActivity" />
-        <activity android:name=".ui.activity.SearchActivity" />
         <activity android:name=".ui.activity.ViewFollowingActivity" />
         <activity android:name=".ui.activity.EditNicknameActivity" />
         <activity android:name=".ui.activity.CreateTeamActivity" />

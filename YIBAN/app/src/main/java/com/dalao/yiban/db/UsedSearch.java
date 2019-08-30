@@ -7,13 +7,14 @@ import java.util.Set;
 
 public class UsedSearch {
 
-    private int id;
+    private int userid;
     private String content;
     private int searchid;
 
-    public UsedSearch(String content,int id,int searchid) {
+    public UsedSearch(String content,int userid,int searchid) {
         this.content=content;
-        this.id=id;
+        this.userid = userid;
+        this.searchid =searchid;
     }
 
     public String getContent()
@@ -25,12 +26,20 @@ public class UsedSearch {
         this.content=content;
     }
 
-    public int getId(){
-        return id;
+    public int getUserId(){
+        return userid;
     }
 
-    public void setId(int id){
-        this.id=id;
+    public void setUserId(int id){
+        this.userid=id;
+    }
+
+    public int getSearchid(){
+        return searchid;
+    }
+
+    public void setSearchid(int searchid){
+        this.searchid = searchid;
     }
 
 }
