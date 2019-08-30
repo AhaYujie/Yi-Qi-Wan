@@ -127,6 +127,8 @@ public class HttpUtil {
     public static void collectContent(final BaseActivity activity, final int categorySelected,
                                       String userId, String contentId, int isCollect,
                                       CollectInterface collectInterface) {
+        collectInterface.collectStart();
+
         String category;
         String url;
         switch (categorySelected) {
@@ -178,6 +180,12 @@ public class HttpUtil {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        collectInterface.collectError();
+                    }
+                });
             }
 
             @Override
@@ -202,8 +210,7 @@ public class HttpUtil {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
-                                        Toast.LENGTH_SHORT).show();
+                                collectInterface.collectError();
                             }
                         });
                     }
@@ -213,8 +220,7 @@ public class HttpUtil {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
-                                    Toast.LENGTH_SHORT).show();
+                            collectInterface.collectError();
                         }
                     });
                 }
@@ -236,6 +242,8 @@ public class HttpUtil {
     public static void followBlogAuthor(final BlogActivity blogActivity, final ViewFollowingActivity viewFollowingActivity,
                                  final FollowInterface followInterface, String userId,
                                  String authorId, int activityType, final int followType) {
+        followInterface.followStart(authorId);
+
         final BaseActivity activity;
         switch (activityType) {
             case HomeConstant.BLOG_ACTIVITY:
@@ -245,8 +253,7 @@ public class HttpUtil {
                 activity = viewFollowingActivity;
                 break;
             default:
-                Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
-                        Toast.LENGTH_SHORT).show();
+                followInterface.followError(authorId);
                 return;
         }
         String url;
@@ -258,8 +265,7 @@ public class HttpUtil {
                 url = ServerUrlConstant.UN_FOLLOW_BLOG_AUTHOR_URI;
                 break;
             default:
-                Toast.makeText(MyApplication.getContext(), HintConstant.BLOG_AUTHOR_FOLLOW_ERROR,
-                        Toast.LENGTH_SHORT).show();
+                followInterface.followError(authorId);
                 return;
         }
 
@@ -271,6 +277,12 @@ public class HttpUtil {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        followInterface.followError(authorId);
+                    }
+                });
             }
 
             @Override
@@ -278,16 +290,19 @@ public class HttpUtil {
                 try {
                     String responseText = response.body().string();
                     FollowGson followGson = JsonUtil.handleFollowResponse(responseText);
+                    if (followGson == null || followGson.getMsg() == null) {
+                        throw new NullPointerException();
+                    }
                     if (followGson.getMsg().equals(CommunityConstant.BLOG_FOLLOW_SUCCESS_RESPONSE)) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 switch (followType) {
                                     case CommunityConstant.FOLLOW:
-                                        followInterface.followSucceed();
+                                        followInterface.followSucceed(authorId);
                                         break;
                                     case CommunityConstant.UN_FOLLOW:
-                                        followInterface.unFollowSucceed();
+                                        followInterface.unFollowSucceed(authorId);
                                         break;
                                     default:
                                         break;
@@ -299,8 +314,7 @@ public class HttpUtil {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MyApplication.getContext(),
-                                        HintConstant.BLOG_AUTHOR_FOLLOW_ERROR, Toast.LENGTH_SHORT).show();
+                                followInterface.followError(authorId);
                             }
                         });
                     }
@@ -310,8 +324,7 @@ public class HttpUtil {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MyApplication.getContext(),
-                                    HintConstant.BLOG_AUTHOR_FOLLOW_ERROR, Toast.LENGTH_SHORT).show();
+                            followInterface.followError(authorId);
                         }
                     });
                 }

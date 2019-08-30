@@ -54,4 +54,6 @@ public class ServerUrlConstant {
 
     public static final String MY_COLLECTION_BLOG = SERVER_URI + "/user/colblog";
 
+    public static final String MY_FOLLOWING_URI = SERVER_URI + "/user/following";
+
 }

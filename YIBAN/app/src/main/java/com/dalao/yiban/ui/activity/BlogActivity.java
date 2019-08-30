@@ -518,6 +518,7 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_blue);
         blogGson.setCollection(HomeConstant.COLLECT);
+        blogBottomNavCollect.setClickable(true);
     }
 
     /**
@@ -528,26 +529,63 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
         Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         blogBottomNavCollect.setBackgroundResource(R.drawable.ic_collect_black);
         blogGson.setCollection(HomeConstant.UN_COLLECT);
+        blogBottomNavCollect.setClickable(true);
+    }
+
+    /**
+     * 收藏或取消收藏失败
+     */
+    @Override
+    public void collectError() {
+        Toast.makeText(this, HintConstant.COLLECT_ERROR, Toast.LENGTH_SHORT).show();
+        blogBottomNavCollect.setClickable(true);
+    }
+
+    /**
+     * 进行收藏或取消收藏操作
+     */
+    @Override
+    public void collectStart() {
+        blogBottomNavCollect.setClickable(false);
     }
 
     /**
      * 关注成功, 更新UI，数据库
      */
     @Override
-    public void followSucceed() {
+    public void followSucceed(String userId) {
         blogFollowAuthorButton.setText(CommunityConstant.UN_FOLLOW_TEXT);
         Toast.makeText(this, HintConstant.BLOG_AUTHOR_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
         blogGson.setFollow(CommunityConstant.FOLLOW);
+        blogFollowAuthorButton.setClickable(true);
     }
 
     /**
      * 取消关注成功, 更新UI，数据库
      */
     @Override
-    public void unFollowSucceed() {
+    public void unFollowSucceed(String userId) {
         blogFollowAuthorButton.setText(CommunityConstant.FOLLOW_TEXT);
         Toast.makeText(this, HintConstant.BLOG_AUTHOR_UN_FOLLOW_SUCCESS, Toast.LENGTH_SHORT).show();
         blogGson.setFollow(CommunityConstant.UN_FOLLOW);
+        blogFollowAuthorButton.setClickable(true);
+    }
+
+    /**
+     * 关注或取消关注失败
+     */
+    @Override
+    public void followError(String userId) {
+        Toast.makeText(this, HintConstant.BLOG_AUTHOR_FOLLOW_ERROR, Toast.LENGTH_SHORT).show();
+        blogFollowAuthorButton.setClickable(true);
+    }
+
+    /**
+     * 进行关注或取消关注操作
+     */
+    @Override
+    public void followStart(String userId) {
+        blogFollowAuthorButton.setClickable(false);
     }
 
     @Override

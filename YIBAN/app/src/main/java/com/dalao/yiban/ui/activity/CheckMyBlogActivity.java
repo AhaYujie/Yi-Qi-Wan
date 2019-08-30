@@ -172,7 +172,8 @@ public class CheckMyBlogActivity extends BaseActivity {
                         @Override
                         public void run() {
                             // 无数据
-                            if (myBLogGson == null || myBLogGson.getMyblogs().size() == 0) {
+                            if (myBLogGson == null || myBLogGson.getData() == null ||
+                                    myBLogGson.getData().size() == 0) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -235,7 +236,7 @@ public class CheckMyBlogActivity extends BaseActivity {
         CommunityBlogListGson communityBlogListGson = new CommunityBlogListGson();
         List<CommunityBlogListGson.DataBean> dataBeanList = new ArrayList<>();
         communityBlogListGson.setData(dataBeanList);
-        for (MyBLogGson.MyblogsBean myblogsBean : myBLogGson.getMyblogs()) {
+        for (MyBLogGson.dataBean myblogsBean : myBLogGson.getData()) {
             CommunityBlogListGson.DataBean dataBean = new CommunityBlogListGson.DataBean();
             dataBean.setAuthor(userName);
             dataBean.setAuthorid(Integer.valueOf(userId));

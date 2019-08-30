@@ -52,6 +52,12 @@ public class MyCollectionActivity extends BaseActivity {
 
     private CommunityBlogItemAdapter blogListAdapter;
 
+    private LinearLayoutManager activityLayoutManager;
+
+    private LinearLayoutManager contestLayoutManager;
+
+    private LinearLayoutManager blogLayoutManager;
+
     private TextView myCollectionNotFoundLayout;
 
     private LinearLayout wrongPageLayout;
@@ -112,17 +118,17 @@ public class MyCollectionActivity extends BaseActivity {
         wrongPageReload.setOnClickListener(this);
 
         // 设置RecyclerView
-        LinearLayoutManager activityLayoutManager = new LinearLayoutManager(this);
+        activityLayoutManager = new LinearLayoutManager(this);
         myCollectionActivityRecyclerview.setLayoutManager(activityLayoutManager);
         activityListAdapter = new HomeItemAdapter(null, HomeConstant.SELECT_ACTIVITY, this, userId);
         myCollectionActivityRecyclerview.setAdapter(activityListAdapter);
 
-        LinearLayoutManager contestLayoutManager = new LinearLayoutManager(this);
+        contestLayoutManager = new LinearLayoutManager(this);
         myCollectionContestRecyclerview.setLayoutManager(contestLayoutManager);
         contestListAdapter = new HomeItemAdapter(null, HomeConstant.SELECT_CONTEST, this, userId);
         myCollectionContestRecyclerview.setAdapter(contestListAdapter);
 
-        LinearLayoutManager blogLayoutManager = new LinearLayoutManager(this);
+        blogLayoutManager = new LinearLayoutManager(this);
         myCollectionBlogRecyclerview.setLayoutManager(blogLayoutManager);
         blogListAdapter = new CommunityBlogItemAdapter(this, userId);
         myCollectionBlogRecyclerview.setAdapter(blogListAdapter);
@@ -131,9 +137,29 @@ public class MyCollectionActivity extends BaseActivity {
         myCollectionTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                cancelCall();
                 categorySelected = tab.getPosition();
                 selectRecyclerView(categorySelected);
-                requestDataFromServer();
+                // 无数据则请求服务器
+                switch (categorySelected) {
+                    case HomeConstant.SELECT_ACTIVITY:
+                        if (activityListGson == null || activityListGson.getData().size() == 0) {
+                            requestDataFromServer();
+                        }
+                        break;
+                    case HomeConstant.SELECT_CONTEST:
+                        if (contestListGson == null || contestListGson.getData().size() == 0) {
+                            requestDataFromServer();
+                        }
+                        break;
+                    case HomeConstant.SELECT_BLOG:
+                        if (blogListGson == null || blogListGson.getData().size() == 0) {
+                            requestDataFromServer();
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             @Override
@@ -143,6 +169,8 @@ public class MyCollectionActivity extends BaseActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                cancelCall();
+                moveToTop();
                 requestDataFromServer();
             }
         });
@@ -204,9 +232,25 @@ public class MyCollectionActivity extends BaseActivity {
                     @Override
                     public void run() {
                         myCollectionRefresh.setRefreshing(false);
-                        wrongPageLayout.setVisibility(View.VISIBLE);
-                        selectRecyclerView(HomeConstant.SELECT_NONE);
-                        myCollectionNotFoundLayout.setVisibility(View.GONE);
+                        // 若无数据则显示错误页面
+                        if (categorySelected == HomeConstant.SELECT_ACTIVITY && (activityListGson == null ||
+                                activityListGson.getData().size() == 0)) {
+                            wrongPageLayout.setVisibility(View.VISIBLE);
+                            selectRecyclerView(HomeConstant.SELECT_NONE);
+                            myCollectionNotFoundLayout.setVisibility(View.GONE);
+                        }
+                        if (categorySelected == HomeConstant.SELECT_CONTEST && (contestListGson == null ||
+                                contestListGson.getData().size() == 0)) {
+                            wrongPageLayout.setVisibility(View.VISIBLE);
+                            selectRecyclerView(HomeConstant.SELECT_NONE);
+                            myCollectionNotFoundLayout.setVisibility(View.GONE);
+                        }
+                        if (categorySelected == HomeConstant.SELECT_BLOG && (blogListGson == null ||
+                                blogListGson.getData().size() == 0)) {
+                            wrongPageLayout.setVisibility(View.VISIBLE);
+                            selectRecyclerView(HomeConstant.SELECT_NONE);
+                            myCollectionNotFoundLayout.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
@@ -243,7 +287,12 @@ public class MyCollectionActivity extends BaseActivity {
                         default:
                             return;
                     }
-                    updateCollectionListUI();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateCollectionListUI();
+                        }
+                    });
                 }
                 catch (NullPointerException e) {
                     runOnUiThread(new Runnable() {
@@ -313,6 +362,37 @@ public class MyCollectionActivity extends BaseActivity {
                 break;
         }
     }
+
+    /**
+     * 移动到顶部
+     */
+    private void moveToTop() {
+        switch (categorySelected) {
+            case HomeConstant.SELECT_ACTIVITY:
+                if (activityLayoutManager.findFirstVisibleItemPosition() >= 5) {
+                    myCollectionActivityRecyclerview.scrollToPosition(5);
+                }
+                myCollectionActivityRecyclerview.smoothScrollToPosition(0);
+                break;
+            case HomeConstant.SELECT_CONTEST:
+                if (contestLayoutManager.findFirstVisibleItemPosition() >= 5) {
+                    myCollectionContestRecyclerview.scrollToPosition(5);
+                }
+                myCollectionContestRecyclerview.smoothScrollToPosition(0);
+                break;
+            case HomeConstant.SELECT_BLOG:
+                if (blogLayoutManager.findFirstVisibleItemPosition() >= 5) {
+                    myCollectionBlogRecyclerview.scrollToPosition(5);
+                }
+                myCollectionBlogRecyclerview.smoothScrollToPosition(0);
+                break;
+            case HomeConstant.SELECT_NONE:
+                break;
+            default:
+                break;
+        }
+    }
+
 }
 
 

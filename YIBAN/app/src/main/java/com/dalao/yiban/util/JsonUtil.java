@@ -12,6 +12,7 @@ import com.dalao.yiban.gson.EditUserInfoGson;
 import com.dalao.yiban.gson.FollowGson;
 import com.dalao.yiban.gson.HomeListGson;
 import com.dalao.yiban.gson.MyBLogGson;
+import com.dalao.yiban.gson.MyFollowingGson;
 import com.dalao.yiban.gson.PostImageGson;
 import com.dalao.yiban.gson.ReplyGson;
 import com.dalao.yiban.gson.UserInfoGson;
@@ -19,6 +20,22 @@ import com.google.gson.Gson;
 
 
 public class JsonUtil {
+
+    /**
+     * 解析我关注的人数据json
+     * @param responseText : 返回的json数据body
+     * @return : MyFollowingGson
+     */
+    public static MyFollowingGson handleMyFollowingResponse(String responseText) {
+        try {
+            return new Gson().fromJson(responseText, MyFollowingGson.class);
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * 解析我的博客数据json

@@ -42,6 +42,7 @@ import com.dalao.yiban.ui.activity.MainActivity;
 import com.dalao.yiban.ui.activity.MyBlogActivity;
 import com.dalao.yiban.ui.activity.MyCollectionActivity;
 import com.dalao.yiban.ui.activity.MyStarActivity;
+import com.dalao.yiban.ui.activity.ViewFollowingActivity;
 import com.dalao.yiban.ui.custom.CustomPopWindow;
 import com.dalao.yiban.util.CommonUtil;
 import com.dalao.yiban.util.HttpUtil;
@@ -216,7 +217,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
 
             // 查看我关注的人
             case R.id.mine_following_layout:
-                MyStarActivity.actionStart(activity, activity.userId);
+                ViewFollowingActivity.actionStart(activity, activity.userId);
                 break;
 
             // 易班登录

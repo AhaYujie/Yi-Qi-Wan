@@ -4,17 +4,17 @@ import java.util.List;
 
 public class MyBLogGson {
 
-    private List<MyblogsBean> myblogs;
+    private List<dataBean> data;
 
-    public List<MyblogsBean> getMyblogs() {
-        return myblogs;
+    public List<dataBean> getData() {
+        return data;
     }
 
-    public void setMyblogs(List<MyblogsBean> myblogs) {
-        this.myblogs = myblogs;
+    public void setData(List<dataBean> data) {
+        this.data = data;
     }
 
-    public static class MyblogsBean {
+    public static class dataBean {
         /**
          * id : 1
          * title : 博客标题

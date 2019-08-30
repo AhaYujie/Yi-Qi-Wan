@@ -12,4 +12,14 @@ public interface CollectInterface {
      */
     void unCollectSuccess();
 
+    /**
+     * 收藏或取消收藏失败
+     */
+    void collectError();
+
+    /**
+     * 进行收藏或取消收藏操作
+     */
+    void collectStart();
+
 }
