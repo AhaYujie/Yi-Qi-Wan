@@ -155,12 +155,12 @@ public class SearchActivity extends BaseActivity {
                 if (userid != -1) {
                     for(int i=0;i<UsedSearchList.size();i++)
                         Delete_the_search(UsedSearchList.get(i));
-                    UsedSearchList.clear();
-                    adapter_UsedSearch.notifyDataSetChanged();//刷新动画
                 }else{
                     SQLiteDatabase database = dataBaseHelper.getReadableDatabase();
                     database.delete("UsedSearch",null,null);
                 }
+                UsedSearchList.clear();
+                adapter_UsedSearch.notifyDataSetChanged();//刷新动画
             }
         });
 
@@ -176,6 +176,8 @@ public class SearchActivity extends BaseActivity {
                     SQLiteDatabase database = dataBaseHelper.getReadableDatabase();
                     database.delete("UsedSearch",null,null);
                 }
+                UsedSearchList.clear();
+                adapter_UsedSearch.notifyDataSetChanged();//刷新动画 
             }
         });
 
