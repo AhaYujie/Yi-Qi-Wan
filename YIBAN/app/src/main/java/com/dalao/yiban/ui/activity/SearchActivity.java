@@ -29,6 +29,7 @@ import androidx.appcompat.widget.SearchView;
 
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -83,7 +84,7 @@ public class SearchActivity extends BaseActivity {
     private Button button_back;
     private View view_blank1;
     private View view_blank2;
-    private LinearLayout function_bar;
+    private RelativeLayout function_bar;
     private ProgressBar progressBar;
     private TextView text_notfound;
     private SearchView searchView;
@@ -126,7 +127,7 @@ public class SearchActivity extends BaseActivity {
         button_back = (Button) findViewById(R.id.SearchBarBackButton);
         view_blank1 = (View) findViewById(R.id.search_bar_blank1);
         view_blank2 = (View) findViewById(R.id.search_bar_blank2);
-        function_bar = (LinearLayout) findViewById(R.id.search_bar_function_bar);
+        function_bar = (RelativeLayout) findViewById(R.id.search_bar_function_bar);
         searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
         progressBar = (ProgressBar) findViewById(R.id.search_bar_progressbar);
         text_notfound = (TextView) findViewById(R.id.search_result_notfound);

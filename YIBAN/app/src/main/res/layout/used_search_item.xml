@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 <!--    <View
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="10dp"></View>-->
-<LinearLayout
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <View
-        android:visibility="invisible"
-        android:layout_width="12dp"
-        android:layout_height="30dp"></View>
-
-    <ImageView
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:src="@drawable/ic_clock_balck"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="21dp" />
-
-    <View
-        android:visibility="invisible"
-        android:layout_width="12dp"
-        android:layout_height="30dp"></View>
-
-    <TextView
-        android:layout_gravity="center"
-        android:text="@string/activity"
-        android:textColor="#6B6666"
-        android:textSize="15dp"
-        android:clickable="true"
-        android:id="@+id/UsedSearchItem"
-        android:layout_weight="15"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content" />
-
-    <ImageView
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:id="@+id/UsedSearchDelete"
-        android:src="@drawable/ic_delete_black"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="30dp" />
-</LinearLayout>
-    <View
+    <RelativeLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="10dp"></View>
-    <View
-        android:background="#D3D3D3"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/used_search_icon"
+            android:layout_gravity="center"
+            android:focusable="true"
+            android:clickable="true"
+            android:src="@drawable/ic_clock_balck"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"/>
+
+        <TextView
+            android:layout_gravity="center"
+            android:text="@string/activity"
+            android:textColor="#6B6666"
+            android:textSize="15dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/UsedSearchItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/used_search_icon"/>
+
+        <ImageView
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/UsedSearchDelete"
+            android:src="@drawable/ic_delete_black"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"></View>
+        android:layout_height="1dp"
+        android:background="@color/boundaryLine">
+    </LinearLayout>
+
 </LinearLayout>
