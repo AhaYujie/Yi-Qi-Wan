@@ -16,6 +16,7 @@ import com.dalao.yiban.R;
 import com.dalao.yiban.constant.ServerUrlConstant;
 import com.dalao.yiban.db.Activity;
 import com.dalao.yiban.gson.CommunityBlogListGson;
+import com.dalao.yiban.ui.activity.BaseActivity;
 import com.dalao.yiban.ui.activity.BlogActivity;
 import com.dalao.yiban.ui.activity.MainActivity;
 
@@ -25,7 +26,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlogItemAdapter.ViewHolder> {
 
-    private MainActivity activity;
+    private BaseActivity activity;
+
+    private String userId;
 
     private List<CommunityBlogListGson.DataBean> dataBeanList;
 
@@ -59,8 +62,9 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
         }
     }
 
-    public CommunityBlogItemAdapter(MainActivity activity) {
+    public CommunityBlogItemAdapter(BaseActivity activity, String userId) {
         this.activity = activity;
+        this.userId = userId;
     }
 
     @NonNull
@@ -86,7 +90,7 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
             @Override
             public void onClick(View view) {
                 // 启动BlogActivity
-                BlogActivity.actionStart(view.getContext(), activity.userId,
+                BlogActivity.actionStart(view.getContext(), userId,
                         String.valueOf(dataBean.getId()), dataBean.getAvatar(),
                         String.valueOf(dataBean.getAuthor()), dataBean.getTitle(),
                         dataBean.getTime(), String.valueOf(dataBean.getAuthorid()));

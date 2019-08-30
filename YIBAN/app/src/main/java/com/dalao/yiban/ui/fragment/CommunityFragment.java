@@ -168,7 +168,7 @@ public class CommunityFragment extends BaseFragment {
         // 初始化RecyclerView
         linearLayoutManager = new LinearLayoutManager(activity);
         communityBlogRecyclerView.setLayoutManager(linearLayoutManager);
-        communityBlogItemAdapter = new CommunityBlogItemAdapter(activity);
+        communityBlogItemAdapter = new CommunityBlogItemAdapter(activity, activity.userId);
         communityBlogRecyclerView.setAdapter(communityBlogItemAdapter);
 
         // 设置RecyclerView监听事件

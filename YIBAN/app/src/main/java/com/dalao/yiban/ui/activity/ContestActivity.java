@@ -455,6 +455,8 @@ public class ContestActivity extends ContentActivity implements CommentInterface
         moreCollect.setTitle(HomeConstant.UN_COLLECT_TEXT);
         Toast.makeText(this, HintConstant.COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         contestGson.setCollection(HomeConstant.COLLECT);
+        bottomNavCollect.setClickable(true);
+        moreCollect.setEnabled(true);
     }
 
     /**
@@ -466,6 +468,27 @@ public class ContestActivity extends ContentActivity implements CommentInterface
         moreCollect.setTitle(HomeConstant.COLLECT_TEXT);
         Toast.makeText(this, HintConstant.UN_COLLECT_SUCCESS, Toast.LENGTH_SHORT).show();
         contestGson.setCollection(HomeConstant.UN_COLLECT);
+        bottomNavCollect.setClickable(true);
+        moreCollect.setEnabled(true);
+    }
+
+    /**
+     * 收藏或取消收藏失败
+     */
+    @Override
+    public void collectError() {
+        Toast.makeText(this, HintConstant.COLLECT_ERROR, Toast.LENGTH_SHORT).show();
+        bottomNavCollect.setClickable(true);
+        moreCollect.setEnabled(true);
+}
+
+    /**
+     * 进行收藏或取消收藏操作
+     */
+    @Override
+    public void collectStart() {
+        bottomNavCollect.setClickable(false);
+        moreCollect.setEnabled(false);
     }
 
     /**

@@ -34,6 +34,8 @@ public class CommunityConstant {
 
     public static final int UN_FOLLOW = -1;
 
+    public static final int FOLLOW_START = 0;
+
     public static final int CREATE_BLOG_CONTENT_MIN_LENGTH = 10;
 
     public static final int CREATE_BLOG_CONTENT_MAX_LENGTH = 1000;
