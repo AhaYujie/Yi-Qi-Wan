@@ -470,83 +470,9 @@ public class SearchActivity extends BaseActivity {
         function_bar.setVisibility(View.GONE);
         view_blank1.setVisibility(View.GONE);
         view_blank2.setVisibility(View.GONE);
-
-        searchView.setQuery(query.toString(),true);
         //以下是搜索接口
-        page_result=1;
         SearchResultList.clear();//先清空搜索结果
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    HashMap<String, String> paramsMap = new HashMap<>();//用哈希表来存参数
-                    paramsMap.put("keyword", query);
-                    paramsMap.put("userid", Integer.toString(userid));
-                    paramsMap.put("page",Integer.toString(page_result));
-                    FormBody.Builder builder = new FormBody.Builder();
-                    for (String key : paramsMap.keySet()) {
-                        //追加表单信息
-                        builder.add(key, paramsMap.get(key));
-                    }
-                    OkHttpClient okHttpClient = new OkHttpClient();
-                    RequestBody formBody = builder.build();
-                    Request request = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody).build();
-                    Response response = okHttpClient.newCall(request).execute();
-                    String responseData = response.body().string();
-                    //以下是解析json
-                    try {
-                        JSONObject jsnobject = new JSONObject(responseData);
-                        JSONArray jsonArray = jsnobject.getJSONArray("competition");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String time = jsonObject.getString("time");
-                            String title = jsonObject.getString("title");
-                            int pageviews = jsonObject.getInt("pageviews");
-                            int id = jsonObject.getInt("id");
-                            String avatar = jsonObject.getString("url");
-                            SearchResult content = new SearchResult(pageviews, time, title , id, user_id, 0, avatar);
-                            SearchResultList.add(content);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        JSONObject jsnobject = new JSONObject(responseData);
-                        JSONArray jsonArray = jsnobject.getJSONArray("activity");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String time = jsonObject.getString("time");
-                            String title = jsonObject.getString("title");
-                            int pageviews = jsonObject.getInt("pageviews");
-                            int id = jsonObject.getInt("id");
-                            String avatar = jsonObject.getString("url");
-                            SearchResult content = new SearchResult(pageviews, time, title, id, user_id, 1, avatar);
-                            SearchResultList.add(content);
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (SearchResultList.size() != 0) {
-                            progressBar.setVisibility(View.GONE);
-                            recyclerView_Result.setVisibility(View.VISIBLE);
-                            adapter_Result.notifyDataSetChanged();
-                        } else {
-                            progressBar.setVisibility(View.GONE);
-                            text_notfound.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-            }
-        }).start();
+        searchView.setQuery(query.toString(), true);
     }
 
     private List<UsedSearch> filter(List<UsedSearch> list, String text) {
