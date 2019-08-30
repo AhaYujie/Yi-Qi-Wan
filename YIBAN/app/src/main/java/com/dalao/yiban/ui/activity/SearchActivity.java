@@ -713,5 +713,7 @@ public class SearchActivity extends BaseActivity {
         }
     }
 
-    public void Delete_the_search()
+    public void Delete_the_search() {
+
+    }
 }
