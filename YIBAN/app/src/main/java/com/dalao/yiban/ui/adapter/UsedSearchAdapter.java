@@ -63,6 +63,7 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
                 else {
                     mcontext.Delete_the_search(usedSearch);
                     mUsedSearchList.remove(position);
+                    notifyItemRemoved(position);
                     notifyDataSetChanged();
                 }
             }

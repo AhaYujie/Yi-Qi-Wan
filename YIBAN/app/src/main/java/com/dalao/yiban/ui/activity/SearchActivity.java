@@ -152,16 +152,30 @@ public class SearchActivity extends BaseActivity {
         textview_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UsedSearchList.clear();
-                adapter_UsedSearch.notifyDataSetChanged();//刷新动画
+                if (userid != -1) {
+                    for(int i=0;i<UsedSearchList.size();i++)
+                        Delete_the_search(UsedSearchList.get(i));
+                    UsedSearchList.clear();
+                    adapter_UsedSearch.notifyDataSetChanged();//刷新动画
+                }else{
+                    SQLiteDatabase database = dataBaseHelper.getReadableDatabase();
+                    database.delete("UsedSearch",null,null);
+                }
             }
         });
 
         imageView_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UsedSearchList.clear();
-                adapter_UsedSearch.notifyDataSetChanged();//刷新动画
+                if(userid!=-1) {
+                    for(int i=0;i<UsedSearchList.size();i++)
+                        Delete_the_search(UsedSearchList.get(i));
+                    UsedSearchList.clear();
+                    adapter_UsedSearch.notifyDataSetChanged();//刷新动画
+                }else {
+                    SQLiteDatabase database = dataBaseHelper.getReadableDatabase();
+                    database.delete("UsedSearch",null,null);
+                }
             }
         });
 
@@ -456,8 +470,8 @@ public class SearchActivity extends BaseActivity {
         function_bar.setVisibility(View.GONE);
         view_blank1.setVisibility(View.GONE);
         view_blank2.setVisibility(View.GONE);
-        searchView.setQuery(query,false);
 
+        searchView.setQuery(query.toString(),true);
         //以下是搜索接口
         page_result=1;
         SearchResultList.clear();//先清空搜索结果
