@@ -55,13 +55,15 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(usedSearch.getId()==-1){
-                    mcontext.delete_keyword_in_file(usedSearch.getContent(),usedSearch.getId());
+                if(usedSearch.getUserId()==-1){
+                    mcontext.delete_keyword_in_file(usedSearch.getContent(),usedSearch.getUserId());
                     mUsedSearchList.remove(position);
                     notifyDataSetChanged();
                 }
                 else {
-
+                    mcontext.Delete_the_search(usedSearch);
+                    mUsedSearchList.remove(position);
+                    notifyDataSetChanged();
                 }
             }
         });

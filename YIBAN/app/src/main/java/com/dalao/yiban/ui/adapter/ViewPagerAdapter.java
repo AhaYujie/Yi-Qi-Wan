@@ -48,4 +48,5 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public void registerDataSetObserver(@NonNull DataSetObserver observer) {
         super.registerDataSetObserver(observer);
     }
+
 }

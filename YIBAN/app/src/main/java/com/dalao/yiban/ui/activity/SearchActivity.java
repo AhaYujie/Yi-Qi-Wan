@@ -1,11 +1,15 @@
 package com.dalao.yiban.ui.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 
 import com.dalao.yiban.R;
+import com.dalao.yiban.UsedSearchDataBaseHelper;
 import com.dalao.yiban.constant.HomeConstant;
 import com.dalao.yiban.db.Contest;
 import com.dalao.yiban.db.SearchResult;
@@ -92,6 +96,7 @@ public class SearchActivity extends BaseActivity {
     private TextView search_wait_pull;
     private TextView search_pulling;
     private TextView search_to_end;
+    private UsedSearchDataBaseHelper dataBaseHelper;
 
     @Override
     public void onClick(View view) {
@@ -103,11 +108,12 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_bar);
 
+        dataBaseHelper = new UsedSearchDataBaseHelper(this,"UsedSearch.db",null,1);
+        dataBaseHelper.getWritableDatabase();
         //从上一个活动获取数据
-        /*Intent intent = getIntent();
+        Intent intent = getIntent();
         String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-        int userid = Integer.parseInt(user_id);*/
-        userid = -1;
+        int userid = Integer.parseInt(user_id);
 
         page_result = 1;
         page_UsedSearch = 1;
@@ -241,11 +247,6 @@ public class SearchActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (adapter_Result.getItemCount() - (page_result - 1) * 10 > 0) {
-                                        Toast.makeText(SearchActivity.this, "已加载了" + Integer.toString(adapter_Result.getItemCount() - (page_result - 1) * 10) + "条数据", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(SearchActivity.this, "已经到尽头了", Toast.LENGTH_SHORT).show();
-                                    }
                                     adapter_Result.notifyDataSetChanged();
                                 }
                             });
@@ -294,7 +295,8 @@ public class SearchActivity extends BaseActivity {
                                         for (int i = 0; i < jsonArray.length(); i++) {
                                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                                             String keyword = jsonObject.getString("keyword");
-                                            UsedSearch content = new UsedSearch(keyword, userid);
+                                            int searchid = jsonObject.getInt("id");
+                                            UsedSearch content = new UsedSearch(keyword, userid,searchid);
                                             UsedSearchList.add(content);
                                         }
                                     } catch (Exception e) {
@@ -307,11 +309,6 @@ public class SearchActivity extends BaseActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (adapter_UsedSearch.getItemCount() - (page_UsedSearch - 1) * 10 > 0) {
-                                            Toast.makeText(SearchActivity.this, "已加载了" + Integer.toString(adapter_UsedSearch.getItemCount() - (page_UsedSearch - 1) * 10) + "条数据", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(SearchActivity.this, "已经到尽头了", Toast.LENGTH_SHORT).show();
-                                        }
                                         adapter_UsedSearch.notifyDataSetChanged();
                                     }
                                 });
@@ -326,7 +323,7 @@ public class SearchActivity extends BaseActivity {
                             reader = new BufferedReader(new InputStreamReader(in));
                             String line = "";
                             while ((line = reader.readLine()) != null) {
-                                UsedSearch content = new UsedSearch(line, userid);
+                                UsedSearch content = new UsedSearch(line, userid,0);
                                 UsedSearchList.add(content);
                             }
                         } catch (Exception e) {
@@ -549,85 +546,34 @@ public class SearchActivity extends BaseActivity {
     }
 
     public void delete_keyword_in_file(String keyword,int userid) {
-        //读
-        List<UsedSearch> mList = new ArrayList<>();
-        FileInputStream in = null;
-        BufferedReader reader = null;
-        try {
-            in = openFileInput("data");
-            reader = new BufferedReader(new InputStreamReader(in));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                UsedSearch content = new UsedSearch(line, userid);
-                mList.add(content);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        //查重
-        for (int i = 0; i < mList.size(); i++) {
-            if (mList.get(i).getContent().equals(keyword) == true) {
-                mList.remove(i);
-            }
-        }
-
-        //写
-        String data = keyword;
-        FileOutputStream out = null;
-        BufferedWriter writer = null;
-        try {
-            out = openFileOutput("data", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            for (int i = 0; i < mList.size(); i++) {
-                writer.write(mList.get(i).getContent());
-                writer.write('\n');
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        SQLiteDatabase database =dataBaseHelper.getWritableDatabase();
+        database.delete("UsedSearch","content = ?",new String[]{keyword});
     }
 
     public void save_keyword_in_file(String keyword) {
-        FileOutputStream out = null;
-        BufferedWriter writer = null;
-        try {
-            out = openFileOutput("data", Context.MODE_APPEND);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            writer.write(keyword);
-            writer.write('\n');
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
+        int flag=0;
+        SQLiteDatabase db = dataBaseHelper.getWritableDatabase();
+        Cursor cursor = db.query("UsedSearch",null,null,null,
+                null,null,null);
+        if(cursor.moveToFirst()){
+            do{
+                String content = cursor.getString(cursor.getColumnIndex("content"));
+                if(content.equals(keyword)){
+                    flag=1;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            }while (cursor.moveToNext());
         }
+        if(flag==0){
+            ContentValues values = new ContentValues();
+            values.put("content",keyword);
+            db.insert("UsedSearch",null,values);
+        }
+        cursor.close();
     }
 
     private List<UsedSearch> rip_same_content (List<UsedSearch> mList){
         for(int i=0;i<mList.size();i++){
-            for(int j=i;j<mList.size();j++){
+            for(int j=i+1;j<mList.size();j++){
                 if(mList.get(j).getContent().equals(mList.get(i).getContent())==true){
                     mList.remove(j);
                 }
@@ -663,7 +609,8 @@ public class SearchActivity extends BaseActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 String keyword = jsonObject.getString("keyword");
-                                UsedSearch content = new UsedSearch(keyword, userid);
+                                int searchid = jsonObject.getInt("id");
+                                UsedSearch content = new UsedSearch(keyword, userid,searchid);
                                 UsedSearchList.add(content);
                             }
                         } catch (Exception e) {
@@ -677,7 +624,6 @@ public class SearchActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (UsedSearchList.size() != 0) {
-                                UsedSearchList=rip_same_content(UsedSearchList);
                                 recyclerView_UsedSearch.setVisibility(View.VISIBLE);
                                 adapter_UsedSearch.notifyDataSetChanged();
                             }
@@ -687,31 +633,44 @@ public class SearchActivity extends BaseActivity {
             }).start();
         }//文件读取数据
         else {
-            FileInputStream in = null;
-            BufferedReader reader = null;
-            try {
-                in = openFileInput("data");
-                reader = new BufferedReader(new InputStreamReader(in));
-                String line = "";
-                while ((line = reader.readLine()) != null) {
-                    UsedSearch content = new UsedSearch(line, userid);
-                    UsedSearchList.add(content);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                        UsedSearchList=rip_same_content(UsedSearchList);
-                        adapter_UsedSearch.notifyDataSetChanged();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            SQLiteDatabase database = dataBaseHelper.getWritableDatabase();
+            Cursor cursor = database.query("UsedSearch",null,null,null,
+            null,null,null);
+            if(cursor.moveToFirst()){
+                do{
+                    String content = cursor.getString(cursor.getColumnIndex("content"));
+                    UsedSearch usedSearch = new UsedSearch(content,-1,0);
+                    UsedSearchList.add(usedSearch);
+                }while (cursor.moveToNext());
             }
+            adapter_UsedSearch.notifyDataSetChanged();
+            cursor.close();
         }
     }
 
-    public void Delete_the_search()
+    public void Delete_the_search(UsedSearch usedSearch){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HashMap<String, String> paramsMap_UsedSearch = new HashMap<>();//用哈希表来存参数
+                    paramsMap_UsedSearch.put("userid",Integer.toString(usedSearch.getUserId()));
+                    paramsMap_UsedSearch.put("searchid",Integer.toString(usedSearch.getSearchid()));
+                    FormBody.Builder builder_UsedSearch = new FormBody.Builder();
+                    for (String key : paramsMap_UsedSearch.keySet()) {
+                        //追加表单信息
+                        builder_UsedSearch.add(key, paramsMap_UsedSearch.get(key));
+                    }
+                    OkHttpClient okHttpClient_UsedSearch = new OkHttpClient();
+                    RequestBody formBody_UsedSearch = builder_UsedSearch.build();
+                    Request request_UsedSearch = new Request.Builder().url("http://188888888.xyz:5000/search/delete").post(formBody_UsedSearch).build();
+                    Response response_UsedSearch = okHttpClient_UsedSearch.newCall(request_UsedSearch).execute();
+                    String responseData_UsedSearch = response_UsedSearch.body().string();
+                    //以下是解析json
+                } catch (Exception e) {
+                e.printStackTrace();
+            };
+            }
+        }).start();
+    }
 }
