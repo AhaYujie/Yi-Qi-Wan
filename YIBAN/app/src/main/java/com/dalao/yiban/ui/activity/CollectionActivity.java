@@ -229,7 +229,7 @@ public class CollectionActivity extends BaseActivity {
                                         String avater = jsonObject.getString("avatar");
                                         String name = jsonObject.getString("name");
                                         String authorid  = jsonObject.getString("authorid");
-                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,1,avater);
+                                        SearchResult content = new SearchResult(pageviews, time, title,  id,user_id,1,avater);
                                         ActivityList.add(content);
                                     }
                                 } catch (Exception e) {
@@ -370,7 +370,7 @@ public class CollectionActivity extends BaseActivity {
                                         String avater = jsonObject.getString("avatar");
                                         String name = jsonObject.getString("name");
                                         String authorid  = jsonObject.getString("authorid");
-                                        SearchResult content = new SearchResult(pageviews, time, title, "西楼", id,user_id,0,avater);
+                                        SearchResult content = new SearchResult(pageviews, time, title, id,user_id,0,avater);
                                         ContestList.add(content);
                                     }
                                 } catch (Exception e) {

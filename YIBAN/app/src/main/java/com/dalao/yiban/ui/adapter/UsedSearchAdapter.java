@@ -56,9 +56,12 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
             @Override
             public void onClick(View v) {
                 if(usedSearch.getId()==-1){
-                    mcontext.delete_keyword_fromfile(usedSearch.getContent());
-                    notifyItemRemoved(position);
+                    mcontext.delete_keyword_in_file(usedSearch.getContent(),usedSearch.getId());
+                    mUsedSearchList.remove(position);
                     notifyDataSetChanged();
+                }
+                else {
+
                 }
             }
         });
@@ -72,10 +75,7 @@ public class UsedSearchAdapter extends RecyclerView.Adapter<UsedSearchAdapter.Vi
 
     @Override
     public int getItemCount() {
-        if(mUsedSearchList.size()<=10)
             return mUsedSearchList.size();
-        else
-            return 10;
     }
 
     //  删除数据

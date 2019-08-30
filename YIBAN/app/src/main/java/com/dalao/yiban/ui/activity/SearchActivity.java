@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 
 import android.widget.LinearLayout;
@@ -59,46 +61,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SearchActivity extends BaseActivity {
-
+    //启动函数
     public static void actionStart(Context context, String userId) {
         Intent intent = new Intent(context, SearchActivity.class);
         intent.putExtra(HomeConstant.USER_ID, userId);
         context.startActivity(intent);
     }
 
-    int userid ;
-    String user_id;
-    final String FILE_NAME = "used_search";
-
-    private boolean deng(String a, String b) {
-        if (a.equals(b))
-            return true;
-        else
-            return false;
-    }
-
-    private List<UsedSearch> Rip(List<UsedSearch> UsedSearchList) {
-
-        for (int i = 0; i < UsedSearchList.size(); i++) {
-            UsedSearch a = UsedSearchList.get(i);
-            int j;
-            for (j = 0; j < i; j++) {
-                UsedSearch b = UsedSearchList.get(j);
-                if (deng(a.getContent(), b.getContent()) == true)
-                    break;
-            }
-            if (j != i)
-                UsedSearchList.remove(i);
-        }
-
-        return UsedSearchList;
-    }
-
     private List<UsedSearch> UsedSearchList = new ArrayList<>();
     //这是曾经搜索的列表
     private List<SearchResult> SearchResultList = new ArrayList<>();
     //这是搜索结果的列表
-
     private RecyclerView recyclerView_Result;
     private RecyclerView recyclerView_UsedSearch;
     private TextView textview_clear;
@@ -109,8 +82,16 @@ public class SearchActivity extends BaseActivity {
     private LinearLayout function_bar;
     private ProgressBar progressBar;
     private TextView text_notfound;
-    //搜索历史那一栏
     private SearchView searchView;
+    private String user_id;
+    private int userid;
+    private SearchResultAdapter adapter_Result;
+    private UsedSearchAdapter adapter_UsedSearch;
+    private int page_UsedSearch;
+    private int page_result;
+    private TextView search_wait_pull;
+    private TextView search_pulling;
+    private TextView search_to_end;
 
     @Override
     public void onClick(View view) {
@@ -123,10 +104,15 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.search_bar);
 
         //从上一个活动获取数据
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         String user_id = intent.getStringExtra(HomeConstant.USER_ID);
-        int userid=Integer.parseInt(user_id);
+        int userid = Integer.parseInt(user_id);*/
+        userid = -1;
 
+        page_result = 1;
+        page_UsedSearch = 1;
+
+        //控件初始化
         recyclerView_Result = (RecyclerView) findViewById(R.id.search_bar_result);
         recyclerView_UsedSearch = (RecyclerView) findViewById(R.id.search_bar_RecyclerView);
         textview_clear = (TextView) findViewById(R.id.UsedSearchClearText);
@@ -135,95 +121,26 @@ public class SearchActivity extends BaseActivity {
         view_blank1 = (View) findViewById(R.id.search_bar_blank1);
         view_blank2 = (View) findViewById(R.id.search_bar_blank2);
         function_bar = (LinearLayout) findViewById(R.id.search_bar_function_bar);
-        //搜索历史那一栏
         searchView = (SearchView) findViewById(R.id.search_bar_SearchView);
         progressBar = (ProgressBar) findViewById(R.id.search_bar_progressbar);
         text_notfound = (TextView) findViewById(R.id.search_result_notfound);
+        /*search_wait_pull = (TextView) findViewById(R.id.search_wait_pull);
+        search_pulling = (TextView) findViewById(R.id.search_pulling);
+        search_to_end = (TextView) findViewById(R.id.search_to_end);*/
 
         LinearLayoutManager layoutManager_UsedSearch = new LinearLayoutManager(this);
         recyclerView_UsedSearch.setLayoutManager(layoutManager_UsedSearch);
-        final UsedSearchAdapter adapter_UsedSearch = new UsedSearchAdapter(UsedSearchList, SearchActivity.this);
+        adapter_UsedSearch = new UsedSearchAdapter(UsedSearchList, SearchActivity.this);
         recyclerView_UsedSearch.setAdapter(adapter_UsedSearch);
 
         LinearLayoutManager layoutManager_Result = new LinearLayoutManager(this);
         recyclerView_Result.setLayoutManager(layoutManager_Result);
-        SearchResultAdapter adapter_Result = new SearchResultAdapter(SearchResultList);
+        adapter_Result = new SearchResultAdapter(SearchResultList);
         recyclerView_Result.setAdapter(adapter_Result);
         progressBar.setVisibility(View.GONE);
+
         //搜索记录初始化
-        if (userid != -1) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        HashMap<String, String> paramsMap_UsedSearch = new HashMap<>();//用哈希表来存参数
-                        paramsMap_UsedSearch.put("userid", Integer.toString(userid));
-                        FormBody.Builder builder_UsedSearch = new FormBody.Builder();
-                        for (String key : paramsMap_UsedSearch.keySet()) {
-                            //追加表单信息
-                            builder_UsedSearch.add(key, paramsMap_UsedSearch.get(key));
-                        }
-                        OkHttpClient okHttpClient_UsedSearch = new OkHttpClient();
-                        RequestBody formBody_UsedSearch = builder_UsedSearch.build();
-                        Request request_UsedSearch = new Request.Builder().url("http://188888888.xyz:5000/search/history").post(formBody_UsedSearch).build();
-                        Response response_UsedSearch = okHttpClient_UsedSearch.newCall(request_UsedSearch).execute();
-                        String responseData_UsedSearch = response_UsedSearch.body().string();
-                        //以下是解析json
-                        try {
-                            JSONObject jsnobject = new JSONObject(responseData_UsedSearch);
-                            JSONArray jsonArray = jsnobject.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i += 2) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                String keyword = jsonObject.getString("keyword");
-                                UsedSearch content = new UsedSearch(keyword, userid);
-                                UsedSearchList.add(content);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    UsedSearchList = Rip(UsedSearchList);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (UsedSearchList.size() != 0) {
-                                recyclerView_UsedSearch.setVisibility(View.VISIBLE);
-                                adapter_UsedSearch.notifyDataSetChanged();
-                            }
-                        }
-                    });
-                }
-            }).start();
-        }//文件读取数据
-        else {
-            FileInputStream in = null;
-            BufferedReader reader = null;
-            try {
-                in = openFileInput("data");
-                reader = new BufferedReader(new InputStreamReader(in));
-                String line = "";
-                while ((line = reader.readLine()) != null) {
-                    UsedSearch content = new UsedSearch(line, userid);
-                    UsedSearchList.add(content);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                        adapter_UsedSearch.notifyDataSetChanged();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
+        InitSearchData(userid);
 
         textview_clear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,31 +167,192 @@ public class SearchActivity extends BaseActivity {
 
         searchView.setSubmitButtonEnabled(true);//显示提交按钮
         searchView.setIconifiedByDefault(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+        recyclerView_Result.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int LastVisibleItem;
+
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
-                if (userid == -1) {
-                    String data = query;
-                    FileOutputStream out = null;
-                    BufferedWriter writer = null;
-                    try {
-                        out = openFileOutput("data", Context.MODE_APPEND);
-                        writer = new BufferedWriter(new OutputStreamWriter(out));
-                        writer.write(query);
-                        writer.write('\n');
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            if (writer != null) {
-                                writer.close();
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LastVisibleItem = layoutManager_Result.findLastVisibleItemPosition();
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && LastVisibleItem + 1 == adapter_Result.getItemCount()) {
+                    page_result++;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                HashMap<String, String> paramsMap = new HashMap<>();//用哈希表来存参数
+                                paramsMap.put("keyword", searchView.getQuery().toString());
+                                paramsMap.put("userid", Integer.toString(userid));
+                                paramsMap.put("page", Integer.toString(page_result));
+                                FormBody.Builder builder = new FormBody.Builder();
+                                for (String key : paramsMap.keySet()) {
+                                    //追加表单信息
+                                    builder.add(key, paramsMap.get(key));
+                                }
+                                OkHttpClient okHttpClient = new OkHttpClient();
+                                RequestBody formBody = builder.build();
+                                Request request = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody).build();
+                                Response response = okHttpClient.newCall(request).execute();
+                                String responseData = response.body().string();
+                                //以下是解析json
+                                try {
+                                    JSONObject jsnobject = new JSONObject(responseData);
+                                    JSONArray jsonArray = jsnobject.getJSONArray("competition");
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        String time = jsonObject.getString("time");
+                                        String title = jsonObject.getString("title");
+                                        int pageviews = jsonObject.getInt("pageviews");
+                                        int id = jsonObject.getInt("id");
+                                        String avatar = jsonObject.getString("url");
+                                        SearchResult content = new SearchResult(pageviews, time, title, id, user_id, 0, avatar);
+                                        SearchResultList.add(content);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    JSONObject jsnobject = new JSONObject(responseData);
+                                    JSONArray jsonArray = jsnobject.getJSONArray("activity");
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        String time = jsonObject.getString("time");
+                                        String title = jsonObject.getString("title");
+                                        int pageviews = jsonObject.getInt("pageviews");
+                                        int id = jsonObject.getInt("id");
+                                        String avatar = jsonObject.getString("url");
+                                        SearchResult content = new SearchResult(pageviews, time, title, id, user_id, 1, avatar);
+                                        SearchResultList.add(content);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (adapter_Result.getItemCount() - (page_result - 1) * 10 > 0) {
+                                        Toast.makeText(SearchActivity.this, "已加载了" + Integer.toString(adapter_Result.getItemCount() - (page_result - 1) * 10) + "条数据", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(SearchActivity.this, "已经到尽头了", Toast.LENGTH_SHORT).show();
+                                    }
+                                    adapter_Result.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    }).start();
+                }
+            }
+        });
+
+        recyclerView_UsedSearch.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int LastVisibleItem;
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LastVisibleItem = layoutManager_UsedSearch.findLastVisibleItemPosition();
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && LastVisibleItem + 1 == adapter_UsedSearch.getItemCount()) {
+                    page_UsedSearch++;
+                    if (userid != -1) {//游客
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    HashMap<String, String> paramsMap_UsedSearch = new HashMap<>();//用哈希表来存参数
+                                    paramsMap_UsedSearch.put("userid", Integer.toString(userid));
+                                    paramsMap_UsedSearch.put("page", Integer.toString(page_UsedSearch));
+                                    FormBody.Builder builder_UsedSearch = new FormBody.Builder();
+                                    for (String key : paramsMap_UsedSearch.keySet()) {
+                                        //追加表单信息
+                                        builder_UsedSearch.add(key, paramsMap_UsedSearch.get(key));
+                                    }
+                                    OkHttpClient okHttpClient_UsedSearch = new OkHttpClient();
+                                    RequestBody formBody_UsedSearch = builder_UsedSearch.build();
+                                    Request request_UsedSearch = new Request.Builder().url("http://188888888.xyz:5000/search/history").post(formBody_UsedSearch).build();
+                                    Response response_UsedSearch = okHttpClient_UsedSearch.newCall(request_UsedSearch).execute();
+                                    String responseData_UsedSearch = response_UsedSearch.body().string();
+                                    //以下是解析json
+                                    try {
+                                        JSONObject jsnobject = new JSONObject(responseData_UsedSearch);
+                                        JSONArray jsonArray = jsnobject.getJSONArray("data");
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                            String keyword = jsonObject.getString("keyword");
+                                            UsedSearch content = new UsedSearch(keyword, userid);
+                                            UsedSearchList.add(content);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (adapter_UsedSearch.getItemCount() - (page_UsedSearch - 1) * 10 > 0) {
+                                            Toast.makeText(SearchActivity.this, "已加载了" + Integer.toString(adapter_UsedSearch.getItemCount() - (page_UsedSearch - 1) * 10) + "条数据", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(SearchActivity.this, "已经到尽头了", Toast.LENGTH_SHORT).show();
+                                        }
+                                        adapter_UsedSearch.notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                        }).start();
+                    }//文件读取数据
+                    else {
+                        FileInputStream in = null;
+                        BufferedReader reader = null;
+                        try {
+                            in = openFileInput("data");
+                            reader = new BufferedReader(new InputStreamReader(in));
+                            String line = "";
+                            while ((line = reader.readLine()) != null) {
+                                UsedSearch content = new UsedSearch(line, userid);
+                                UsedSearchList.add(content);
+                            }
+                        } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            if (reader != null) {
+                                try {
+                                    reader.close();
+                                    UsedSearchList = rip_same_content(UsedSearchList);
+                                    adapter_UsedSearch.notifyDataSetChanged();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 }
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(userid == -1){
+                    save_keyword_in_file(query);
+                }
+                Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.VISIBLE);
                 text_notfound.setVisibility(View.GONE);
                 recyclerView_UsedSearch.setVisibility(View.GONE);
@@ -283,82 +361,64 @@ public class SearchActivity extends BaseActivity {
                 view_blank2.setVisibility(View.GONE);
 
                 //以下是搜索接口
+                page_result=1;
                 SearchResultList.clear();//先清空搜索结果
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            //以下是POST方法
-                            HashMap<String, String> paramsMap_competition = new HashMap<>();//用哈希表来存参数
-                            paramsMap_competition.put("competition", query);
-                            paramsMap_competition.put("userid", Integer.toString(userid));
-                            FormBody.Builder builder_competition = new FormBody.Builder();
-                            for (String key : paramsMap_competition.keySet()) {
+                            HashMap<String, String> paramsMap = new HashMap<>();//用哈希表来存参数
+                            paramsMap.put("keyword", query);
+                            paramsMap.put("userid", Integer.toString(userid));
+                            paramsMap.put("page",Integer.toString(page_result));
+                            FormBody.Builder builder = new FormBody.Builder();
+                            for (String key : paramsMap.keySet()) {
                                 //追加表单信息
-                                builder_competition.add(key, paramsMap_competition.get(key));
+                                builder.add(key, paramsMap.get(key));
                             }
-                            OkHttpClient okHttpClient_competition = new OkHttpClient();
-                            RequestBody formBody_competition = builder_competition.build();
-                            Request request_competition = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_competition).build();
-                            Response response_competition = okHttpClient_competition.newCall(request_competition).execute();
-                            String responseData_competition = response_competition.body().string();
+                            OkHttpClient okHttpClient = new OkHttpClient();
+                            RequestBody formBody = builder.build();
+                            Request request = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody).build();
+                            Response response = okHttpClient.newCall(request).execute();
+                            String responseData = response.body().string();
                             //以下是解析json
-
-
                             try {
-                                JSONObject jsnobject = new JSONObject(responseData_competition);
-                                JSONArray jsonArray = jsnobject.getJSONArray("data");
+                                JSONObject jsnobject = new JSONObject(responseData);
+                                JSONArray jsonArray = jsnobject.getJSONArray("competition");
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     String time = jsonObject.getString("time");
                                     String title = jsonObject.getString("title");
                                     int pageviews = jsonObject.getInt("pageviews");
                                     int id = jsonObject.getInt("id");
-                                    String avatar = jsonObject.getString("avatar");
-                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, Integer.toString(userid), 0, avatar);
+                                    String avatar = jsonObject.getString("url");
+                                    SearchResult content = new SearchResult(pageviews, time, title , id, user_id, 0, avatar);
                                     SearchResultList.add(content);
-                                    //Log.e("qaq",Integer.toString(SearchResultList.size()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
-
-                            HashMap<String, String> paramsMap_activity = new HashMap<>();//用哈希表来存参数
-                            paramsMap_activity.put("activity", query);
-                            paramsMap_activity.put("userid", Integer.toString(userid));
-                            FormBody.Builder builder_activity = new FormBody.Builder();
-                            for (String key : paramsMap_activity.keySet()) {
-                                //追加表单信息
-                                builder_activity.add(key, paramsMap_activity.get(key));
-                            }
-                            OkHttpClient okHttpClient_activity = new OkHttpClient();
-                            RequestBody formBody_activity = builder_activity.build();
-                            Request request_activity = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_activity).build();
-                            Response response_activity = okHttpClient_activity.newCall(request_activity).execute();
-                            String responseData_activity = response_activity.body().string();
-                            //以下是解析json
                             try {
-                                JSONObject jsnobject = new JSONObject(responseData_activity);
-                                JSONArray jsonArray = jsnobject.getJSONArray("data");
+                                JSONObject jsnobject = new JSONObject(responseData);
+                                JSONArray jsonArray = jsnobject.getJSONArray("activity");
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     String time = jsonObject.getString("time");
                                     String title = jsonObject.getString("title");
                                     int pageviews = jsonObject.getInt("pageviews");
                                     int id = jsonObject.getInt("id");
-                                    String avatar = jsonObject.getString("avatar");
-                                    SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, user_id, 1, avatar);
+                                    String avatar = jsonObject.getString("url");
+                                    SearchResult content = new SearchResult(pageviews, time, title, id, user_id, 1, avatar);
                                     SearchResultList.add(content);
                                 }
-                            } catch (Exception e) {
+                            }catch (Exception e){
                                 e.printStackTrace();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -374,10 +434,10 @@ public class SearchActivity extends BaseActivity {
                             }
                         });
                     }
-
                 }).start();
                 return false;
             }
+
 
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -389,97 +449,76 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
-    public void TouchContent(String query) {
-        //搜索历史那一栏
-        Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
 
+    public void TouchContent(String query) {
+        Toast.makeText(SearchActivity.this, "你想搜索的是:" + query + "。\n请稍等片刻(●'◡'●)", Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.VISIBLE);
         text_notfound.setVisibility(View.GONE);
         recyclerView_UsedSearch.setVisibility(View.GONE);
         function_bar.setVisibility(View.GONE);
         view_blank1.setVisibility(View.GONE);
         view_blank2.setVisibility(View.GONE);
+        searchView.setQuery(query,false);
 
         //以下是搜索接口
+        page_result=1;
         SearchResultList.clear();//先清空搜索结果
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    //以下是POST方法
-                    HashMap<String, String> paramsMap_competition = new HashMap<>();//用哈希表来存参数
-                    paramsMap_competition.put("competition", query);
-                    paramsMap_competition.put("userid", Integer.toString(userid));
-                    FormBody.Builder builder_competition = new FormBody.Builder();
-                    for (String key : paramsMap_competition.keySet()) {
+                    HashMap<String, String> paramsMap = new HashMap<>();//用哈希表来存参数
+                    paramsMap.put("keyword", query);
+                    paramsMap.put("userid", Integer.toString(userid));
+                    paramsMap.put("page",Integer.toString(page_result));
+                    FormBody.Builder builder = new FormBody.Builder();
+                    for (String key : paramsMap.keySet()) {
                         //追加表单信息
-                        builder_competition.add(key, paramsMap_competition.get(key));
+                        builder.add(key, paramsMap.get(key));
                     }
-                    OkHttpClient okHttpClient_competition = new OkHttpClient();
-                    RequestBody formBody_competition = builder_competition.build();
-                    Request request_competition = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_competition).build();
-                    Response response_competition = okHttpClient_competition.newCall(request_competition).execute();
-                    String responseData_competition = response_competition.body().string();
-                    Thread.sleep(1000);
+                    OkHttpClient okHttpClient = new OkHttpClient();
+                    RequestBody formBody = builder.build();
+                    Request request = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody).build();
+                    Response response = okHttpClient.newCall(request).execute();
+                    String responseData = response.body().string();
                     //以下是解析json
-
-
                     try {
-                        JSONObject jsnobject = new JSONObject(responseData_competition);
-                        JSONArray jsonArray = jsnobject.getJSONArray("data");
+                        JSONObject jsnobject = new JSONObject(responseData);
+                        JSONArray jsonArray = jsnobject.getJSONArray("competition");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String time = jsonObject.getString("time");
                             String title = jsonObject.getString("title");
                             int pageviews = jsonObject.getInt("pageviews");
                             int id = jsonObject.getInt("id");
-                            String avatar = jsonObject.getString("avatar");
-                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, Integer.toString(userid), 0, avatar);
+                            String avatar = jsonObject.getString("url");
+                            SearchResult content = new SearchResult(pageviews, time, title , id, user_id, 0, avatar);
                             SearchResultList.add(content);
-                            //Log.e("qaq",Integer.toString(SearchResultList.size()));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-
-                    HashMap<String, String> paramsMap_activity = new HashMap<>();//用哈希表来存参数
-                    paramsMap_activity.put("activity",
-                            query);
-                    paramsMap_activity.put("userid", Integer.toString(userid));
-                    FormBody.Builder builder_activity = new FormBody.Builder();
-                    for (String key : paramsMap_activity.keySet()) {
-                        //追加表单信息
-                        builder_activity.add(key, paramsMap_activity.get(key));
-                    }
-                    OkHttpClient okHttpClient_activity = new OkHttpClient();
-                    RequestBody formBody_activity = builder_activity.build();
-                    Request request_activity = new Request.Builder().url("http://188888888.xyz:5000/search").post(formBody_activity).build();
-                    Response response_activity = okHttpClient_activity.newCall(request_activity).execute();
-                    String responseData_activity = response_activity.body().string();
-                    //以下是解析json
                     try {
-                        JSONObject jsnobject = new JSONObject(responseData_activity);
-                        JSONArray jsonArray = jsnobject.getJSONArray("data");
+                        JSONObject jsnobject = new JSONObject(responseData);
+                        JSONArray jsonArray = jsnobject.getJSONArray("activity");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String time = jsonObject.getString("time");
                             String title = jsonObject.getString("title");
                             int pageviews = jsonObject.getInt("pageviews");
                             int id = jsonObject.getInt("id");
-                            String avatar = jsonObject.getString("avatar");
-                            SearchResult content = new SearchResult(pageviews, time, title, "西楼", id, user_id, 1, avatar);
+                            String avatar = jsonObject.getString("url");
+                            SearchResult content = new SearchResult(pageviews, time, title, id, user_id, 1, avatar);
                             SearchResultList.add(content);
                         }
-                    } catch (Exception e) {
+                    }catch (Exception e){
                         e.printStackTrace();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                UsedSearchList = Rip(UsedSearchList);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -487,6 +526,7 @@ public class SearchActivity extends BaseActivity {
                         if (SearchResultList.size() != 0) {
                             progressBar.setVisibility(View.GONE);
                             recyclerView_Result.setVisibility(View.VISIBLE);
+                            adapter_Result.notifyDataSetChanged();
                         } else {
                             progressBar.setVisibility(View.GONE);
                             text_notfound.setVisibility(View.VISIBLE);
@@ -494,7 +534,6 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
             }
-
         }).start();
     }
 
@@ -509,7 +548,7 @@ public class SearchActivity extends BaseActivity {
         return filterString;
     }
 
-    public void delete_keyword_fromfile(String keyword) {
+    public void delete_keyword_in_file(String keyword,int userid) {
         //读
         List<UsedSearch> mList = new ArrayList<>();
         FileInputStream in = null;
@@ -534,11 +573,13 @@ public class SearchActivity extends BaseActivity {
             }
         }
 
-        for(int i=0;i<mList.size();i++){
-            if(mList.get(i).getContent().equals(keyword)==true){
+        //查重
+        for (int i = 0; i < mList.size(); i++) {
+            if (mList.get(i).getContent().equals(keyword) == true) {
                 mList.remove(i);
             }
         }
+
         //写
         String data = keyword;
         FileOutputStream out = null;
@@ -546,7 +587,7 @@ public class SearchActivity extends BaseActivity {
         try {
             out = openFileOutput("data", Context.MODE_PRIVATE);
             writer = new BufferedWriter(new OutputStreamWriter(out));
-            for(int i=0;i<mList.size();i++){
+            for (int i = 0; i < mList.size(); i++) {
                 writer.write(mList.get(i).getContent());
                 writer.write('\n');
             }
@@ -562,4 +603,115 @@ public class SearchActivity extends BaseActivity {
             }
         }
     }
+
+    public void save_keyword_in_file(String keyword) {
+        FileOutputStream out = null;
+        BufferedWriter writer = null;
+        try {
+            out = openFileOutput("data", Context.MODE_APPEND);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            writer.write(keyword);
+            writer.write('\n');
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private List<UsedSearch> rip_same_content (List<UsedSearch> mList){
+        for(int i=0;i<mList.size();i++){
+            for(int j=i;j<mList.size();j++){
+                if(mList.get(j).getContent().equals(mList.get(i).getContent())==true){
+                    mList.remove(j);
+                }
+            }
+        }
+        return mList;
+    }
+
+    private void InitSearchData(int userid){
+        page_UsedSearch = 1;
+        if (userid != -1) {//游客
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HashMap<String, String> paramsMap_UsedSearch = new HashMap<>();//用哈希表来存参数
+                        paramsMap_UsedSearch.put("userid", Integer.toString(userid));
+                        paramsMap_UsedSearch.put("page",Integer.toString(page_UsedSearch));
+                        FormBody.Builder builder_UsedSearch = new FormBody.Builder();
+                        for (String key : paramsMap_UsedSearch.keySet()) {
+                            //追加表单信息
+                            builder_UsedSearch.add(key, paramsMap_UsedSearch.get(key));
+                        }
+                        OkHttpClient okHttpClient_UsedSearch = new OkHttpClient();
+                        RequestBody formBody_UsedSearch = builder_UsedSearch.build();
+                        Request request_UsedSearch = new Request.Builder().url("http://188888888.xyz:5000/search/history").post(formBody_UsedSearch).build();
+                        Response response_UsedSearch = okHttpClient_UsedSearch.newCall(request_UsedSearch).execute();
+                        String responseData_UsedSearch = response_UsedSearch.body().string();
+                        //以下是解析json
+                        try {
+                            JSONObject jsnobject = new JSONObject(responseData_UsedSearch);
+                            JSONArray jsonArray = jsnobject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String keyword = jsonObject.getString("keyword");
+                                UsedSearch content = new UsedSearch(keyword, userid);
+                                UsedSearchList.add(content);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (UsedSearchList.size() != 0) {
+                                UsedSearchList=rip_same_content(UsedSearchList);
+                                recyclerView_UsedSearch.setVisibility(View.VISIBLE);
+                                adapter_UsedSearch.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                }
+            }).start();
+        }//文件读取数据
+        else {
+            FileInputStream in = null;
+            BufferedReader reader = null;
+            try {
+                in = openFileInput("data");
+                reader = new BufferedReader(new InputStreamReader(in));
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    UsedSearch content = new UsedSearch(line, userid);
+                    UsedSearchList.add(content);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                        UsedSearchList=rip_same_content(UsedSearchList);
+                        adapter_UsedSearch.notifyDataSetChanged();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    public void Delete_the_search()
 }

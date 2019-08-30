@@ -9,8 +9,9 @@ public class UsedSearch {
 
     private int id;
     private String content;
+    private int searchid;
 
-    public UsedSearch(String content,int id) {
+    public UsedSearch(String content,int id,int searchid) {
         this.content=content;
         this.id=id;
     }
