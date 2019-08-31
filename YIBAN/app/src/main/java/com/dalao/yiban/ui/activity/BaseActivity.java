@@ -25,6 +25,8 @@ import okhttp3.Call;
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public String userId;
+
     // 网络请求
     private List<Call> callList;
 

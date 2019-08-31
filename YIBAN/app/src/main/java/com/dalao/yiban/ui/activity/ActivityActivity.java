@@ -83,7 +83,7 @@ public class ActivityActivity extends ContentActivity implements CommentInterfac
 
     private String activityId;
 
-    private String userId;
+    //private String userId;
 
     private ActivityGson activityGson;
 
@@ -169,7 +169,7 @@ public class ActivityActivity extends ContentActivity implements CommentInterfac
         // 设置RecyclerView
         linearLayoutManager = new LinearLayoutManager(this);
         activityCommentRecyclerView.setLayoutManager(linearLayoutManager);
-        commentAdapter = new CommentAdapter(this, this, userId,
+        commentAdapter = new CommentAdapter(this, this,
                 activityId, HomeConstant.SELECT_ACTIVITY, commentsLoadingLayout);
         activityCommentRecyclerView.setAdapter(commentAdapter);
 

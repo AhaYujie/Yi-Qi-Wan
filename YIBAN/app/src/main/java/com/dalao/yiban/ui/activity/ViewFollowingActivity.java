@@ -51,7 +51,7 @@ public class ViewFollowingActivity extends BaseActivity{
 
     private SwipeRefreshLayout myFollowingRefresh;
 
-    private String userId;
+    //private String userId;
 
     private MyFollowingGson myFollowingGson;
 
@@ -93,7 +93,7 @@ public class ViewFollowingActivity extends BaseActivity{
         // 设置RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         myFollowingRecyclerView.setLayoutManager(linearLayoutManager);
-        myFollowingItemAdapter = new MyFollowingItemAdapter(this, userId);
+        myFollowingItemAdapter = new MyFollowingItemAdapter(this);
         myFollowingRecyclerView.setAdapter(myFollowingItemAdapter);
 
         // 设置下拉刷新

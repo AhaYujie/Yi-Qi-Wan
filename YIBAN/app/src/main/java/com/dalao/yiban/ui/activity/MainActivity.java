@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ import static com.dalao.yiban.constant.MineConstant.SECRET;
 
 public class MainActivity extends BaseActivity {
 
-    public String userId;
+    // public String userId;
 
     private CustomViewPager viewPager;
 
@@ -101,6 +102,7 @@ public class MainActivity extends BaseActivity {
         else {
             LoginActivity.actionStart(this);
         }
+        Log.d("yujie", "main create userid : " + userId);
 
     }
 
@@ -180,6 +182,9 @@ public class MainActivity extends BaseActivity {
                     user.setSeverId(userId);
                     user.setSearchList(null);
                     user.save();
+                    Log.d("yujie", "main login userid : " + userId);
+                    List<User> userList = DataSupport.findAll(User.class);
+                    Log.d("yujie", "main user num : " + userList.size());
                 }
                 else {
                     finish();

@@ -28,7 +28,7 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
 
     private BaseActivity activity;
 
-    private String userId;
+    //private String userId;
 
     private List<CommunityBlogListGson.DataBean> dataBeanList;
 
@@ -62,9 +62,8 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
         }
     }
 
-    public CommunityBlogItemAdapter(BaseActivity activity, String userId) {
+    public CommunityBlogItemAdapter(BaseActivity activity) {
         this.activity = activity;
-        this.userId = userId;
     }
 
     @NonNull
@@ -90,7 +89,7 @@ public class CommunityBlogItemAdapter extends RecyclerView.Adapter<CommunityBlog
             @Override
             public void onClick(View view) {
                 // 启动BlogActivity
-                BlogActivity.actionStart(view.getContext(), userId,
+                BlogActivity.actionStart(view.getContext(), activity.userId,
                         String.valueOf(dataBean.getId()), dataBean.getAvatar(),
                         String.valueOf(dataBean.getAuthor()), dataBean.getTitle(),
                         dataBean.getTime(), String.valueOf(dataBean.getAuthorid()));

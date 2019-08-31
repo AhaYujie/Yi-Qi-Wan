@@ -4,12 +4,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.dalao.yiban.R;
@@ -31,6 +34,8 @@ public class YibanLoginFragment extends BaseFragment {
     private WebView yibanLoginWebview;
 
     private MyJavaScriptInterface myJavaScriptInterface;
+
+    private ProgressBar webViewProgressBar;
 
     public YibanLoginFragment() {
         // Required empty public constructor
@@ -60,6 +65,7 @@ public class YibanLoginFragment extends BaseFragment {
 
         // 初始化控件
         yibanLoginWebview = (WebView) view.findViewById(R.id.yiban_login_webview);
+        webViewProgressBar = (ProgressBar) view.findViewById(R.id.web_view_progress_bar);
         return view;
     }
 
@@ -81,13 +87,11 @@ public class YibanLoginFragment extends BaseFragment {
                     // 易班登录授权
                     if (url.contains(YiBanConstant.REQUEST_YIBAN_URL)) {
                         yibanLoginWebview.setVisibility(View.VISIBLE);
-                        yibanLoginWebview.loadUrl(url);
                     }
                     // 回调接口获取用户id
                     else {
                         loginActivity.customProgressDialog.showProgressDialog();
                         yibanLoginWebview.setVisibility(View.INVISIBLE);
-                        yibanLoginWebview.loadUrl(url);
                     }
                     return false;
                 }
@@ -96,6 +100,21 @@ public class YibanLoginFragment extends BaseFragment {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
+                }
+            });
+
+            yibanLoginWebview.setWebChromeClient(new WebChromeClient() {
+                @Override
+                public void onProgressChanged(WebView view, int newProgress) {
+
+                    if(newProgress==100){
+                        webViewProgressBar.setVisibility(View.GONE);//加载完网页进度条消失
+                    }
+                    else{
+                        webViewProgressBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                        webViewProgressBar.setProgress(newProgress);//设置进度值
+                    }
+
                 }
             });
 

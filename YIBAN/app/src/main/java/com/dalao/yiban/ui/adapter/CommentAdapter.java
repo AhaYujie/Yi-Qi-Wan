@@ -49,7 +49,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     private List<CommentBean> commentsBeanList;
 
-    private String userId;
+    //private String userId;
 
     private String contentId;
 
@@ -100,15 +100,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
      *
      * @param activity :
      * @param commentInterface :
-     * @param userId : 用户id
      * @param contentId : 活动或竞赛或博客的id
      * @param category : SELECT_ACTIVITY or SELECT_BLOG or SELECT_CONTEST
      */
-    public CommentAdapter(BaseActivity activity, CommentInterface commentInterface, String userId,
+    public CommentAdapter(BaseActivity activity, CommentInterface commentInterface,
                           String contentId, int category, CommentsLoadingLayout commentsLoadingLayout) {
         this.activity = activity;
         this.commentInterface = commentInterface;
-        this.userId = userId;
         this.contentId = contentId;
         this.category = category;
         this.page = 1;
@@ -147,7 +145,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     // 启动查看回复activity
-                    ViewReplyActivity.actionStart(activity, commentBean, userId, contentId, category);
+                    ViewReplyActivity.actionStart(activity, commentBean, activity.userId, contentId, category);
                 }
             });
         }
@@ -159,7 +157,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onClick(View view) {
                 // 游客禁止使用此功能
-                if (userId.equals(HomeConstant.VISITOR_USER_ID)) {
+                if (activity.userId.equals(HomeConstant.VISITOR_USER_ID)) {
                     Toast.makeText(MyApplication.getContext(), HintConstant.VISITOR_NOT_ALLOW,
                             Toast.LENGTH_SHORT).show();
                 }
@@ -205,7 +203,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         FormBody formBody  = new FormBody.Builder()
                 .add(contentIdKey, contentId)
-                .add(ServerPostDataConstant.USER_ID, userId)
+                .add(ServerPostDataConstant.USER_ID, activity.userId)
                 .add(ServerPostDataConstant.PAGE, String.valueOf(newPage))
                 .build();
 

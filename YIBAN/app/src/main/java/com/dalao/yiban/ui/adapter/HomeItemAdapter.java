@@ -36,7 +36,7 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
 
     private int categorySelected;
 
-    private String userId;
+    //private String userId;
 
     public int getCategorySelected() {
         return categorySelected;
@@ -72,12 +72,10 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
         }
     }
 
-    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected, BaseActivity activity,
-                           String userId) {
+    public HomeItemAdapter(HomeListGson homeListGson, int categorySelected, BaseActivity activity) {
         this.homeListGson = homeListGson;
         this.categorySelected = categorySelected;
         this.activity = activity;
-        this.userId = userId;
     }
 
     @NonNull
@@ -117,12 +115,12 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.ViewHo
             public void onClick(View view) {
                 // 启动ContestActivity
                 if (categorySelected == SELECT_CONTEST) {
-                    ContestActivity.actionStart(view.getContext(), userId,
+                    ContestActivity.actionStart(view.getContext(), activity.userId,
                             String.valueOf(dataBean.getId()), dataBean.getTitle(), dataBean.getTime());
                 }
                 // 启动ActivityActivity
                 else if (categorySelected == SELECT_ACTIVITY) {
-                    ActivityActivity.actionStart(view.getContext(), userId,
+                    ActivityActivity.actionStart(view.getContext(), activity.userId,
                             String.valueOf(dataBean.getId()), dataBean.getTitle(), dataBean.getTime());
                 }
             }

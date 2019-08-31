@@ -61,7 +61,7 @@ public class ViewReplyActivity extends ContentActivity implements CommentInterfa
 
     private String commentToCommentId;
 
-    public String userId;
+    //public String userId;
 
     public String contentId;
 
@@ -132,7 +132,7 @@ public class ViewReplyActivity extends ContentActivity implements CommentInterfa
         // 设置RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         viewReplyRecyclerView.setLayoutManager(layoutManager);
-        commentAdapter = new CommentAdapter(this, this, userId,
+        commentAdapter = new CommentAdapter(this, this,
                 contentId, category, commentsLoadingLayout);
         viewReplyRecyclerView.setAdapter(commentAdapter);
 

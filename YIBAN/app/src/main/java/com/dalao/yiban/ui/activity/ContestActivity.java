@@ -82,7 +82,7 @@ public class ContestActivity extends ContentActivity implements CommentInterface
 
     private String contestId;
 
-    private String userId;
+    //private String userId;
 
     private Menu menu;
 
@@ -169,7 +169,7 @@ public class ContestActivity extends ContentActivity implements CommentInterface
         // 初始化RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         contestTeamRecyclerView.setLayoutManager(layoutManager);
-        commentAdapter = new CommentAdapter(this, this, userId, contestId,
+        commentAdapter = new CommentAdapter(this, this, contestId,
                 HomeConstant.SELECT_CONTEST, commentsLoadingLayout);
         contestTeamRecyclerView.setAdapter(commentAdapter);
 

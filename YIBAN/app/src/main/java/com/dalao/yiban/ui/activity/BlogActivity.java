@@ -101,7 +101,7 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
 
     private String blogId;
 
-    private String userId;
+    //private String userId;
 
     private String authorId;
 
@@ -189,7 +189,7 @@ public class BlogActivity extends ContentActivity implements CommentInterface, F
         // 设置RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         blogCommentRecyclerView.setLayoutManager(linearLayoutManager);
-        commentAdapter = new CommentAdapter(this, this, userId,
+        commentAdapter = new CommentAdapter(this, this,
                 blogId, HomeConstant.SELECT_BLOG, commentsLoadingLayout);
         blogCommentRecyclerView.setAdapter(commentAdapter);
 

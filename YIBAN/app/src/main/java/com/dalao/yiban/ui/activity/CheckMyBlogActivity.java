@@ -58,7 +58,7 @@ public class CheckMyBlogActivity extends BaseActivity {
 
     private MyBLogGson myBLogGson;
 
-    private String userId;
+    //private String userId;
 
     private String userName;
 
@@ -103,7 +103,7 @@ public class CheckMyBlogActivity extends BaseActivity {
         // 设置RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         myBlogRecyclerview.setLayoutManager(linearLayoutManager);
-        communityBlogItemAdapter = new CommunityBlogItemAdapter(this, userId);
+        communityBlogItemAdapter = new CommunityBlogItemAdapter(this);
         myBlogRecyclerview.setAdapter(communityBlogItemAdapter);
 
         // 设置swipe refresh事件

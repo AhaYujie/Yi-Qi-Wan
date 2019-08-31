@@ -30,7 +30,7 @@ public class EditNicknameActivity extends BaseActivity {
 
     private String nickname;
 
-    private String userId;
+    //private String userId;
 
     /**
      * 启动 EditNicknameActivity

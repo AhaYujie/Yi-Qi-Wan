@@ -7,6 +7,15 @@
     tools:context=".ui.fragment.YibanLoginFragment"
     android:background="@color/myBackground">
 
+    <ProgressBar
+        android:id="@+id/web_view_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dip"
+        android:progressDrawable="@drawable/webview_progress_bar"
+        android:visibility="gone"
+        />
+
     <WebView
         android:id="@+id/yiban_login_webview"
         android:layout_width="match_parent"

@@ -70,7 +70,7 @@ public class MyCollectionActivity extends BaseActivity {
 
     private int categorySelected;
 
-    private String userId;
+    //private String userId;
 
     private HomeListGson activityListGson;
 
@@ -120,17 +120,17 @@ public class MyCollectionActivity extends BaseActivity {
         // 设置RecyclerView
         activityLayoutManager = new LinearLayoutManager(this);
         myCollectionActivityRecyclerview.setLayoutManager(activityLayoutManager);
-        activityListAdapter = new HomeItemAdapter(null, HomeConstant.SELECT_ACTIVITY, this, userId);
+        activityListAdapter = new HomeItemAdapter(null, HomeConstant.SELECT_ACTIVITY, this);
         myCollectionActivityRecyclerview.setAdapter(activityListAdapter);
 
         contestLayoutManager = new LinearLayoutManager(this);
         myCollectionContestRecyclerview.setLayoutManager(contestLayoutManager);
-        contestListAdapter = new HomeItemAdapter(null, HomeConstant.SELECT_CONTEST, this, userId);
+        contestListAdapter = new HomeItemAdapter(null, HomeConstant.SELECT_CONTEST, this);
         myCollectionContestRecyclerview.setAdapter(contestListAdapter);
 
         blogLayoutManager = new LinearLayoutManager(this);
         myCollectionBlogRecyclerview.setLayoutManager(blogLayoutManager);
-        blogListAdapter = new CommunityBlogItemAdapter(this, userId);
+        blogListAdapter = new CommunityBlogItemAdapter(this);
         myCollectionBlogRecyclerview.setAdapter(blogListAdapter);
 
         // 设置类别切换事件

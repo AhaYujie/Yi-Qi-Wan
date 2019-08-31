@@ -64,7 +64,7 @@ import okhttp3.Response;
 
 public class CreateBlogActivity extends BaseActivity {
 
-    private String userId;
+    //private String userId;
 
     private Button createBlogCancelButton;
 

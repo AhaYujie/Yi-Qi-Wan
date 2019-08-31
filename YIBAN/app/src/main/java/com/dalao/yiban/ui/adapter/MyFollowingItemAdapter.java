@@ -33,7 +33,7 @@ public class MyFollowingItemAdapter extends RecyclerView.Adapter<MyFollowingItem
 
     private ViewFollowingActivity activity;
 
-    private String userId;
+    //private String userId;
 
     public MyFollowingGson getMyFollowingGson() {
         return myFollowingGson;
@@ -57,9 +57,8 @@ public class MyFollowingItemAdapter extends RecyclerView.Adapter<MyFollowingItem
         }
     }
 
-    public MyFollowingItemAdapter(ViewFollowingActivity activity, String userId) {
+    public MyFollowingItemAdapter(ViewFollowingActivity activity) {
         this.activity = activity;
-        this.userId = userId;
     }
 
     @NonNull
@@ -94,13 +93,13 @@ public class MyFollowingItemAdapter extends RecyclerView.Adapter<MyFollowingItem
                 // 取消关注
                 if (!dataBean.getFollowing() && dataBean.getIsFollow() == CommunityConstant.FOLLOW) {
                     HttpUtil.followBlogAuthor(null, activity, MyFollowingItemAdapter.this,
-                            userId, String.valueOf(dataBean.getUserid()),
+                            activity.userId, String.valueOf(dataBean.getUserid()),
                             HomeConstant.VIEW_FOLLOWING_ACTIVITY, CommunityConstant.UN_FOLLOW);
                 }
                 // 关注
                 else if (!dataBean.getFollowing() && dataBean.getIsFollow() == CommunityConstant.UN_FOLLOW) {
                     HttpUtil.followBlogAuthor(null, activity, MyFollowingItemAdapter.this,
-                            userId, String.valueOf(dataBean.getUserid()),
+                            activity.userId, String.valueOf(dataBean.getUserid()),
                             HomeConstant.VIEW_FOLLOWING_ACTIVITY, CommunityConstant.FOLLOW);
                 }
             }
