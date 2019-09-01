@@ -8,8 +8,6 @@ public class YiBanConstant {
 
     public static final String BACK_URL = "http://188888888.xyz:5000/backurl";
 
-    public static final String LOGIN_URL = "login_url";
-
     public static final String REQUEST_YIBAN_URL = "https://oauth.yiban.cn";
 
 }

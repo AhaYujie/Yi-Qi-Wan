@@ -13,11 +13,6 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.activity.SearchActivity">
         </activity>
-        <activity android:name=".ui.activity.MyBlogActivity">
-        </activity>
-        <activity android:name=".ui.activity.CollectionActivity"/>
-        <activity android:name=".ui.activity.MyStarActivity">
-        </activity>
         <activity android:name=".ui.activity.LoginActivity">
         </activity>
         <activity android:name=".ui.activity.MyCollectionActivity"></activity>

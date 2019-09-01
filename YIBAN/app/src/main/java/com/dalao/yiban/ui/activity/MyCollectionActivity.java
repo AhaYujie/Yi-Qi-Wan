@@ -140,6 +140,8 @@ public class MyCollectionActivity extends BaseActivity {
                 cancelCall();
                 categorySelected = tab.getPosition();
                 selectRecyclerView(categorySelected);
+                myCollectionNotFoundLayout.setVisibility(View.GONE);
+                wrongPageLayout.setVisibility(View.GONE);
                 // 无数据则请求服务器
                 switch (categorySelected) {
                     case HomeConstant.SELECT_ACTIVITY:
