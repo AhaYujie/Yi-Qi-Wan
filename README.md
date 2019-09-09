@@ -39,10 +39,14 @@ git clone https://github.com/AhaYujie/YIBAN_Android.git
 
 ## Contributors ##
 
-[QingFengQ][1]  
-[BeyondLam][2]  
+[QingFengQ][1]
+
+[BeyondLam][2]
+
 [西楼][3]
-[lzkloop][4]  
+
+[lzkloop][4]
+
 [aha][5]
 
 
