@@ -1,4 +1,4 @@
-package com.dalao.yiban;
+package com.dalao.yiban.DataBaseHelper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
