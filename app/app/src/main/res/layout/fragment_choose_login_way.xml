@@ -13,7 +13,7 @@
         android:layout_height="@dimen/login_app_icon_size"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
-        android:src="@drawable/ic_app" />
+        android:src="@mipmap/ic_launcher" />
 
     <Button
         android:id="@+id/choose_yiban_login_way"
